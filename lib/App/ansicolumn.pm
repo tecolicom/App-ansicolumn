@@ -1,6 +1,5 @@
 package App::ansicolumn;
-use 5.008001;
-use strict;
+use v5.14;
 use warnings;
 
 our $VERSION = "0.01";
@@ -14,26 +13,27 @@ __END__
 
 =head1 NAME
 
-App::ansicolumn - It's new $module
+App::ansicolumn - ANSI sequence aware column commmand
 
 =head1 SYNOPSIS
 
-    use App::ansicolumn;
+    $ ansicolumn
 
 =head1 DESCRIPTION
 
-App::ansicolumn is ...
-
-=head1 LICENSE
-
-Copyright (C) Kazumasa Utashiro.
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+ansicolumn is a column command clone which can handle ANSI
+terminal sequences.
 
 =head1 AUTHOR
 
 Kazumasa Utashiro E<lt>kaz@utashiro.comE<gt>
+
+=head1 LICENSE
+
+Copyright 2020 Kazumasa Utashiro.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
 
