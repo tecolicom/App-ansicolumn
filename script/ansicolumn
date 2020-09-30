@@ -1,0 +1,46 @@
+#!/usr/bin/perl -CSDA
+
+$opts = 'w:c:';
+while ($_ = $ARGV[0], /^-.+/ && shift) {
+    next unless ($car, $cdr) = /^-?(.)(.*)/;
+    if (/-(tex|tbl)$/) { $format = $1; next; }
+    if ($car eq 'h') { &usage; }
+    eval "\$opt_$car = length(\$cdr) ? \$cdr : \@ARGV ? shift : &usage", next
+	if index($opts, "$car:") >= $[;
+    eval "\$opt_$car++", $_ = $cdr, redo
+	if index($opts, $car) >= $[;
+    &usage("Unknown option: $car\n");
+}
+
+$opt_w = 80 unless $opt_w;
+
+&column_out(<>);
+
+;#
+;# implement ls -C
+;#
+use Text::MBPrintf qw(mbwidth);
+sub column_out {
+    my @item = @_;
+    my($W, $c) = ($opt_w, $opt_c);
+
+    return unless @item;
+    chop @item;
+
+    my @width = map { mbwidth $_ } @item;
+    my $w = 8;
+    for (@width) {
+	$w = ($_ + 1 + 7) & ~7 if $_ > $w - 1
+    }
+
+    $c = $w >= $W ? 1 : int($W / $w) unless $opt_c;
+    my $l = int((@item + $c - 1) / $c);	# line
+
+    my $p = 0;
+    for (sort {$a % $l <=> $b % $l || $a <=> $b} 0 .. $#item) {
+	print $_ < $p + $l ? "\n" : ' ' x ($w - $width[$p]) if $_;
+	print $item[$_];
+	$p = $_;
+    }
+    print "\n";
+}
