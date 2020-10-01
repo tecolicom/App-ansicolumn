@@ -56,6 +56,17 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kaz-utashiro/App-ansicolumn/issues"
+      },
+      "homepage" : "https://github.com/kaz-utashiro/App-ansicolumn",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/kaz-utashiro/App-ansicolumn.git",
+         "web" : "https://github.com/kaz-utashiro/App-ansicolumn"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [

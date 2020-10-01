@@ -13,6 +13,7 @@ sub new {
     bless {
 	tab => 8,
 	separator => ' ',
+	join => '  ',
     }, $class;
 }
 
@@ -27,6 +28,7 @@ sub run {
 	"table|t",
 	"separator|s=s",
 	"tab=i",
+	"join=s",
 	);
     Getopt::Long::Configure("bundling");
     GetOptions(@optargs) || pod2usage();
@@ -76,13 +78,13 @@ sub table_out {
     my %opt = %$obj;
     return unless @_;
     chomp @_;
-    my $split  = qr/[\Q$obj->{separator}\E]/;
+    my $split  = $obj->{separator} eq ' ' ? ' ' : qr/[\Q$obj->{separator}\E]/;
     my @lines  = map { [ grep { $_ ne '' } split $split, $_ ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
     my @format = map { sprintf "%%-%ds", $_ } @max;
     for my $line (@lines) {
-	my $format = join('  ', @format[0..$#{$line}]) . "\n";
+	my $format = join $obj->{join}, @format[0..$#{$line}-1], "%s\n";
 	ansi_printf $format, @$line;
     }
 }

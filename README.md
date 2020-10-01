@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.com/kaz-utashiro/App-ansicolumn.svg?branch=master)](https://travis-ci.com/kaz-utashiro/App-ansicolumn)
 # NAME
 
 ansicolumn - ANSI sequence aware column command
