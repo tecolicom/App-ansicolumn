@@ -11,16 +11,16 @@ use Getopt::EX::Long;
 sub new {
     my $class = shift;
     bless {
-	tab => 8,
-	separator => ' ',
-	join => '  ',
+	"tab"          => 8,
+	"separator"    => ' ',
+	"join"         => '  ',
+	"ignore-space" => 1,
     }, $class;
 }
 
 sub run {
     my $obj = shift;
     local @ARGV = @_;
-
     my @optargs = (
 	$obj,
 	"column|c=i",
@@ -29,6 +29,7 @@ sub run {
 	"separator|s=s",
 	"tab=i",
 	"join=s",
+	"ignore-space|is!",
 	);
     Getopt::Long::Configure("bundling");
     GetOptions(@optargs) || pod2usage();
@@ -78,8 +79,14 @@ sub table_out {
     my %opt = %$obj;
     return unless @_;
     chomp @_;
-    my $split  = $obj->{separator} eq ' ' ? ' ' : qr/[\Q$obj->{separator}\E]/;
-    my @lines  = map { [ grep { $_ ne '' } split $split, $_ ] } @_;
+    my $split = do {
+	if ($obj->{separator} eq ' ') {
+	    $opt{"ignore-space"} ? ' ' : qr/ /;
+	} else {
+	    qr/[\Q$obj->{separator}\E]/;
+	}
+    };
+    my @lines  = map { [ split $split, $_ ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
     my @format = map { sprintf "%%-%ds", $_ } @max;
