@@ -1,4 +1,5 @@
 name = "App-ansicolumn"
+readme_from = "script/ansicolumn"
 badges = ["travis-ci.com"]
 authority="cpan:UTASHIRO"
 

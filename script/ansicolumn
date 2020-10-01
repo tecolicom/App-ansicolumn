@@ -6,3 +6,66 @@ use warnings;
 use App::ansicolumn;
 
 App::ansicolumn->new->run(@ARGV);
+
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+ansicolumn - ANSI sequence aware column command
+
+=head1 SYNOPSIS
+
+ansicolumn [-tx] [-c columns]
+
+=head1 DESCRIPTION
+
+From column(1):
+
+=over 4
+
+The column utility formats its input into multiple columns.  Rows are
+filled before columns.  Input is taken from file operands, or, by
+default, from the standard input.  Empty lines are ignored.
+
+=over 7
+
+=item -c
+
+Output is formatted for a display columns wide.
+
+=item -s
+
+Specify a set of characters to be used to delimit columns for the
+-t option.
+
+=item -t
+
+Determine the number of columns the input contains and create a
+table.  Columns are delimited with whitespace, by default, or
+with the characters supplied using the -s option.  Useful for
+pretty-printing displays.
+
+=item -x
+
+Fill columns before filling rows.
+
+=back
+
+=back
+
+B<ansicolumn> is a clone which can handle ANSI terminal sequences.
+
+=head1 AUTHOR
+
+Kazumasa Utashiro
+
+=head1 LICENSE
+
+Copyright 2020 Kazumasa Utashiro.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
