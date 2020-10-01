@@ -1,22 +1,49 @@
+
 # NAME
 
-App::ansicolumn - It's new $module
+ansicolumn - ANSI sequence aware column command
 
 # SYNOPSIS
 
-    use App::ansicolumn;
+ansicolumn \[-tx\] \[-c columns\]
 
 # DESCRIPTION
 
-App::ansicolumn is ...
+From column(1):
 
-# LICENSE
+> The column utility formats its input into multiple columns.  Rows are
+> filled before columns.  Input is taken from file operands, or, by
+> default, from the standard input.  Empty lines are ignored.
+>
+> - -c
+>
+>     Output is formatted for a display columns wide.
+>
+> - -s
+>
+>     Specify a set of characters to be used to delimit columns for the
+>     \-t option.
+>
+> - -t
+>
+>     Determine the number of columns the input contains and create a
+>     table.  Columns are delimited with whitespace, by default, or
+>     with the characters supplied using the -s option.  Useful for
+>     pretty-printing displays.
+>
+> - -x
+>
+>     Fill columns before filling rows.
 
-Copyright (C) Kazumasa Utashiro.
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+**ansicolumn** is a clone which can handle ANSI terminal sequences.
 
 # AUTHOR
 
-Kazumasa Utashiro <kaz@utashiro.com>
+Kazumasa Utashiro
+
+# LICENSE
+
+Copyright 2020 Kazumasa Utashiro.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
