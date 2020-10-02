@@ -17,7 +17,7 @@ ansicolumn - ANSI sequence aware column command
 
 =head1 SYNOPSIS
 
-ansicolumn [-tx] [-c columns]
+ansicolumn [-tx] [-c columns] [-s sep] [file ...]
 
 =head1 DESCRIPTION
 

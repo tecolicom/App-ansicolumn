@@ -5,7 +5,7 @@ ansicolumn - ANSI sequence aware column command
 
 # SYNOPSIS
 
-ansicolumn \[-tx\] \[-c columns\]
+ansicolumn \[-tx\] \[-c columns\] \[-s sep\] \[file ...\]
 
 # DESCRIPTION
 
