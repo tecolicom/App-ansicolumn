@@ -14,7 +14,7 @@ sub new {
 	"tab"          => 8,
 	"separator"    => ' ',
 	"join"         => '  ',
-	"ignore-space" => 1,
+	"ignore_space" => 1,
     }, $class;
 }
 
@@ -29,7 +29,7 @@ sub run {
 	"separator|s=s",
 	"tab=i",
 	"join=s",
-	"ignore-space|is!",
+	"ignore_space|ignore-space|is!",
 	);
     Getopt::Long::Configure("bundling");
     GetOptions(@optargs) || pod2usage();
@@ -80,10 +80,10 @@ sub table_out {
     return unless @_;
     chomp @_;
     my $split = do {
-	if ($obj->{separator} eq ' ') {
-	    $opt{"ignore-space"} ? ' ' : qr/ /;
+	if ($opt{separator} eq ' ') {
+	    $opt{ignore_space} ? ' ' : qr/ /;
 	} else {
-	    qr/[\Q$obj->{separator}\E]/;
+	    qr/[\Q$opt{separator}\E]/;
 	}
     };
     my @lines  = map { [ split $split, $_ ] } @_;
