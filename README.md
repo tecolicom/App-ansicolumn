@@ -37,6 +37,14 @@ From column(1):
 
 **ansicolumn** is a clone which can handle ANSI terminal sequences.
 
+# INSTALL
+
+## CPANMINUS
+
+    $ cpanm App::Greple
+    or
+    $ curl -sL http://cpanmin.us | perl - App::Greple
+
 # AUTHOR
 
 Kazumasa Utashiro

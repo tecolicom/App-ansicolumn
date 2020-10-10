@@ -7,6 +7,7 @@ use warnings;
 use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long;
+Getopt::Long::Configure("bundling");
 
 sub new {
     my $class = shift;
@@ -21,7 +22,7 @@ sub new {
 sub run {
     my $obj = shift;
     local @ARGV = @_;
-    my @optargs = (
+    GetOptions(
 	$obj,
 	"column|c=i",
 	"transpose|xpose|x",
@@ -30,9 +31,7 @@ sub run {
 	"tab=i",
 	"join=s",
 	"ignore_space|ignore-space|is!",
-	);
-    Getopt::Long::Configure("bundling");
-    GetOptions(@optargs) || pod2usage();
+	) || pod2usage();
     if ($obj->{table}) {
 	$obj->table_out(<>);
     } else {
