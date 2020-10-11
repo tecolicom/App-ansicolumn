@@ -3,11 +3,18 @@
 
 ansicolumn - ANSI terminal sequence aware column command
 
+# VERSION
+
+Version 0.04
+
 # SYNOPSIS
 
 ansicolumn \[-tx\] \[-c columns\] \[-s sep\] \[file ...\]
 
 # DESCRIPTION
+
+**ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone which can handle ANSI
+terminal sequences.
 
 From [column(1)](http://man.he.net/man1/column):
 
@@ -35,15 +42,13 @@ From [column(1)](http://man.he.net/man1/column):
 >
 >     Fill columns before filling rows.
 
-**ansicolumn** is a clone which can handle ANSI terminal sequences.
+Some addtional options are compatible with Linux extended version.
 
-Some addtional options are available.
-
-> - **--column** #
+> - **--output-width** #
 >
 >     Long name for **-c**.
 >
-> - **--separator**
+> - **--separator** #
 >
 >     Long name for **-s**.
 >
@@ -51,10 +56,17 @@ Some addtional options are available.
 >
 >     Long name for **-t**.
 >
-> - **--transpose**, **--xpose**
+> - **--fillrows**
 >
 >     Long name for **-x**.
 >
+> - **--output-separator** #, **-o** #
+>
+>     When used **--table** or **-t** option, each columns are joind by two
+>     space characters (' ') by defualt.  This option will change it.
+
+Some options are original.
+
 > - **--tab** #
 >
 >     Specify tab width.
@@ -63,12 +75,7 @@ Some addtional options are available.
 >
 >     Output is formatted in specified number of panes.
 >
-> - **--join** #
->
->     When used **--table** or **-t** option, each columns are joind by two
->     space characters (' ') by defualt.  This option will change it.
->
-> - **--\[no-\]ignore-space**, **--\[no-\]is**
+> - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 >
 >     When used **-t** option, leading spaces are ignored by default.  Use
 >     **--no-ignore-space** option to disable it.
@@ -79,7 +86,7 @@ Some addtional options are available.
 
     $ cpanm App::Greple
     or
-    $ curl -sL http://cpanmin.us | perl - App::Greple
+    $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 
 # SEE ALSO
 

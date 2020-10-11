@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 use v5.14;
 use warnings;
@@ -12,11 +12,14 @@ Getopt::Long::Configure("bundling");
 sub new {
     my $class = shift;
     bless {
-	tab          => 8,
-	pane         => 0,
-	separator    => ' ',
-	join         => '  ',
-	ignore_space => 1,
+	output_width     => undef,
+	fillrows         => undef,
+	table            => undef,
+	separator        => ' ',
+	output_separator => '  ',
+	tab              => 8,
+	pane             => 0,
+	ignore_space     => 1,
     }, $class;
 }
 
@@ -25,13 +28,13 @@ sub run {
     local @ARGV = @_;
     GetOptions(
 	$obj,
-	"column|c=i",
-	"transpose|xpose|x",
+	"output_width|output-width|c=i",
+	"fillrows|x",
 	"table|t",
 	"separator|s=s",
+	"output_separator|output-separator|o=s",
 	"tab=i",
 	"pane=i",
-	"join=s",
 	"ignore_space|ignore-space|is!",
 	) || pod2usage();
     if ($obj->{table}) {
@@ -55,7 +58,7 @@ sub column_out {
     chop @item;
 
     use integer;
-    my $width = $opt{column} || terminal_width();
+    my $width = $opt{output_width} || terminal_width();
     my @width = map { ansi_width $_ } @item;
     my $tab = $opt{tab} || 1;
     my $span = (max(@width) + $tab) / $tab * $tab;
@@ -63,7 +66,7 @@ sub column_out {
     my $rows = (@item + $panes - 1) / $panes;
     my @index = 0 .. $#item;
     my @lines = do {
-	if ($opt{transpose}) {
+	if ($opt{fillrows}) {
 	    map { [ splice @index, 0, $panes ] } 1 .. $rows;
 	} else {
 	    zip map { [ splice @index, 0, $rows ] } 1 .. $panes;
@@ -92,7 +95,8 @@ sub table_out {
     my @max    = map { max @$_ } zip @length;
     my @format = map { sprintf "%%-%ds", $_ } @max;
     for my $line (@lines) {
-	my $format = join $obj->{join}, @format[0..$#{$line}-1], "%s\n";
+	my $format = join($obj->{output_separator},
+			  @format[0..$#{$line}-1], "%s\n");
 	ansi_printf $format, @$line;
     }
 }

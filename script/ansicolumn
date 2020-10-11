@@ -15,11 +15,18 @@ __END__
 
 ansicolumn - ANSI terminal sequence aware column command
 
+=head1 VERSION
+
+Version 0.04
+
 =head1 SYNOPSIS
 
 ansicolumn [-tx] [-c columns] [-s sep] [file ...]
 
 =head1 DESCRIPTION
+
+B<ansicolumn> is a L<column(1)> command clone which can handle ANSI
+terminal sequences.
 
 From L<column(1)>:
 
@@ -55,19 +62,17 @@ Fill columns before filling rows.
 
 =back
 
-B<ansicolumn> is a clone which can handle ANSI terminal sequences.
-
-Some addtional options are available.
+Some addtional options are compatible with Linux extended version.
 
 =over 4
 
 =over 7
 
-=item B<--column> #
+=item B<--output-width> #
 
 Long name for B<-c>.
 
-=item B<--separator>
+=item B<--separator> #
 
 Long name for B<-s>.
 
@@ -75,9 +80,24 @@ Long name for B<-s>.
 
 Long name for B<-t>.
 
-=item B<--transpose>, B<--xpose>
+=item B<--fillrows>
 
 Long name for B<-x>.
+
+=item B<--output-separator> #, B<-o> #
+
+When used B<--table> or B<-t> option, each columns are joind by two
+space characters (' ') by defualt.  This option will change it.
+
+=back
+
+=back
+
+Some options are original.
+
+=over 4
+
+=over 7
 
 =item B<--tab> #
 
@@ -87,12 +107,7 @@ Specify tab width.
 
 Output is formatted in specified number of panes.
 
-=item B<--join> #
-
-When used B<--table> or B<-t> option, each columns are joind by two
-space characters (' ') by defualt.  This option will change it.
-
-=item B<--[no-]ignore-space>, B<--[no-]is>
+=item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
 When used B<-t> option, leading spaces are ignored by default.  Use
 B<--no-ignore-space> option to disable it.
@@ -107,7 +122,7 @@ B<--no-ignore-space> option to disable it.
 
     $ cpanm App::Greple
     or
-    $ curl -sL http://cpanmin.us | perl - App::Greple
+    $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 
 =head1 SEE ALSO
 

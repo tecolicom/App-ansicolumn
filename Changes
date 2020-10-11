@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.04 2020-10-11T13:57:13Z
+
+    - Make options Linux extended version compatible.
+
 0.03 2020-10-11T08:55:44Z
 
     - Update document.
