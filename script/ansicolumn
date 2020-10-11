@@ -13,7 +13,7 @@ __END__
 
 =head1 NAME
 
-ansicolumn - ANSI sequence aware column command
+ansicolumn - ANSI terminal sequence aware column command
 
 =head1 SYNOPSIS
 
@@ -59,7 +59,25 @@ B<ansicolumn> is a clone which can handle ANSI terminal sequences.
 
 Some addtional options are available.
 
+=over 4
+
 =over 7
+
+=item B<--column> #
+
+Long name for B<-c>.
+
+=item B<--separator>
+
+Long name for B<-s>.
+
+=item B<--table>
+
+Long name for B<-t>.
+
+=item B<--transpose>, B<--xpose>
+
+Long name for B<-x>.
 
 =item B<--tab> #
 
@@ -68,6 +86,18 @@ Specify tab width.
 =item B<--pane> #
 
 Output is formatted in specified number of panes.
+
+=item B<--join> #
+
+When used B<--table> or B<-t> option, each columns are joind by two
+space characters (' ') by defualt.  This option will change it.
+
+=item B<--[no-]ignore-space>, B<--[no-]is>
+
+When used B<-t> option, leading spaces are ignored by default.  Use
+B<--no-ignore-space> option to disable it.
+
+=back
 
 =back
 
@@ -80,6 +110,8 @@ Output is formatted in specified number of panes.
     $ curl -sL http://cpanmin.us | perl - App::Greple
 
 =head1 SEE ALSO
+
+L<column(1)>
 
 L<App::ansicolumn>,
 L<https://github.com/kaz-utashiro/App-ansicolumn>

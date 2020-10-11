@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/kaz-utashiro/App-ansicolumn.svg?branch=master)](https://travis-ci.com/kaz-utashiro/App-ansicolumn)
 # NAME
 
-ansicolumn - ANSI sequence aware column command
+ansicolumn - ANSI terminal sequence aware column command
 
 # SYNOPSIS
 
@@ -39,13 +39,39 @@ From [column(1)](http://man.he.net/man1/column):
 
 Some addtional options are available.
 
-- **--tab** #
-
-    Specify tab width.
-
-- **--pane** #
-
-    Output is formatted in specified number of panes.
+> - **--column** #
+>
+>     Long name for **-c**.
+>
+> - **--separator**
+>
+>     Long name for **-s**.
+>
+> - **--table**
+>
+>     Long name for **-t**.
+>
+> - **--transpose**, **--xpose**
+>
+>     Long name for **-x**.
+>
+> - **--tab** #
+>
+>     Specify tab width.
+>
+> - **--pane** #
+>
+>     Output is formatted in specified number of panes.
+>
+> - **--join** #
+>
+>     When used **--table** or **-t** option, each columns are joind by two
+>     space characters (' ') by defualt.  This option will change it.
+>
+> - **--\[no-\]ignore-space**, **--\[no-\]is**
+>
+>     When used **-t** option, leading spaces are ignored by default.  Use
+>     **--no-ignore-space** option to disable it.
 
 # INSTALL
 
@@ -56,6 +82,8 @@ Some addtional options are available.
     $ curl -sL http://cpanmin.us | perl - App::Greple
 
 # SEE ALSO
+
+[column(1)](http://man.he.net/man1/column)
 
 [App::ansicolumn](https://metacpan.org/pod/App::ansicolumn),
 [https://github.com/kaz-utashiro/App-ansicolumn](https://github.com/kaz-utashiro/App-ansicolumn)

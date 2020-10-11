@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.03 2020-10-11T08:55:44Z
+
+    - Update document.
+
 0.02 2020-10-11T06:34:14Z
 
     - Add --pane option.
