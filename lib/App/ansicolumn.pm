@@ -12,10 +12,11 @@ Getopt::Long::Configure("bundling");
 sub new {
     my $class = shift;
     bless {
-	"tab"          => 8,
-	"separator"    => ' ',
-	"join"         => '  ',
-	"ignore_space" => 1,
+	tab          => 8,
+	pane         => 0,
+	separator    => ' ',
+	join         => '  ',
+	ignore_space => 1,
     }, $class;
 }
 
@@ -29,6 +30,7 @@ sub run {
 	"table|t",
 	"separator|s=s",
 	"tab=i",
+	"pane=i",
 	"join=s",
 	"ignore_space|ignore-space|is!",
 	) || pod2usage();
@@ -57,14 +59,14 @@ sub column_out {
     my @width = map { ansi_width $_ } @item;
     my $tab = $opt{tab} || 1;
     my $span = (max(@width) + $tab) / $tab * $tab;
-    my $fields = $width / $span || 1;
-    my $rows = (@item + $fields - 1) / $fields;
+    my $panes = $opt{pane} || $width / $span || 1;
+    my $rows = (@item + $panes - 1) / $panes;
     my @index = 0 .. $#item;
     my @lines = do {
 	if ($opt{transpose}) {
-	    map { [ splice @index, 0, $fields ] } 1 .. $rows;
+	    map { [ splice @index, 0, $panes ] } 1 .. $rows;
 	} else {
-	    zip map { [ splice @index, 0, $rows ] } 1 .. $fields;
+	    zip map { [ splice @index, 0, $rows ] } 1 .. $panes;
 	}
     };
     for my $line (@lines) {
@@ -108,6 +110,7 @@ ansicolumn - ANSI sequence aware column command
 =head1 DESCRIPTION
 
 Document is included in executable script.
+Use `perldoc ansicolumn`.
 
 =head1 AUTHOR
 

@@ -21,7 +21,7 @@ ansicolumn [-tx] [-c columns] [-s sep] [file ...]
 
 =head1 DESCRIPTION
 
-From column(1):
+From L<column(1)>:
 
 =over 4
 
@@ -31,23 +31,23 @@ default, from the standard input.  Empty lines are ignored.
 
 =over 7
 
-=item -c
+=item B<-c> #
 
 Output is formatted for a display columns wide.
 
-=item -s
+=item B<-s> #
 
 Specify a set of characters to be used to delimit columns for the
 -t option.
 
-=item -t
+=item B<-t>
 
 Determine the number of columns the input contains and create a
 table.  Columns are delimited with whitespace, by default, or
 with the characters supplied using the -s option.  Useful for
 pretty-printing displays.
 
-=item -x
+=item B<-x>
 
 Fill columns before filling rows.
 
@@ -57,6 +57,20 @@ Fill columns before filling rows.
 
 B<ansicolumn> is a clone which can handle ANSI terminal sequences.
 
+Some addtional options are available.
+
+=over 7
+
+=item B<--tab> #
+
+Specify tab width.
+
+=item B<--pane> #
+
+Output is formatted in specified number of panes.
+
+=back
+
 =head1 INSTALL
 
 =head2 CPANMINUS
@@ -64,6 +78,14 @@ B<ansicolumn> is a clone which can handle ANSI terminal sequences.
     $ cpanm App::Greple
     or
     $ curl -sL http://cpanmin.us | perl - App::Greple
+
+=head1 SEE ALSO
+
+L<App::ansicolumn>,
+L<https://github.com/kaz-utashiro/App-ansicolumn>
+
+L<Text::ANSI::Printf>,
+L<https://github.com/kaz-utashiro/Text-ANSI-Printf>
 
 =head1 AUTHOR
 
