@@ -36,7 +36,9 @@ sub run {
 	"tab=i",
 	"pane=i",
 	"ignore_space|ignore-space|is!",
+	"version|v",
 	) || pod2usage();
+    $obj->{version} and do { say $VERSION; exit };
     if ($obj->{table}) {
 	$obj->table_out(<>);
     } else {
