@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =head1 SYNOPSIS
 
@@ -103,6 +103,10 @@ Some options are original.
 
 Specify tab width.
 
+=item B<--fullwidth>
+
+Use full width of the terminal.
+
 =item B<--pane> #
 
 Output is formatted in specified number of panes.
@@ -111,6 +115,28 @@ Output is formatted in specified number of panes.
 
 When used B<-t> option, leading spaces are ignored by default.  Use
 B<--no-ignore-space> option to disable it.
+
+=item B<--linestyle>=I<none>|I<truncate>|I<wrap>|I<wordwrap>, B<--ls>=I<...>
+
+Set the style of treatment for longer lines.
+Default is I<none>.
+
+=begin comment
+
+=item B<--boundary>=I<word>
+
+Set text wrap boundary.
+
+=end comment
+
+=item B<--linebreak>=I<none|all|runin|runout>
+
+Set the linebreak mode.
+
+=item B<--runin>=#, B<--runout>=#
+
+Set number of runin/runout column.
+Default is both 2.
 
 =back
 

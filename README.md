@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.04
+Version 0.05
 
 # SYNOPSIS
 
@@ -71,6 +71,10 @@ Some options are original.
 >
 >     Specify tab width.
 >
+> - **--fullwidth**
+>
+>     Use full width of the terminal.
+>
 > - **--pane** #
 >
 >     Output is formatted in specified number of panes.
@@ -79,6 +83,20 @@ Some options are original.
 >
 >     When used **-t** option, leading spaces are ignored by default.  Use
 >     **--no-ignore-space** option to disable it.
+>
+> - **--linestyle**=_none_|_truncate_|_wrap_|_wordwrap_, **--ls**=_..._
+>
+>     Set the style of treatment for longer lines.
+>     Default is _none_.
+>
+> - **--linebreak**=_none|all|runin|runout_
+>
+>     Set the linebreak mode.
+>
+> - **--runin**=#, **--runout**=#
+>
+>     Set number of runin/runout column.
+>     Default is both 2.
 
 # INSTALL
 
