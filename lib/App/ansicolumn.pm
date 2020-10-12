@@ -25,8 +25,9 @@ sub new {
 	table            => undef,
 	separator        => ' ',
 	output_separator => '  ',
-	tab              => 8,
+	columnunit       => 8,
 	pane             => 0,
+	tabstop          => 8,
 	ignore_space     => 1,
 	fullwidth        => undef,
 	linestyle        => 'none',
@@ -47,8 +48,9 @@ sub run {
 	"table|t",
 	"separator|s=s",
 	"output_separator|output-separator|o=s",
-	"tab=i",
+	"columnunit|cu=i",
 	"pane=i",
+	"tab=i",
 	"ignore_space|ignore-space|is!",
 	"fullwidth!",
 	"linestyle|ls=s",
@@ -61,6 +63,7 @@ sub run {
 	$obj->{linestyle} = 'wrap';
 	$obj->{boundary} = 'word';
     }
+    $Text::Tabs::tabstop = $obj->{tabstop};
     my @lines = expand <>;
     if ($obj->{table}) {
 	$obj->table_out(@lines);
@@ -87,8 +90,8 @@ sub column_out {
     my $width = $opt{output_width} || terminal_width();
     my @length = map { ansi_width $_ } @item;
     my $max_length = max @length;
-    my $tab = $opt{tab} || 1;
-    my $span = ($max_length + $tab) / $tab * $tab;
+    my $unit = $opt{columnunit} || 1;
+    my $span = ($max_length + $unit) / $unit * $unit;
     my $panes = $opt{pane} || $width / $span || 1;
     if ($opt{fullwidth}) {
 	$span = $width / $panes;

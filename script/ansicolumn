@@ -99,9 +99,14 @@ Some options are original.
 
 =over 7
 
-=item B<--tab> #
+=item B<--tabstop> #
 
-Specify tab width.
+Set tab width.
+
+=item B<--columnunit> #
+
+Each columns are placed at unit of 8 by default.  This option changes
+the number of unit.
 
 =item B<--fullwidth>
 
