@@ -127,8 +127,9 @@ Set pagelength to terminal height - 1.
 
 =item B<--document>, B<-D>
 
-Document mode on.  Set following options.
+Document mode.  Set following options.
 
+    --fullwidth
     --linebreak=all
     --linestyle=wrap
     --boundary=word
@@ -136,7 +137,11 @@ Document mode on.  Set following options.
 
 Next command display document text in 3-up format.
 
-    optex -Mtextconv foo.docx | ansicolumn -DPC3 | less
+    optex -Mtextconv cat foo.docx | ansicolumn -DPC3 | less
+
+or
+
+    LESSOPEN='| optex -Mtextconv ansicolumn -DPC3 %s' less foo.docx
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
