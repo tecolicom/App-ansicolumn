@@ -117,8 +117,7 @@ my %lb_flag = (
 sub column_out {
     my $obj = shift;
     my %opt = %$obj;
-    my @data = @_;
-    return unless @data;
+    my @data = @_ or return;
     chop @data;
 
     use integer;
@@ -131,16 +130,16 @@ sub column_out {
     if ($opt{fullwidth}) {
 	$span = $width / $panes;
     }
-    $span -= length($opt{prefix}) + length($opt{postfix});
-    if ($max_length > $span
-	and $opt{linestyle} and $opt{linestyle} ne 'none') {
-	my $width = $span;
-	if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
-	    $width -= $opt{runin};
-	    die "Not enough space.\n" if $width <= 0;
-	}
+    $span -= (length($opt{prefix}) + length($opt{postfix}));
+    my $cell_width = $span;
+    if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
+	$cell_width -= $opt{runin};
+	die "Not enough space.\n" if $cell_width < 1;
+    }
+    if ($max_length > $cell_width and
+	$opt{linestyle} and $opt{linestyle} ne 'none') {
 	my $fold = Text::ANSI::Fold->new(
-	    width => $width,
+	    width => $cell_width,
 	    boundary => $opt{boundary},
 	    linebreak => $lb_flag{$opt{linebreak}},
 	    runin => $opt{runin}, runout => $opt{runout},
@@ -149,7 +148,7 @@ sub column_out {
 		     wrap     => sub { $fold->text($_[0])->chops } };
 	my $sub = $hash->{$opt{linestyle}} or die "$opt{linestyle}: unknown";
 	@data = map {
-	    $length[$_] <= $span ? $data[$_] : $sub->($data[$_])
+	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;
     }
     $opt{pagelength} ||= (@data + $panes - 1) / $panes;
