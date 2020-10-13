@@ -157,7 +157,7 @@ sub column_out {
     while (@data) {
 	my @page = splice @data, 0, $opt{pagelength} * $panes;
 	my @index = 0 .. $#page;
-	my @lines = do {
+	my @lines = grep { @$_ } do {
 	    if ($opt{fillrows}) {
 		map { [ splice @index, 0, $panes ] } 1 .. $opt{pagelength};
 	    } else {
