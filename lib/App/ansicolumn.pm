@@ -73,7 +73,7 @@ sub run {
 
     $obj->{version} and do { say $VERSION; exit };
 
-    if ($obj->{linestyle} !~ /^(?:(wordwrap)|wrap|truncate)$/) {
+    if ($obj->{linestyle} !~ /^(?:(wordwrap)|wrap|truncate|)$/) {
 	die "$obj->{linestyle}: unknown style.\n";
     } elsif ($1) {
 	$obj->{linestyle} = 'wrap';
