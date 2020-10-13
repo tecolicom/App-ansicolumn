@@ -73,17 +73,21 @@ sub run {
 
     $obj->{version} and do { say $VERSION; exit };
 
-    if ($obj->{linestyle} eq 'wordwrap') {
+    if ($obj->{linestyle} !~ /^(?:(wordwrap)|wrap|truncate)$/) {
+	die "$obj->{linestyle}: unknown style.\n";
+    } elsif ($1) {
 	$obj->{linestyle} = 'wrap';
 	$obj->{boundary} = 'word';
     }
     $obj->{fullwidth} = 1 if $obj->{pane};
     ($obj->{terminal_width}, $obj->{terminal_height}) = terminal_size;
 
+    ## -P
     if ($obj->{page}) {
 	$obj->{pagelength} ||= $obj->{terminal_height} - 1;
 	$obj->{linestyle}  ||= 'wrap';
     }
+    ## -D
     if ($obj->{document}) {
 	$obj->{fullwidth} = 1;
 	$obj->{postfix}   ||= ' ';
@@ -143,8 +147,7 @@ sub column_out {
 	    );
 	my $hash = { truncate => sub { ($fold->fold($_[0]))[0] },
 		     wrap     => sub { $fold->text($_[0])->chops } };
-	my $sub = $hash->{$opt{linestyle}} or
-	    die"Unknown line style: $opt{linestyle}\n";
+	my $sub = $hash->{$opt{linestyle}} or die "$opt{linestyle}: unknown";
 	@data = map {
 	    $length[$_] <= $span ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;
