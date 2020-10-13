@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =head1 SYNOPSIS
 
@@ -135,13 +135,10 @@ Document mode.  Set following options.
     --boundary=word
     --postfix=' '
 
-Next command display document text in 3-up format.
+Next command display DOCX text in 3-up format using
+L<App::optex::textconv>.
 
-    optex -Mtextconv cat foo.docx | ansicolumn -DPC3 | less
-
-or
-
-    LESSOPEN='| optex -Mtextconv ansicolumn -DPC3 %s' less foo.docx
+    optex -Mtextconv ansicolumn -DPC3 foo.docx | less
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
@@ -167,8 +164,8 @@ Set the linebreak mode.
 
 =item B<--prefix>=I<string>, B<--runout>=I<string>
 
-Set prefix and postfix appended to each data.
-Default value is empty.
+Set prefix and postfix appended to each data.  Prefix is empty and
+postfix is single space, by default.
 
 =item B<--runin>=#, B<--runout>=#
 

@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.07 2020-10-13T07:47:38Z
+
+    - Use single space as --postfix default.
+
 0.06 2020-10-13T03:47:16Z
 
     - Add new options

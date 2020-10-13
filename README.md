@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.06
+Version 0.07
 
 # SYNOPSIS
 
@@ -95,16 +95,18 @@ Some options are original.
 >
 > - **--document**, **-D**
 >
->     Document mode on.  Set following options.
+>     Document mode.  Set following options.
 >
+>         --fullwidth
 >         --linebreak=all
 >         --linestyle=wrap
 >         --boundary=word
 >         --postfix=' '
 >
->     Next command display document text in 3-up format.
+>     Next command display DOCX text in 3-up format using
+>     [App::optex::textconv](https://metacpan.org/pod/App::optex::textconv).
 >
->         optex -Mtextconv foo.docx | ansicolumn -DPC3 | less
+>         optex -Mtextconv ansicolumn -DPC3 foo.docx | less
 >
 > - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 >
@@ -122,8 +124,8 @@ Some options are original.
 >
 > - **--prefix**=_string_, **--runout**=_string_
 >
->     Set prefix and postfix appended to each data.
->     Default value is empty.
+>     Set prefix and postfix appended to each data.  Prefix is empty and
+>     postfix is single space, by default.
 >
 > - **--runin**=#, **--runout**=#
 >

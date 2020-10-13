@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
 
 use v5.14;
 use warnings;
@@ -39,7 +39,7 @@ sub new {
 	runin            => 4,
 	runout           => 4,
 	prefix           => '',
-	postfix          => '',
+	postfix          => ' ',
 	document         => undef,
     }, $class;
 }
@@ -101,7 +101,7 @@ sub run {
     }
 }
 
-my %linebreak = (
+my %lb_flag = (
     ''     => LINEBREAK_NONE,
     none   => LINEBREAK_NONE,
     runin  => LINEBREAK_RUNIN,
@@ -126,34 +126,30 @@ sub column_out {
     if ($opt{fullwidth}) {
 	$span = $width / $panes;
     }
+    $span -= length($opt{prefix}) + length($opt{postfix});
     if ($max_length > $span
 	and $opt{linestyle} and $opt{linestyle} ne 'none') {
 	my $width = $span;
-	my $linebreak = $linebreak{$opt{linebreak}};
-	if ($linebreak & LINEBREAK_RUNIN) {
+	if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
 	    $width -= $opt{runin};
+	    die "Not enough space.\n" if $width <= 0;
 	}
 	my $fold = Text::ANSI::Fold->new(
 	    width => $width,
 	    boundary => $opt{boundary},
-	    linebreak => $linebreak,
+	    linebreak => $lb_flag{$opt{linebreak}},
 	    runin => $opt{runin}, runout => $opt{runout},
 	    );
-	if ($opt{linestyle} eq 'truncate') {
-	    @data = map { ($fold->fold($_))[0] } @data;
-	}
-	elsif ($opt{linestyle} eq 'wrap') {
-	    @data = map {
-		$_ eq '' ? $_ : $fold->text($_)->chops;
-	    } @data;
-	}
-	else {
-	    die "Unknown line style: $opt{linestyle}\n";
-	}
+	my $hash = { truncate => sub { ($fold->fold($_[0]))[0] },
+		     wrap     => sub { $fold->text($_[0])->chops } };
+	my $sub = $hash->{$opt{linestyle}} or
+	    die"Unknown line style: $opt{linestyle}\n";
+	@data = map {
+	    $length[$_] <= $span ? $data[$_] : $sub->($data[$_])
+	} 0 .. $#data;
     }
     $opt{pagelength} ||= (@data + $panes - 1) / $panes;
     my($pre, $post) = @opt{qw(prefix postfix)};
-    $span -= length($pre) + length($post);
     while (@data) {
 	my @page = splice @data, 0, $opt{pagelength} * $panes;
 	my @index = 0 .. $#page;
