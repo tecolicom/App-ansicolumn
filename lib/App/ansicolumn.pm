@@ -82,6 +82,7 @@ sub run {
 
     if ($obj->{page}) {
 	$obj->{pagelength} ||= $obj->{terminal_height} - 1;
+	$obj->{linestyle}  ||= 'wrap';
     }
     if ($obj->{document}) {
 	$obj->{fullwidth} = 1;

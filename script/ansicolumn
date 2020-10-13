@@ -123,7 +123,8 @@ Set page length and page mode on.
 
 =item B<--page>, B<-P>
 
-Set pagelength to terminal height - 1.
+Page mode.  Set B<--pagelength> to terminal height - 1, and set
+B<--linestyle> as B<wrap>.
 
 =item B<--document>, B<-D>
 
