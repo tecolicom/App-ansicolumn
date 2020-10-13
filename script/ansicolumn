@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =head1 SYNOPSIS
 
@@ -68,23 +68,23 @@ Some addtional options are compatible with Linux extended version.
 
 =over 7
 
-=item B<--output-width> #
+=item B<--output-width>=#, B<-c>#
 
 Long name for B<-c>.
 
-=item B<--separator> #
+=item B<--separator>=#, B<-s>#
 
 Long name for B<-s>.
 
-=item B<--table>
+=item B<--table>, B<-t>
 
 Long name for B<-t>.
 
-=item B<--fillrows>
+=item B<--fillrows>, B<-x>
 
 Long name for B<-x>.
 
-=item B<--output-separator> #, B<-o> #
+=item B<--output-separator>=#, B<-o>#
 
 When used B<--table> or B<-t> option, each columns are joind by two
 space characters (' ') by defualt.  This option will change it.
@@ -99,11 +99,11 @@ Some options are original.
 
 =over 7
 
-=item B<--tabstop> #
+=item B<--tabstop>=#
 
 Set tab width.
 
-=item B<--columnunit> #
+=item B<--columnunit>=#
 
 Each columns are placed at unit of 8 by default.  This option changes
 the number of unit.
@@ -112,9 +112,31 @@ the number of unit.
 
 Use full width of the terminal.
 
-=item B<--pane> #
+=item B<--pane>=#, B<-C>#
 
-Output is formatted in specified number of panes.
+Output is formatted in specified number of panes.  Setting number of
+panes implies -B<--fullwidth> option enabled.
+
+=item B<--pagelength>=#
+
+Set page length and page mode on.
+
+=item B<--page>, B<-P>
+
+Set pagelength to terminal height - 1.
+
+=item B<--document>, B<-D>
+
+Document mode on.  Set following options.
+
+    --linebreak=all
+    --linestyle=wrap
+    --boundary=word
+    --postfix=' '
+
+Next command display document text in 3-up format.
+
+    optex -Mtextconv foo.docx | ansicolumn -DPC3 | less
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
@@ -138,10 +160,15 @@ Set text wrap boundary.
 
 Set the linebreak mode.
 
+=item B<--prefix>=I<string>, B<--runout>=I<string>
+
+Set prefix and postfix appended to each data.
+Default value is empty.
+
 =item B<--runin>=#, B<--runout>=#
 
 Set number of runin/runout column.
-Default is both 2.
+Default is both 4.
 
 =back
 

@@ -4,7 +4,7 @@ use v5.14;
 use warnings;
 
 use Exporter qw(import);
-our @EXPORT = qw(&terminal_width &zip);
+our @EXPORT = qw(&terminal_size &zip);
 
 sub terminal_width {
     use Term::ReadKey;
@@ -17,6 +17,19 @@ sub terminal_width {
 	@size = GetTerminalSize $tty, $tty;
     }
     $size[0] or $default;
+}
+
+sub terminal_size {
+    use Term::ReadKey;
+    my @default = (80, 24);
+    my @size;
+    if (open my $tty, ">", "/dev/tty") {
+	# Term::ReadKey 2.31 on macOS 10.15 has a bug in argument handling
+	# and the latest version 2.38 fails to install.
+	# This code should work on both versions.
+	@size = GetTerminalSize $tty, $tty;
+    }
+    @size ? @size : @default;
 }
 
 sub zip {

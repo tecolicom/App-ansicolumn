@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.05
+Version 0.06
 
 # SYNOPSIS
 
@@ -44,40 +44,67 @@ From [column(1)](http://man.he.net/man1/column):
 
 Some addtional options are compatible with Linux extended version.
 
-> - **--output-width** #
+> - **--output-width**=#, **-c**#
 >
 >     Long name for **-c**.
 >
-> - **--separator** #
+> - **--separator**=#, **-s**#
 >
 >     Long name for **-s**.
 >
-> - **--table**
+> - **--table**, **-t**
 >
 >     Long name for **-t**.
 >
-> - **--fillrows**
+> - **--fillrows**, **-x**
 >
 >     Long name for **-x**.
 >
-> - **--output-separator** #, **-o** #
+> - **--output-separator**=#, **-o**#
 >
 >     When used **--table** or **-t** option, each columns are joind by two
 >     space characters (' ') by defualt.  This option will change it.
 
 Some options are original.
 
-> - **--tab** #
+> - **--tabstop**=#
 >
->     Specify tab width.
+>     Set tab width.
+>
+> - **--columnunit**=#
+>
+>     Each columns are placed at unit of 8 by default.  This option changes
+>     the number of unit.
 >
 > - **--fullwidth**
 >
 >     Use full width of the terminal.
 >
-> - **--pane** #
+> - **--pane**=#, **-C**#
 >
->     Output is formatted in specified number of panes.
+>     Output is formatted in specified number of panes.  Setting number of
+>     panes implies -**--fullwidth** option enabled.
+>
+> - **--pagelength**=#
+>
+>     Set page length and page mode on.
+>
+> - **--page**, **-P**
+>
+>     Set pagelength to terminal height - 1.
+>
+> - **--document**, **-D**
+>
+>     Document mode on.  Set following options.
+>
+>         --linebreak=all
+>         --linestyle=wrap
+>         --boundary=word
+>         --postfix=' '
+>
+>     Next command display document text in 3-up format.
+>
+>         optex -Mtextconv foo.docx | ansicolumn -DPC3 | less
 >
 > - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 >
@@ -93,10 +120,15 @@ Some options are original.
 >
 >     Set the linebreak mode.
 >
+> - **--prefix**=_string_, **--runout**=_string_
+>
+>     Set prefix and postfix appended to each data.
+>     Default value is empty.
+>
 > - **--runin**=#, **--runout**=#
 >
 >     Set number of runin/runout column.
->     Default is both 2.
+>     Default is both 4.
 
 # INSTALL
 
