@@ -110,12 +110,18 @@ the number of unit.
 
 =item B<--fullwidth>
 
-Use full width of the terminal.
+Use full width of the terminal.  Each panes are expanded to fill
+terminal width, unless B<--pane-width> is specified.
 
 =item B<--pane>=#, B<-C>#
 
-Output is formatted in specified number of panes.  Setting number of
-panes implies -B<--fullwidth> option enabled.
+Output is formatted in the specified number of panes.  Setting number
+of panes implies -B<--fullwidth> option enabled.
+
+=item B<--pane-width>=#, B<--pw>=#, B<-S>#
+
+Specify pane width.  This includes B<--prefix> and B<--postfix>
+spaces.
 
 =item B<--pagelength>=#
 
@@ -163,7 +169,7 @@ Set text wrap boundary.
 
 Set the linebreak mode.
 
-=item B<--prefix>=I<string>, B<--runout>=I<string>
+=item B<--prefix>=I<string>, B<--postfix>=I<string>
 
 Set prefix and postfix appended to each data.  Prefix is empty and
 postfix is single space, by default.

@@ -26,10 +26,11 @@ sub new {
 	table            => undef,
 	separator        => ' ',
 	output_separator => '  ',
-	pagelength       => 0,
+	page_length      => 0,
 	margin           => 0,
 	columnunit       => 8,
 	pane             => 0,
+	pane_width       => undef,
 	tabstop          => \$Text::Tabs::tabstop,
 	ignore_space     => 1,
 	fullwidth        => undef,
@@ -55,10 +56,11 @@ sub run {
 	"separator|s=s",
 	"output_separator|output-separator|o=s",
 	"page|P",
-	"pagelength|pl=i",
+	"page_length|pl=i",
 	"margin=i",
 	"columnunit|cu=i",
 	"pane|C=i",
+	"pane_width|pane-width|pw|S=i",
 	"tabstop|ts=i",
 	"ignore_space|ignore-space|is!",
 	"fullwidth!",
@@ -79,12 +81,12 @@ sub run {
 	$obj->{linestyle} = 'wrap';
 	$obj->{boundary} = 'word';
     }
-    $obj->{fullwidth} = 1 if $obj->{pane};
+    $obj->{fullwidth} = 1 if $obj->{pane} and not $obj->{pane_width};
     ($obj->{terminal_width}, $obj->{terminal_height}) = terminal_size;
 
     ## -P
     if ($obj->{page}) {
-	$obj->{pagelength} ||= $obj->{terminal_height} - 1;
+	$obj->{page_length} ||= $obj->{terminal_height} - 1;
 	$obj->{linestyle}  ||= 'wrap';
     }
     ## -D
@@ -125,9 +127,9 @@ sub column_out {
     my @length = map { ansi_width $_ } @data;
     my $max_length = max @length;
     my $unit = $opt{columnunit} || 1;
-    my $span = ($max_length + $unit) / $unit * $unit;
+    my $span = $opt{pane_width} || ($max_length + $unit) / $unit * $unit;
     my $panes = $opt{pane} || $width / $span || 1;
-    if ($opt{fullwidth}) {
+    if ($opt{fullwidth} and not $opt{pane_width}) {
 	$span = $width / $panes;
     }
     $span -= (length($opt{prefix}) + length($opt{postfix}));
@@ -151,16 +153,16 @@ sub column_out {
 	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;
     }
-    $opt{pagelength} ||= (@data + $panes - 1) / $panes;
+    $opt{page_length} ||= (@data + $panes - 1) / $panes;
     my($pre, $post) = @opt{qw(prefix postfix)};
     while (@data) {
-	my @page = splice @data, 0, $opt{pagelength} * $panes;
+	my @page = splice @data, 0, $opt{page_length} * $panes;
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($opt{fillrows}) {
-		map { [ splice @index, 0, $panes ] } 1 .. $opt{pagelength};
+		map { [ splice @index, 0, $panes ] } 1 .. $opt{page_length};
 	    } else {
-		zip map { [ splice @index, 0, $opt{pagelength} ] } 1 .. $panes;
+		zip map { [ splice @index, 0, $opt{page_length} ] } 1 .. $panes;
 	    }
 	};
 	for my $line (@lines) {
