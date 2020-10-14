@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.07
+Version 0.08
 
 # SYNOPSIS
 
@@ -78,12 +78,18 @@ Some options are original.
 >
 > - **--fullwidth**
 >
->     Use full width of the terminal.
+>     Use full width of the terminal.  Each panes are expanded to fill
+>     terminal width, unless **--pane-width** is specified.
 >
 > - **--pane**=#, **-C**#
 >
->     Output is formatted in specified number of panes.  Setting number of
->     panes implies -**--fullwidth** option enabled.
+>     Output is formatted in the specified number of panes.  Setting number
+>     of panes implies -**--fullwidth** option enabled.
+>
+> - **--pane-width**=#, **--pw**=#, **-S**#
+>
+>     Specify pane width.  This includes **--prefix** and **--postfix**
+>     spaces.
 >
 > - **--pagelength**=#
 >
@@ -91,7 +97,8 @@ Some options are original.
 >
 > - **--page**, **-P**
 >
->     Set pagelength to terminal height - 1.
+>     Page mode.  Set **--pagelength** to terminal height - 1, and set
+>     **--linestyle** as **wrap**.
 >
 > - **--document**, **-D**
 >
@@ -122,7 +129,7 @@ Some options are original.
 >
 >     Set the linebreak mode.
 >
-> - **--prefix**=_string_, **--runout**=_string_
+> - **--prefix**=_string_, **--postfix**=_string_
 >
 >     Set prefix and postfix appended to each data.  Prefix is empty and
 >     postfix is single space, by default.
