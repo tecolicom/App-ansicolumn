@@ -29,7 +29,6 @@ sub new {
 	separator        => ' ',
 	output_separator => '  ',
 	page_length      => 0,
-	margin           => 0,
 	columnunit       => 8,
 	pane             => 0,
 	pane_width       => undef,
@@ -39,14 +38,15 @@ sub new {
 	linestyle        => '',
 	boundary         => '',
 	linebreak        => '',
-	runin            => 4,
-	runout           => 4,
+	runin            => 2,
+	runout           => 2,
 	prefix           => '',
-	postfix          => ' ',
+	postfix          => '  ',
 	document         => undef,
 	colormap         => [],
 	COLORHASH        => {
-	    PREFIX  => '', POSTFIX => '',
+	    PREFIX      => '', POSTFIX     => '',
+	    PREFIX_ALT  => '', POSTFIX_ALT => '',
 	},
 	COLORLIST        => [],
     }, $class;
@@ -65,7 +65,6 @@ sub run {
 	"output_separator|output-separator|o=s",
 	"page|P",
 	"page_length|pl=i",
-	"margin=i",
 	"columnunit|cu=i",
 	"pane|C=i",
 	"pane_width|pane-width|pw|S=i",
@@ -172,6 +171,17 @@ sub column_out {
     $opt{page_length} ||= (@data + $panes - 1) / $panes;
     my $pre  = $obj->{COLOR}->(PREFIX  => $obj->{prefix});
     my $post = $obj->{COLOR}->(POSTFIX => $obj->{postfix});
+
+    ## --colorbar
+    my(@pre, @post);
+    for ([ \@pre,  'PREFIX',  'prefix' ], [ \@post, 'POSTFIX', 'postfix' ] ) {
+	my($list, $name, $item) = @$_;
+	@$list = ($obj->{COLOR}->($name => $obj->{$item}));
+	push @$list, $obj->{COLOR}->("$name\_ALT" => $obj->{$item})
+	    if $obj->{COLORHASH}->{"$name\_ALT"};
+    }
+
+    my $page = 0;
     while (@data) {
 	my @page = splice @data, 0, $opt{page_length} * $panes;
 	my @index = 0 .. $#page;
@@ -183,12 +193,16 @@ sub column_out {
 	    }
 	};
 	my @fmt;
+	my $pre  = $pre [$page % @pre];
+	my $post = $post[$page % @post];
 	for my $line (@lines) {
-	    my $fmt = $fmt[+@$line] //= do {
-		"${pre}%-${span}s${post}" x (@$line - 1) . "${pre}%s\n";
-	    };
-	    ansi_printf $fmt, @page[@$line];
+	    my @fmt = (("${pre}%-${span}s${post}") x (@$line - 1), "${pre}%s\n");
+	    my @panes = map {
+		ansi_sprintf $fmt[$_], $page[${$line}[$_]]
+	    } 0 .. $#{$line};
+	    print join '', @panes;
 	}
+	$page++;
     }
 }
 
