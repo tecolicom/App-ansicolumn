@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.08
+Version 0.09
 
 # SYNOPSIS
 
@@ -64,6 +64,11 @@ Some addtional options are compatible with Linux extended version.
 >
 >     When used **--table** or **-t** option, each columns are joind by two
 >     space characters (' ') by defualt.  This option will change it.
+>
+> - **--table-right**=_columns_, **-R**_columns_
+>
+>     Right align text in these columns.
+>     Support only numbers.
 
 Some options are original.
 
