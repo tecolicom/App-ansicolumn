@@ -62,6 +62,7 @@ Fill columns before filling rows.
 
 =back
 
+
 Some addtional options are compatible with Linux extended version.
 
 =over 4
@@ -88,6 +89,11 @@ Long name for B<-x>.
 
 When used B<--table> or B<-t> option, each columns are joind by two
 space characters (' ') by defualt.  This option will change it.
+
+=item B<--table-right>=I<columns>, B<-R>I<columns>
+
+Right align text in these columns.
+Support only numbers.
 
 =back
 

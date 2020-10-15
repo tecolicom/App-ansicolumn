@@ -24,6 +24,7 @@ sub new {
 	output_width     => undef,
 	fillrows         => undef,
 	table            => undef,
+	table_right      => '',
 	separator        => ' ',
 	output_separator => '  ',
 	page_length      => 0,
@@ -53,6 +54,7 @@ sub run {
 	"output_width|output-width|c=i",
 	"fillrows|x",
 	"table|t",
+	"table_right|table-right|R=s",
 	"separator|s=s",
 	"output_separator|output-separator|o=s",
 	"page|P",
@@ -120,7 +122,7 @@ sub column_out {
     my $obj = shift;
     my %opt = %$obj;
     my @data = @_ or return;
-    chop @data;
+    chomp @data;
 
     use integer;
     my $width = $opt{output_width} || $obj->{terminal_width};
@@ -147,7 +149,7 @@ sub column_out {
 	    runin => $opt{runin}, runout => $opt{runout},
 	    );
 	my $hash = { truncate => sub { ($fold->fold($_[0]))[0] },
-		     wrap     => sub { $fold->text($_[0])->chops } };
+		     wrap     => sub {  $fold->text($_[0])->chops } };
 	my $sub = $hash->{$opt{linestyle}} or die "$opt{linestyle}: unknown";
 	@data = map {
 	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
@@ -165,8 +167,11 @@ sub column_out {
 		zip map { [ splice @index, 0, $opt{page_length} ] } 1 .. $panes;
 	    }
 	};
+	my @fmt;
 	for my $line (@lines) {
-	    my $fmt = "${pre}%-${span}s${post}" x (@$line - 1) . "${pre}%s\n";
+	    my $fmt = $fmt[+@$line] //= do {
+		"${pre}%-${span}s${post}" x (@$line - 1) . "${pre}%s\n";
+	    };
 	    ansi_printf $fmt, @page[@$line];
 	}
     }
@@ -187,7 +192,10 @@ sub table_out {
     my @lines  = map { [ split $split, $_ ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
-    my @format = map { sprintf "%%-%ds", $_ } @max;
+    my @right;   map { $right[$_ - 1] = 1 } split /,/, $opt{table_right};
+    my @format = map {
+	sprintf '%%'.'%s'.'%ds', $right[$_] ? '' : '-', $max[$_];
+    } 0 .. $#max;
     for my $line (@lines) {
 	my $format = join($obj->{output_separator},
 			  @format[0..$#{$line}-1], "%s\n");
