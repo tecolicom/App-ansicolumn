@@ -5,6 +5,7 @@ our $VERSION = "0.09";
 use v5.14;
 use warnings;
 use utf8;
+use Encode;
 use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
@@ -54,7 +55,7 @@ sub new {
 
 sub run {
     my $obj = shift;
-    local @ARGV = @_;
+    local @ARGV = map { utf8::is_utf8($_) ? $_ : decode('utf8', $_) } @_;
     GetOptions(
 	$obj,
 	"output_width|output-width|c=i",
