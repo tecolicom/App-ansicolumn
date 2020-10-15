@@ -43,6 +43,11 @@ sub new {
 	prefix           => '',
 	postfix          => ' ',
 	document         => undef,
+	colormap         => [],
+	COLORHASH        => {
+	    PREFIX  => '', POSTFIX => '',
+	},
+	COLORLIST        => [],
     }, $class;
 }
 
@@ -71,6 +76,7 @@ sub run {
 	"linebreak|lb=s", "runin=i", "runout=i",
 	"prefix=s", "postfix=s",
 	"document|D",
+	"colormap|cm=s@",
 	"debug",
 	"version|v",
 	) || pod2usage();
@@ -99,6 +105,13 @@ sub run {
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{boundary}  ||= 'word';
     }
+
+    ## --colormap
+    use Getopt::EX::Colormap;
+    my $cm = Getopt::EX::Colormap
+	->new(HASH => $obj->{COLORHASH}, LIST => $obj->{COLORLIST})
+	->load_params(@{$obj->{colormap}});
+    $obj->{COLOR} = sub { $cm->color(@_) };
 
     warn Dumper $obj if $obj->{debug};
 
@@ -156,7 +169,8 @@ sub column_out {
 	} 0 .. $#data;
     }
     $opt{page_length} ||= (@data + $panes - 1) / $panes;
-    my($pre, $post) = @opt{qw(prefix postfix)};
+    my $pre  = $obj->{COLOR}->(PREFIX  => $obj->{prefix});
+    my $post = $obj->{COLOR}->(POSTFIX => $obj->{postfix});
     while (@data) {
 	my @page = splice @data, 0, $opt{page_length} * $panes;
 	my @index = 0 .. $#page;
