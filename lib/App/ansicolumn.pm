@@ -7,8 +7,9 @@ use warnings;
 use utf8;
 use open IO => 'utf8', ':std';
 use Pod::Usage;
-use Getopt::EX::Long;
-Getopt::Long::Configure("bundling");
+use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
+ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
+Configure("bundling");
 
 use Data::Dumper;
 use List::Util qw(max);
