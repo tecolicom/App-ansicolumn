@@ -19,6 +19,7 @@ use Text::ANSI::Fold qw(:constants);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
+use App::ansicolumn::Border;
 
 sub new {
     my $class = shift;
@@ -41,13 +42,14 @@ sub new {
 	linebreak        => '',
 	runin            => 2,
 	runout           => 2,
-	prefix           => '',
-	postfix          => '  ',
+#	border_left      => '',
+#	border_right     => '  ',
+	border           => 'light_bar',
 	document         => undef,
 	colormap         => [],
 	COLORHASH        => {
-	    PREFIX      => '', POSTFIX     => '',
-	    PREFIX_ALT  => '', POSTFIX_ALT => '',
+	    BORDER_LEFT      => '', BORDER_RIGHT     => '',
+	    BORDER_LEFT_ALT  => '', BORDER_RIGHT_ALT => '',
 	},
 	COLORLIST        => [],
     }, $class;
@@ -75,7 +77,9 @@ sub run {
 	"linestyle|ls=s",
 	"boundary=s",
 	"linebreak|lb=s", "runin=i", "runout=i",
-	"prefix=s", "postfix=s",
+#	"border_left|border-left|ml=s",
+#	"border_right|border-right|mr=s",
+	"border=s",
 	"document|D",
 	"colormap|cm=s@",
 	"debug",
@@ -101,7 +105,6 @@ sub run {
     ## -D
     if ($obj->{document}) {
 	$obj->{fullwidth} = 1;
-	$obj->{postfix}   ||= ' ';
 	$obj->{linebreak} ||= 'all';
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{boundary}  ||= 'word';
@@ -114,6 +117,10 @@ sub run {
 	->load_params(@{$obj->{colormap}});
     $obj->{COLOR} = sub { $cm->color(@_) };
 
+    ## border
+    ($obj->{BORDER} = App::ansicolumn::Border->new)
+	->theme($obj->{border}) // die "Unknown theme.\n";
+
     warn Dumper $obj if $obj->{debug};
 
     my @lines = expand <>;
@@ -122,6 +129,10 @@ sub run {
     } else {
 	$obj->column_out(@lines);
     }
+}
+
+sub border {
+    +shift->{BORDER}->get(@_);
 }
 
 my %lb_flag = (
@@ -148,7 +159,7 @@ sub column_out {
     if ($opt{fullwidth} and not $opt{pane_width}) {
 	$span = $width / $panes;
     }
-    $span -= (length($opt{prefix}) + length($opt{postfix}));
+    $span -= (length($obj->border("left")) + length($obj->border("right")));
     my $cell_width = $span;
     if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
 	$cell_width -= $opt{runin};
@@ -170,19 +181,21 @@ sub column_out {
 	} 0 .. $#data;
     }
     $opt{page_length} ||= (@data + $panes - 1) / $panes;
-    my $pre  = $obj->{COLOR}->(PREFIX  => $obj->{prefix});
-    my $post = $obj->{COLOR}->(POSTFIX => $obj->{postfix});
-
-    ## --colorbar
-    my(@pre, @post);
-    for ([ \@pre,  'PREFIX',  'prefix' ], [ \@post, 'POSTFIX', 'postfix' ] ) {
-	my($list, $name, $item) = @$_;
-	@$list = ($obj->{COLOR}->($name => $obj->{$item}));
-	push @$list, $obj->{COLOR}->("$name\_ALT" => $obj->{$item})
-	    if $obj->{COLORHASH}->{"$name\_ALT"};
-    }
+#    my $pre  = $obj->{COLOR}->(BORDER_LEFT  => $obj->{border_left});
+#    my $post = $obj->{COLOR}->(BORDER_RIGHT => $obj->{border_right});
+#
+#    ## --colorbar
+#    my(@pre, @post);
+#    for ([ \@pre,  'BORDER_LEFT',  'border_left' ],
+#	 [ \@post, 'BORDER_RIGHT', 'border_right' ] ) {
+#	my($list, $name, $item) = @$_;
+#	@$list = ($obj->{COLOR}->($name => $obj->{$item}));
+#	push @$list, $obj->{COLOR}->("$name\_ALT" => $obj->{$item})
+#	    if $obj->{COLORHASH}->{"$name\_ALT"};
+#    }
 
     my $page = 0;
+    my $line_in_page = 0;
     while (@data) {
 	my @page = splice @data, 0, $opt{page_length} * $panes;
 	my @index = 0 .. $#page;
@@ -194,14 +207,16 @@ sub column_out {
 	    }
 	};
 	my @fmt;
-	my $pre  = $pre [$page % @pre];
-	my $post = $post[$page % @post];
-	for my $line (@lines) {
-	    my @fmt = (("${pre}%-${span}s${post}") x (@$line - 1), "${pre}%s\n");
+	my @format = (("%s%-${span}s%s") x ($panes - 1), "%s%-${span}s");
+	for my $i (0.. $#lines) {
+	    my $line = $lines[$i];
+	    my $pos = $i == 0 ? 0 : $i == $#lines ? 2 : 1;
+	    my $l = $obj->border('left',  $pos, $page);
+	    my $r = $obj->border('right', $pos, $page);
 	    my @panes = map {
-		ansi_sprintf $fmt[$_], $page[${$line}[$_]]
+		ansi_sprintf $format[$_], $l, $page[${$line}[$_]], $r;
 	    } 0 .. $#{$line};
-	    print join '', @panes;
+	    print join '', @panes, "\n";
 	}
 	$page++;
     }

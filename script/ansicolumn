@@ -197,6 +197,10 @@ Default is both 4.
     or
     $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 
+Until CPAN release, use this:
+
+    $ cpanm https://github.com/kaz-utashiro/App-ansicolumn.git
+
 =head1 SEE ALSO
 
 L<column(1)>

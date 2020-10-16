@@ -152,6 +152,10 @@ Some options are original.
     or
     $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 
+Until CPAN release, use this:
+
+    $ cpanm https://github.com/kaz-utashiro/App-ansicolumn.git
+
 # SEE ALSO
 
 [column(1)](http://man.he.net/man1/column)

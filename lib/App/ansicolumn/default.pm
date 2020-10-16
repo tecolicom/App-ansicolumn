@@ -5,5 +5,5 @@ package App::ansicolumn::default;
 __DATA__
 
 option --pagebar \
-    --colormap PREFIX=POSTFIX=/L24, \
-    --colormap PREFIX_ALT=POSTFIX_ALT=/L22
+    --colormap MARGIN_LEFT=MARGIN_RIGHT=/L24, \
+    --colormap MARGIN_LEFT_ALT=MARGIN_RIGHT_ALT=/L22
