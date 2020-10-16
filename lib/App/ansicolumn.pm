@@ -117,7 +117,7 @@ sub run {
 	->load_params(@{$obj->{colormap}});
     $obj->{COLOR} = sub { $cm->color(@_) };
 
-    ## border
+    ## --border
     ($obj->{BORDER} = App::ansicolumn::Border->new)
 	->theme($obj->{border}) // die "Unknown theme.\n";
 
