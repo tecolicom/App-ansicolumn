@@ -152,7 +152,7 @@ sub column_out {
     use integer;
     my $width = $opt{output_width} || $obj->{terminal_width};
     my @length = map { ansi_width $_ } @data;
-    my $max_length = max @length;
+    my $max_length = max(@length);
     my $unit = $opt{columnunit} || 1;
     my $span = $opt{pane_width} || ($max_length + $unit) / $unit * $unit;
     my $panes = $opt{pane} || $width / $span || 1;
@@ -196,7 +196,7 @@ sub column_out {
 	    }
 	};
 	my @fmt;
-	my @format = (("%s%-${span}s%s") x ($panes - 1), "%s%-${span}s");
+	my @format = (("%s%-${span}s%s") x (@{$lines[0]} - 1), "%s%-${span}s");
 	for my $i (0.. $#lines) {
 	    my $line = $lines[$i];
 	    my $pos = $i == 0 ? 0 : $i == $#lines ? 2 : 1;
