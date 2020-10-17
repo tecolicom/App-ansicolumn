@@ -30,7 +30,7 @@ sub new {
 	table_right      => '',
 	separator        => ' ',
 	output_separator => '  ',
-	page_length      => 0,
+	page_height      => 0,
 	columnunit       => 8,
 	pane             => 0,
 	pane_width       => undef,
@@ -63,7 +63,7 @@ sub run {
 	"separator|s=s",
 	"output_separator|output-separator|o=s",
 	"page|P",
-	"page_length|pl=i",
+	"page_height|page-height|ph=i",
 	"columnunit|cu=i",
 	"pane|C=i",
 	"pane_width|pane-width|pw|S=i",
@@ -94,7 +94,7 @@ sub run {
 
     ## -P
     if ($obj->{page}) {
-	$obj->{page_length} ||= $obj->{terminal_height} - 1;
+	$obj->{page_height} ||= $obj->{terminal_height} - 1;
 	$obj->{linestyle}  ||= 'wrap';
 	$obj->{border} //= 1;
     }
@@ -180,20 +180,19 @@ sub column_out {
 	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;
     }
-    $opt{page_length} ||= (@data + $panes - 1) / $panes;
+    $opt{page_height} ||= (@data + $panes - 1) / $panes;
 
-    my $page = 0;
     my $line_in_page = 0;
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
-    while (@data_index) {
-	my @page = splice @data_index, 0, $opt{page_length} * $panes;
+    for (my $page = 0; @data_index; $page++) {
+	my @page = splice @data_index, 0, $opt{page_height} * $panes;
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($opt{fillrows}) {
-		map { [ splice @index, 0, $panes ] } 1 .. $opt{page_length};
+		map { [ splice @index, 0, $panes ] } 1 .. $opt{page_height};
 	    } else {
-		zip map { [ splice @index, 0, $opt{page_length} ] } 1 .. $panes;
+		zip map { [ splice @index, 0, $opt{page_height} ] } 1 .. $panes;
 	    }
 	};
 	my @fmt;
@@ -211,9 +210,9 @@ sub column_out {
 		}
 		ansi_sprintf $format[$_], $l, $data[$data_index], $r;
 	    } 0 .. $#{$line};
-	    print join '', @panes, "\n";
+	    print join '', @panes;
+	    print "\n";
 	}
-	$page++;
     }
 }
 
