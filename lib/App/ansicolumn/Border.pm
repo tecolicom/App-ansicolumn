@@ -22,10 +22,10 @@ my %template = (
     side  => { right => ' ' , left => ' ' },
     left  => { right => ''  , left => '  ' },
     light => {
-	right => "│ "  # "\x{2502} "
+	right => "│ ", # "\x{2502} "
     },
     heavy => {
-	right => "┃ " # "\x{2503} "
+	right => "┃ ", # "\x{2503} "
     },
     light_bar => {
 	right => [ "╷ "  , # "\x{2577} "

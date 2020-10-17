@@ -184,8 +184,10 @@ sub column_out {
 
     my $page = 0;
     my $line_in_page = 0;
-    while (@data) {
-	my @page = splice @data, 0, $opt{page_length} * $panes;
+    my @data_index = 0 .. $#data;
+    my $is_last_data = sub { $_[0] == $#data };
+    while (@data_index) {
+	my @page = splice @data_index, 0, $opt{page_length} * $panes;
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($opt{fillrows}) {
@@ -202,7 +204,12 @@ sub column_out {
 	    my $l = $obj->border('left',  $pos, $page);
 	    my $r = $obj->border('right', $pos, $page);
 	    my @panes = map {
-		ansi_sprintf $format[$_], $l, $page[${$line}[$_]], $r;
+		my $data_index = $page[${$line}[$_]];
+		if ($is_last_data->($data_index)) {
+		    $l = $obj->border('left',  2, $page);
+		    $r = $obj->border('right', 2, $page);
+		}
+		ansi_sprintf $format[$_], $l, $data[$data_index], $r;
 	    } 0 .. $#{$line};
 	    print join '', @panes, "\n";
 	}
