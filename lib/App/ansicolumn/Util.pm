@@ -4,7 +4,13 @@ use v5.14;
 use warnings;
 
 use Exporter qw(import);
-our @EXPORT = qw(&terminal_size &zip);
+our @EXPORT = qw(&roundup &terminal_size &zip);
+
+sub roundup {
+    use integer;
+    my($a, $b) = @_;
+    $a + $b / $b * $b;
+}
 
 sub terminal_width {
     use Term::ReadKey;

@@ -13,7 +13,7 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure("bundling");
 
 use Data::Dumper;
-use List::Util qw(max);
+use List::Util qw(max sum);
 use Text::Tabs qw(expand);
 use Text::ANSI::Fold qw(:constants);
 use Text::ANSI::Fold::Util qw(ansi_width);
@@ -83,7 +83,7 @@ sub run {
 
     $obj->{version} and do { say $VERSION; exit };
 
-    if ($obj->{linestyle} !~ /^(?:(wordwrap)|wrap|truncate|)$/) {
+    if ($obj->{linestyle} !~ /^(?:|none|(wordwrap)|wrap|truncate)$/) {
 	die "$obj->{linestyle}: unknown style.\n";
     } elsif ($1) {
 	$obj->{linestyle} = 'wrap';
@@ -153,13 +153,14 @@ sub column_out {
     my $width = $opt{output_width} || $obj->{terminal_width};
     my @length = map { ansi_width $_ } @data;
     my $max_length = max(@length);
+    my $border_width = sum map length($obj->border($_)), qw(left right);
     my $unit = $opt{columnunit} || 1;
-    my $span = $opt{pane_width} || ($max_length + $unit) / $unit * $unit;
+    my $span = $opt{pane_width} || roundup $max_length + $border_width, $unit;
     my $panes = $opt{pane} || $width / $span || 1;
     if ($opt{fullwidth} and not $opt{pane_width}) {
 	$span = $width / $panes;
     }
-    $span -= (length($obj->border("left")) + length($obj->border("right")));
+    $span -= $border_width;
     my $cell_width = $span;
     if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
 	$cell_width -= $opt{runin};
