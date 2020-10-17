@@ -7,25 +7,25 @@ use Data::Dumper;
 
 my %template = (
     DEFAULT => {
-	right  => [ '  ' ],
-	left   => [ '' ],
-	top    => [ '' ],
-	buttom => [ '' ],
+	right  => '  ',
+	left   => '',
+	top    => '',
+	buttom => '',
     },
     none => {
-	right  => [ '' ],
-	left   => [ '' ],
-	top    => [ '' ],
-	buttom => [ '' ],
+	right  => '',
+	left   => '',
+	top    => '',
+	buttom => '',
     },
-    right => { right => [ '  ' ] },
-    side  => { right => [ ' ' ], left => [ ' ' ] },
-    left  => { right => [ '' ],  left => [ '  ' ] },
+    right => { right => '  ' },
+    side  => { right => ' ' , left => ' ' },
+    left  => { right => ''  , left => '  ' },
     light => {
-	right => [ "│ " ]  # "\x{2502} "
+	right => "│ "  # "\x{2502} "
     },
     heavy => {
-	right => [ "┃ " ] # "\x{2503} "
+	right => "┃ " # "\x{2503} "
     },
     light_bar => {
 	right => [ "╷ "  , # "\x{2577} "
@@ -131,10 +131,15 @@ sub get_by_theme ($ $$;$$) {
     my $obj = shift;
     my($theme, $place, $position, $page) = (shift, shift, shift//0, shift//0);
     my $hash = $obj->{$theme} // return undef;
-    my $list = $hash->{$place} // return undef;
-    ref $list eq 'ARRAY' and @$list > 0 or return undef;
-    my $target = ref $list->[0] ? $list->[$page / @$list] : $list;
-    $target->[$position % @$target];
+    my $entry = $hash->{$place} // return undef;
+    if (not ref $entry) {
+	return $entry;
+    } elsif (@$entry == 0) {
+	return undef;
+    } else {
+	my $target = ref $entry->[0] ? $entry->[$page / @$entry] : $entry;
+	return $target->[$position % @$target];
+    }
 }
 
 1;

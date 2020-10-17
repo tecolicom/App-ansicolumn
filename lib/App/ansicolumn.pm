@@ -42,15 +42,11 @@ sub new {
 	linebreak        => '',
 	runin            => 2,
 	runout           => 2,
-#	border_left      => '',
-#	border_right     => '  ',
-	border           => 'light_bar',
+	border           => undef,
+	border_theme     => 'light-bar',
 	document         => undef,
 	colormap         => [],
-	COLORHASH        => {
-	    BORDER_LEFT      => '', BORDER_RIGHT     => '',
-	    BORDER_LEFT_ALT  => '', BORDER_RIGHT_ALT => '',
-	},
+	COLORHASH        => {},
 	COLORLIST        => [],
     }, $class;
 }
@@ -77,9 +73,8 @@ sub run {
 	"linestyle|ls=s",
 	"boundary=s",
 	"linebreak|lb=s", "runin=i", "runout=i",
-#	"border_left|border-left|ml=s",
-#	"border_right|border-right|mr=s",
-	"border=s",
+	"border!",
+	"border_theme|border-theme|bt=s",
 	"document|D",
 	"colormap|cm=s@",
 	"debug",
@@ -101,6 +96,7 @@ sub run {
     if ($obj->{page}) {
 	$obj->{page_length} ||= $obj->{terminal_height} - 1;
 	$obj->{linestyle}  ||= 'wrap';
+	$obj->{border} //= 1;
     }
     ## -D
     if ($obj->{document}) {
@@ -118,8 +114,10 @@ sub run {
     $obj->{COLOR} = sub { $cm->color(@_) };
 
     ## --border
-    ($obj->{BORDER} = App::ansicolumn::Border->new)
-	->theme($obj->{border}) // die "Unknown theme.\n";
+    if ($obj->{border}) {
+	($obj->{BORDER} = App::ansicolumn::Border->new)
+	    ->theme($obj->{border_theme}) // die "Unknown theme.\n";
+    }
 
     warn Dumper $obj if $obj->{debug};
 
@@ -132,7 +130,9 @@ sub run {
 }
 
 sub border {
-    +shift->{BORDER}->get(@_);
+    my $obj = shift;
+    my $border = $obj->{BORDER} or return "";
+    $border->get(@_);
 }
 
 my %lb_flag = (
@@ -181,18 +181,6 @@ sub column_out {
 	} 0 .. $#data;
     }
     $opt{page_length} ||= (@data + $panes - 1) / $panes;
-#    my $pre  = $obj->{COLOR}->(BORDER_LEFT  => $obj->{border_left});
-#    my $post = $obj->{COLOR}->(BORDER_RIGHT => $obj->{border_right});
-#
-#    ## --colorbar
-#    my(@pre, @post);
-#    for ([ \@pre,  'BORDER_LEFT',  'border_left' ],
-#	 [ \@post, 'BORDER_RIGHT', 'border_right' ] ) {
-#	my($list, $name, $item) = @$_;
-#	@$list = ($obj->{COLOR}->($name => $obj->{$item}));
-#	push @$list, $obj->{COLOR}->("$name\_ALT" => $obj->{$item})
-#	    if $obj->{COLORHASH}->{"$name\_ALT"};
-#    }
 
     my $page = 0;
     my $line_in_page = 0;

@@ -185,7 +185,13 @@ postfix is single space, by default.
 Set number of runin/runout column.
 Default is both 4.
 
-=item B<--border>=I<theme>
+=item B<--border>
+
+Print border.  Enabled by B<--page> option automatically.  Use
+B<--no-border to disable it.  Border theme is specified by
+B<--border-theme> option.
+
+=item B<--border-theme>=I<theme>
 
 Set column border theme.  Default is theme is B<light-bar>, which is
 light vertical line filling the pege height.  My favorite is
