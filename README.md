@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.09
+Version 0.10
 
 # SYNOPSIS
 
@@ -144,7 +144,13 @@ Some options are original.
 >     Set number of runin/runout column.
 >     Default is both 4.
 >
-> - **--border**=_theme_
+> - **--border**
+>
+>     Print border.  Enabled by **--page** option automatically.  Use
+>     **--no-border** to disable it.  Border theme is specified by
+>     **--border-theme** option.
+>
+> - **--border-theme**=_theme_
 >
 >     Set column border theme.  Default is theme is **light-bar**, which is
 >     light vertical line filling the pege height.  My favorite is

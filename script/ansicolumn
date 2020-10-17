@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =head1 SYNOPSIS
 
@@ -188,7 +188,7 @@ Default is both 4.
 =item B<--border>
 
 Print border.  Enabled by B<--page> option automatically.  Use
-B<--no-border to disable it.  Border theme is specified by
+B<--no-border> to disable it.  Border theme is specified by
 B<--border-theme> option.
 
 =item B<--border-theme>=I<theme>
