@@ -143,6 +143,13 @@ Some options are original.
 >
 >     Set number of runin/runout column.
 >     Default is both 4.
+>
+> - **--border**=_theme_
+>
+>     Set column border theme.  Default is theme is **light-bar**, which is
+>     light vertical line filling the pege height.  My favorite is
+>     **light-block**.  These themes are experimental and subject to change.
+>     Use \`perldoc -m App::ansicolumn::Border\` for detail.
 
 # INSTALL
 

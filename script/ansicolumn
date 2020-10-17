@@ -185,6 +185,13 @@ postfix is single space, by default.
 Set number of runin/runout column.
 Default is both 4.
 
+=item B<--border>=I<theme>
+
+Set column border theme.  Default is theme is B<light-bar>, which is
+light vertical line filling the pege height.  My favorite is
+B<light-block>.  These themes are experimental and subject to change.
+Use `perldoc -m App::ansicolumn::Border` for detail.
+
 =back
 
 =back
