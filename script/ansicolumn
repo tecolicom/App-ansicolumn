@@ -63,7 +63,7 @@ Fill columns before filling rows.
 =back
 
 
-Some addtional options are compatible with Linux extended version.
+Some additional options are compatible with Linux extended version.
 
 =over 4
 
@@ -87,8 +87,8 @@ Long name for B<-x>.
 
 =item B<--output-separator>=#, B<-o>#
 
-When used B<--table> or B<-t> option, each columns are joind by two
-space characters (' ') by defualt.  This option will change it.
+When used B<--table> or B<-t> option, each columns are joined by two
+space characters (' ') by default.  This option will change it.
 
 =item B<--table-right>=I<columns>, B<-R>I<columns>
 
@@ -135,8 +135,15 @@ Set page length and page mode on.
 
 =item B<--page>, B<-P>
 
-Page mode.  Set B<--pagelength> to terminal height - 1, and set
-B<--linestyle> as B<wrap>.
+Page mode.  Set following options.
+
+    --page-height=[ terminal height - 1 ]
+    --linestyle=wrap
+    --border
+
+=item B<--page-height>=#
+
+Set page height to be used in B<--page> mode.
 
 =item B<--document>, B<-D>
 
@@ -146,7 +153,6 @@ Document mode.  Set following options.
     --linebreak=all
     --linestyle=wrap
     --boundary=word
-    --postfix=' '
 
 Next command display DOCX text in 3-up format using
 L<App::optex::textconv>.
@@ -163,13 +169,11 @@ B<--no-ignore-space> option to disable it.
 Set the style of treatment for longer lines.
 Default is I<none>.
 
-=begin comment
-
 =item B<--boundary>=I<word>
 
-Set text wrap boundary.
-
-=end comment
+Set text wrap boundary.  If this option set to B<word>, text is
+wrapped at word boundary.  Option B<--document> set this automatically.
+Use something like `--boundary=none' to disable it.
 
 =item B<--linebreak>=I<none|all|runin|runout>
 
@@ -194,7 +198,7 @@ B<--border-theme> option.
 =item B<--border-theme>=I<theme>
 
 Set column border theme.  Default is theme is B<light-bar>, which is
-light vertical line filling the pege height.  My favorite is
+light vertical line filling the page height.  My favorite is
 B<light-block>.  These themes are experimental and subject to change.
 Use `perldoc -m App::ansicolumn::Border` for detail.
 
@@ -236,3 +240,7 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
+#  LocalWords:  ansicolumn fillrows tabstop columnunit fullwidth DOCX
+#  LocalWords:  linestyle linebreak docx runin runout perldoc cpanm
+#  LocalWords:  CPANMINUS perl CPAN Kazumasa Utashiro
