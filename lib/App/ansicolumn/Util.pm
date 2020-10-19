@@ -109,12 +109,11 @@ sub insert_space {
     } [], @_;
 }
 
-sub remove_topspaces ($$) {
-    my($lp, $length) = @_;
-    my $page = 0;
-    while (++$page * $length < @$lp) {
+sub remove_topspaces ($$;$) {
+    my($lp, $length, $start) = @_;
+    for (my $page = $start // 0; $page * $length < @$lp; $page++) {
 	my $topline = $page * $length;
-	while ($lp->[$topline] eq '') {
+	while ($topline < @$lp and $lp->[$topline] eq '') {
 	    splice @$lp, $topline, 1;
 	}
     }
