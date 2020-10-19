@@ -169,10 +169,7 @@ sub column_out {
 	and die "Not enough space.\n";
     if ($max_length > $cell_width and
 	$opt{linestyle} and $opt{linestyle} ne 'none') {
-	my $fold = $obj->foldobj($cell_width);
-	my $hash = { truncate => sub { ($fold->fold($_[0]))[0] },
-		     wrap     => sub {  $fold->text($_[0])->chops } };
-	my $sub = $hash->{$opt{linestyle}} or die "$opt{linestyle}: unknown";
+	my $sub = $obj->foldsub($cell_width) or die;
 	@data = map {
 	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;

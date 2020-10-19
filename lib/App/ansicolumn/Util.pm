@@ -72,6 +72,18 @@ sub foldobj {
 	);
 }
 
+sub foldsub {
+    my $obj = shift;
+    my $width = shift;
+    my $fold = $obj->foldobj($width);
+    if ((my $ls = $obj->{linestyle}) eq 'truncate') {
+	sub { ($fold->fold($_[0]))[0] };
+    } elsif ($ls eq 'wrap') {
+	sub {  $fold->text($_[0])->chops };
+    } else {
+	undef;
+    }
+}
 
 ######################################################################
 
