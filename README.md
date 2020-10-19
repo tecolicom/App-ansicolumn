@@ -176,6 +176,11 @@ Some options are original.
 > - **--no-topspace**
 >
 >     Empty lines at the top of pages will be remoeved.
+>
+> - **--ambiguous**=_width\_spec_
+>
+>     Specifies how to treat Unicode ambiguous width characters.  Take a
+>     value of 'narrow' or 'wide.  Default is 'narrow'.
 
 # INSTALL
 

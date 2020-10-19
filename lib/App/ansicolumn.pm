@@ -46,6 +46,7 @@ sub new {
 	document         => undef,
 	insert_space     => undef,
 	top_space        => 1,
+	ambiguous        => 'narrow',
 	colormap         => [],
 	COLORHASH        => {},
 	COLORLIST        => [],
@@ -80,6 +81,7 @@ sub run {
 	"colormap|cm=s@",
 	"insert_space|insert-space!",
 	"top_space|top-space!",
+	"ambiguous=s",
 	"debug",
 	"version|v",
 	) || pod2usage();
@@ -134,6 +136,12 @@ sub setup_options {
     if ($obj->{border}) {
 	($obj->{BORDER} = App::ansicolumn::Border->new)
 	    ->theme($obj->{border_theme}) // die "Unknown theme.\n";
+    }
+
+    ## --ambiguous=wide
+    if ($obj->{ambiguous} eq 'wide') {
+	$Text::VisualWidth::PP::EastAsian = 1;
+	Text::ANSI::Fold->configure(ambiguous => 'wide');
     }
 
     $obj;

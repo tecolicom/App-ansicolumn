@@ -69,6 +69,7 @@ sub foldobj {
 	linebreak => $obj->lb_flag,
 	runin     => $obj->{runin},
 	runout    => $obj->{runout},
+	ambiguous => $obj->{ambiguous},
 	);
 }
 
