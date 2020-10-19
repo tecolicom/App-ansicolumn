@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =head1 SYNOPSIS
 
@@ -201,6 +201,14 @@ Set column border theme.  Default is theme is B<light-bar>, which is
 light vertical line filling the page height.  My favorite is
 B<light-block>.  These themes are experimental and subject to change.
 Use `perldoc -m App::ansicolumn::Border` for detail.
+
+=item B<--insert-space>
+
+Insert empty line between two non-empty lines.
+
+=item B<--no-topspace>
+
+Empty lines at the top of pages will be remoeved.
 
 =back
 

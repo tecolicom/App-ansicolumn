@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.10
+Version 0.11
 
 # SYNOPSIS
 
@@ -42,7 +42,7 @@ From [column(1)](http://man.he.net/man1/column):
 >
 >     Fill columns before filling rows.
 
-Some addtional options are compatible with Linux extended version.
+Some additional options are compatible with Linux extended version.
 
 > - **--output-width**=#, **-c**#
 >
@@ -62,8 +62,8 @@ Some addtional options are compatible with Linux extended version.
 >
 > - **--output-separator**=#, **-o**#
 >
->     When used **--table** or **-t** option, each columns are joind by two
->     space characters (' ') by defualt.  This option will change it.
+>     When used **--table** or **-t** option, each columns are joined by two
+>     space characters (' ') by default.  This option will change it.
 >
 > - **--table-right**=_columns_, **-R**_columns_
 >
@@ -102,8 +102,15 @@ Some options are original.
 >
 > - **--page**, **-P**
 >
->     Page mode.  Set **--pagelength** to terminal height - 1, and set
->     **--linestyle** as **wrap**.
+>     Page mode.  Set following options.
+>
+>         --page-height=[ terminal height - 1 ]
+>         --linestyle=wrap
+>         --border
+>
+> - **--page-height**=#
+>
+>     Set page height to be used in **--page** mode.
 >
 > - **--document**, **-D**
 >
@@ -113,7 +120,6 @@ Some options are original.
 >         --linebreak=all
 >         --linestyle=wrap
 >         --boundary=word
->         --postfix=' '
 >
 >     Next command display DOCX text in 3-up format using
 >     [App::optex::textconv](https://metacpan.org/pod/App::optex::textconv).
@@ -129,6 +135,12 @@ Some options are original.
 >
 >     Set the style of treatment for longer lines.
 >     Default is _none_.
+>
+> - **--boundary**=_word_
+>
+>     Set text wrap boundary.  If this option set to **word**, text is
+>     wrapped at word boundary.  Option **--document** set this automatically.
+>     Use something like \`--boundary=none' to disable it.
 >
 > - **--linebreak**=_none|all|runin|runout_
 >
@@ -153,9 +165,17 @@ Some options are original.
 > - **--border-theme**=_theme_
 >
 >     Set column border theme.  Default is theme is **light-bar**, which is
->     light vertical line filling the pege height.  My favorite is
+>     light vertical line filling the page height.  My favorite is
 >     **light-block**.  These themes are experimental and subject to change.
 >     Use \`perldoc -m App::ansicolumn::Border\` for detail.
+>
+> - **--insert-space**
+>
+>     Insert empty line between two non-empty lines.
+>
+> - **--no-topspace**
+>
+>     Empty lines at the top of pages will be remoeved.
 
 # INSTALL
 

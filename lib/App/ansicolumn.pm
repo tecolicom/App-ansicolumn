@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.10";
+our $VERSION = "0.11";
 
 use v5.14;
 use warnings;
@@ -13,9 +13,8 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure("bundling");
 
 use Data::Dumper;
-use List::Util qw(max sum);
+use List::Util qw(max reduce);
 use Text::Tabs qw(expand);
-use Text::ANSI::Fold qw(:constants);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
@@ -45,6 +44,8 @@ sub new {
 	border           => undef,
 	border_theme     => 'light-bar',
 	document         => undef,
+	insert_space     => undef,
+	top_space        => 1,
 	colormap         => [],
 	COLORHASH        => {},
 	COLORLIST        => [],
@@ -77,11 +78,28 @@ sub run {
 	"border_theme|border-theme|bt=s",
 	"document|D",
 	"colormap|cm=s@",
+	"insert_space|insert-space!",
+	"top_space|top-space!",
 	"debug",
 	"version|v",
 	) || pod2usage();
-
     $obj->{version} and do { say $VERSION; exit };
+    $obj->setup_options;
+
+    warn Dumper $obj if $obj->{debug};
+
+    chomp (my @lines = expand <>);
+    @lines = insert_space @lines if $obj->{insert_space};
+
+    if ($obj->{table}) {
+	$obj->table_out(@lines);
+    } else {
+	$obj->column_out(@lines);
+    }
+}
+
+sub setup_options {
+    my $obj = shift;
 
     if ($obj->{linestyle} !~ /^(?:|none|(wordwrap)|wrap|truncate)$/) {
 	die "$obj->{linestyle}: unknown style.\n";
@@ -90,11 +108,10 @@ sub run {
 	$obj->{boundary} = 'word';
     }
     $obj->{fullwidth} = 1 if $obj->{pane} and not $obj->{pane_width};
-    ($obj->{terminal_width}, $obj->{terminal_height}) = terminal_size;
 
     ## -P
     if ($obj->{page}) {
-	$obj->{page_height} ||= $obj->{terminal_height} - 1;
+	$obj->{page_height} ||= $obj->term_height - 1;
 	$obj->{linestyle}  ||= 'wrap';
 	$obj->{border} //= 1;
     }
@@ -119,29 +136,8 @@ sub run {
 	    ->theme($obj->{border_theme}) // die "Unknown theme.\n";
     }
 
-    warn Dumper $obj if $obj->{debug};
-
-    my @lines = expand <>;
-    if ($obj->{table}) {
-	$obj->table_out(@lines);
-    } else {
-	$obj->column_out(@lines);
-    }
+    $obj;
 }
-
-sub border {
-    my $obj = shift;
-    my $border = $obj->{BORDER} or return "";
-    $border->get(@_);
-}
-
-my %lb_flag = (
-    ''     => LINEBREAK_NONE,
-    none   => LINEBREAK_NONE,
-    runin  => LINEBREAK_RUNIN,
-    runout => LINEBREAK_RUNOUT,
-    all    => LINEBREAK_ALL,
-    );
 
 sub column_out {
     my $obj = shift;
@@ -150,30 +146,30 @@ sub column_out {
     chomp @data;
 
     use integer;
-    my $width = $opt{output_width} || $obj->{terminal_width};
-    my @length = map { ansi_width $_ } @data;
-    my $max_length = max(@length);
-    my $border_width = sum map length($obj->border($_)), qw(left right);
+    my $width = $obj->width;
+    my @length = map ansi_width($_), @data;
+    my $max_length = max @length;
     my $unit = $opt{columnunit} || 1;
-    my $span = $opt{pane_width} || roundup $max_length + $border_width, $unit;
-    my $panes = $opt{pane} || $width / $span || 1;
+
+    my $span;
+    my $panes;
     if ($opt{fullwidth} and not $opt{pane_width}) {
+	my $min = $max_length + ($obj->border_width || 1);
+	$panes = $opt{pane} || $width / $min || 1;
 	$span = $width / $panes;
+    } else {
+	$span = $opt{pane_width} ||
+	    roundup($max_length + ($obj->border_width || 1), $unit);
+	$panes = $opt{pane} || $width / $span || 1;
     }
-    $span -= $border_width;
-    my $cell_width = $span;
-    if ($lb_flag{$opt{linebreak}} & LINEBREAK_RUNIN) {
-	$cell_width -= $opt{runin};
-	die "Not enough space.\n" if $cell_width < 1;
-    }
+    $span -= $obj->border_width;
+
+    ## Fold long lines.
+    (my $cell_width = $span - $obj->margin_width) < -1
+	and die "Not enough space.\n";
     if ($max_length > $cell_width and
 	$opt{linestyle} and $opt{linestyle} ne 'none') {
-	my $fold = Text::ANSI::Fold->new(
-	    width => $cell_width,
-	    boundary => $opt{boundary},
-	    linebreak => $lb_flag{$opt{linebreak}},
-	    runin => $opt{runin}, runout => $opt{runout},
-	    );
+	my $fold = $obj->foldobj($cell_width);
 	my $hash = { truncate => sub { ($fold->fold($_[0]))[0] },
 		     wrap     => sub {  $fold->text($_[0])->chops } };
 	my $sub = $hash->{$opt{linestyle}} or die "$opt{linestyle}: unknown";
@@ -183,7 +179,11 @@ sub column_out {
     }
     $opt{page_height} ||= (@data + $panes - 1) / $panes;
 
-    my $line_in_page = 0;
+    ## --no-topspace
+    if (not $obj->{top_space}) {
+	remove_topspaces \@data, $opt{page_height};
+    }
+
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
     for (my $page = 0; @data_index; $page++) {
@@ -196,20 +196,17 @@ sub column_out {
 		zip map { [ splice @index, 0, $opt{page_height} ] } 1 .. $panes;
 	    }
 	};
-	my @fmt;
 	my @format = (("%s%-${span}s%s") x (@{$lines[0]} - 1), "%s%-${span}s");
 	for my $i (0.. $#lines) {
 	    my $line = $lines[$i];
 	    my $pos = $i == 0 ? 0 : $i == $#lines ? 2 : 1;
-	    my $l = $obj->border('left',  $pos, $page);
-	    my $r = $obj->border('right', $pos, $page);
+	    my @bdr = map $obj->border($_, $pos, $page), qw(left right);
 	    my @panes = map {
 		my $data_index = $page[${$line}[$_]];
 		if ($is_last_data->($data_index)) {
-		    $l = $obj->border('left',  2, $page);
-		    $r = $obj->border('right', 2, $page);
+		    @bdr = map $obj->border($_, 2, $page), qw(left right);
 		}
-		ansi_sprintf $format[$_], $l, $data[$data_index], $r;
+		ansi_sprintf $format[$_], $bdr[0], $data[$data_index], $bdr[1];
 	    } 0 .. $#{$line};
 	    print join '', @panes;
 	    print "\n";
@@ -221,7 +218,6 @@ sub table_out {
     my $obj = shift;
     my %opt = %$obj;
     return unless @_;
-    chomp @_;
     my $split = do {
 	if ($opt{separator} eq ' ') {
 	    $opt{ignore_space} ? ' ' : qr/ /;
