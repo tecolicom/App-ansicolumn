@@ -179,15 +179,10 @@ Use something like `--boundary=none' to disable it.
 
 Set the linebreak mode.
 
-=item B<--prefix>=I<string>, B<--postfix>=I<string>
-
-Set prefix and postfix appended to each data.  Prefix is empty and
-postfix is single space, by default.
-
 =item B<--runin>=#, B<--runout>=#
 
 Set number of runin/runout column.
-Default is both 4.
+Default is both 2.
 
 =item B<--border>
 
@@ -197,7 +192,7 @@ B<--border-theme> option.
 
 =item B<--border-theme>=I<theme>
 
-Set column border theme.  Default is theme is B<light-bar>, which is
+Set column border theme.  Default theme is B<light-bar>, which is
 light vertical line filling the page height.  My favorite is
 B<light-block>.  These themes are experimental and subject to change.
 Use `perldoc -m App::ansicolumn::Border` for detail.
@@ -208,7 +203,7 @@ Insert empty line between two non-empty lines.
 
 =item B<--no-topspace>
 
-Clean up empty lines at the top of pages.
+Clean up empty lines at the top of each pages.
 
 =item B<--ambiguous>=I<width_spec>
 

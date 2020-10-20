@@ -146,15 +146,10 @@ Some options are original.
 >
 >     Set the linebreak mode.
 >
-> - **--prefix**=_string_, **--postfix**=_string_
->
->     Set prefix and postfix appended to each data.  Prefix is empty and
->     postfix is single space, by default.
->
 > - **--runin**=#, **--runout**=#
 >
 >     Set number of runin/runout column.
->     Default is both 4.
+>     Default is both 2.
 >
 > - **--border**
 >
@@ -164,7 +159,7 @@ Some options are original.
 >
 > - **--border-theme**=_theme_
 >
->     Set column border theme.  Default is theme is **light-bar**, which is
+>     Set column border theme.  Default theme is **light-bar**, which is
 >     light vertical line filling the page height.  My favorite is
 >     **light-block**.  These themes are experimental and subject to change.
 >     Use \`perldoc -m App::ansicolumn::Border\` for detail.
@@ -175,7 +170,7 @@ Some options are original.
 >
 > - **--no-topspace**
 >
->     Empty lines at the top of pages will be remoeved.
+>     Clean up empty lines at the top of each pages.
 >
 > - **--ambiguous**=_width\_spec_
 >

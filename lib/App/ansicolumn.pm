@@ -10,7 +10,7 @@ use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
 ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
-Configure("bundling");
+Configure "bundling";
 
 use Data::Dumper;
 use List::Util qw(max reduce);
@@ -213,7 +213,7 @@ sub column_out {
 		}
 		ansi_sprintf $format[$_], $bdr[0], $data[$data_index], $bdr[1];
 	    } 0 .. $#{$line};
-	    print join '', @panes;
+	    print @panes;
 	    print "\n";
 	}
     }
@@ -233,14 +233,15 @@ sub table_out {
     my @lines  = map { [ split $split, $_ ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
-    my @right;   map { $right[$_ - 1] = 1 } split /,/, $opt{table_right};
-    my @format = map {
-	sprintf '%%'.'%s'.'%ds', $right[$_] ? '' : '-', $max[$_];
-    } 0 .. $#max;
+    my @align  = map '-', 0 .. $#max;
+    map { $align[$_ - 1] = '' } split /,/, $opt{table_right};
+    my @format = map { '%' . $align[$_] . $max[$_] . 's' } 0 .. $#max;
     for my $line (@lines) {
-	my $format = join($obj->{output_separator},
-			  @format[0..$#{$line}-1], "%s\n");
+	my @fmt = @format[0 .. $#{$line}];
+	$fmt[$#{$line}] = '%s' if $align[$#{$line}] eq '-';
+	my $format = join $obj->{output_separator}, @fmt;
 	ansi_printf $format, @$line;
+	print "\n";
     }
 }
 
