@@ -88,10 +88,30 @@ sub foldsub {
 
 ######################################################################
 
+sub newlist {
+    my %arg = (count => 0);
+    while (@_ and not ref $_[0]) {
+	my($name, $value) = splice(@_, 0, 2);
+	$arg{$name} = $value;
+    }
+    my @list = ($arg{default}) x $arg{count};
+    while (my($index, $value) = splice(@_, 0, 2)) {
+	$index = [ $index ] if not ref $index;
+	@list[@$index] = ($value) x @$index;
+    }
+    @list;
+}
+
+sub div {
+    use integer;
+    my($a, $b) = @_;
+    ($a + $b - 1) / $b;
+}
+
 sub roundup ($$;$) {
     use integer;
     my($a, $b, $c) = @_;
-    ($a + $b + ($c // 0) - 1) / $b * $b;
+    div($a + ($c // 0), $b) * $b;
 }
 
 sub terminal_size {
@@ -123,11 +143,10 @@ sub insert_space {
 }
 
 sub remove_topspaces ($$;$) {
-    my($lp, $length, $start) = @_;
-    for (my $page = $start // 0; $page * $length < @$lp; $page++) {
-	my $topline = $page * $length;
-	while ($topline < @$lp and $lp->[$topline] eq '') {
-	    splice @$lp, $topline, 1;
+    my($lp, $len, $start) = @_;
+    for (my $page = $start // 0; (my $top = $page * $len) < @$lp; $page++) {
+	while ($top < @$lp and $lp->[$top] eq '') {
+	    splice @$lp, $top, 1;
 	}
     }
     @$lp;

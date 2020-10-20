@@ -126,8 +126,7 @@ of panes implies -B<--fullwidth> option enabled.
 
 =item B<--pane-width>=#, B<--pw>=#, B<-S>#
 
-Specify pane width.  This includes B<--prefix> and B<--postfix>
-spaces.
+Specify pane width.  This includes border spaces.
 
 =item B<--pagelength>=#
 
@@ -199,9 +198,9 @@ Use `perldoc -m App::ansicolumn::Border` for detail.
 
 =item B<--insert-space>
 
-Insert empty line between two non-empty lines.
+Insert empty line between every successive non-empty lines.
 
-=item B<--no-topspace>
+=item B<--no-top-space>
 
 Clean up empty lines at the top of each pages.
 

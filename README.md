@@ -93,8 +93,7 @@ Some options are original.
 >
 > - **--pane-width**=#, **--pw**=#, **-S**#
 >
->     Specify pane width.  This includes **--prefix** and **--postfix**
->     spaces.
+>     Specify pane width.  This includes border spaces.
 >
 > - **--pagelength**=#
 >
@@ -166,9 +165,9 @@ Some options are original.
 >
 > - **--insert-space**
 >
->     Insert empty line between two non-empty lines.
+>     Insert empty line between every successive non-empty lines.
 >
-> - **--no-topspace**
+> - **--no-top-space**
 >
 >     Clean up empty lines at the top of each pages.
 >

@@ -149,7 +149,6 @@ sub setup_options {
 
 sub column_out {
     my $obj = shift;
-    my %opt = %$obj;
     my @data = @_ or return;
     chomp @data;
 
@@ -157,18 +156,18 @@ sub column_out {
     my $width = $obj->width;
     my @length = map ansi_width($_), @data;
     my $max_length = max @length;
-    my $unit = $opt{columnunit} || 1;
+    my $unit = $obj->{columnunit} || 1;
 
     my $span;
     my $panes;
-    if ($opt{fullwidth} and not $opt{pane_width}) {
+    if ($obj->{fullwidth} and not $obj->{pane_width}) {
 	my $min = $max_length + ($obj->border_width || 1);
-	$panes = $opt{pane} || $width / $min || 1;
+	$panes = $obj->{pane} || $width / $min || 1;
 	$span = $width / $panes;
     } else {
-	$span = $opt{pane_width} ||
+	$span = $obj->{pane_width} ||
 	    roundup($max_length + ($obj->border_width || 1), $unit);
-	$panes = $opt{pane} || $width / $span || 1;
+	$panes = $obj->{pane} || $width / $span || 1;
     }
     $span -= $obj->border_width;
 
@@ -176,29 +175,29 @@ sub column_out {
     (my $cell_width = $span - $obj->margin_width) < -1
 	and die "Not enough space.\n";
     if ($max_length > $cell_width and
-	$opt{linestyle} and $opt{linestyle} ne 'none') {
+	$obj->{linestyle} and $obj->{linestyle} ne 'none') {
 	my $sub = $obj->foldsub($cell_width) or die;
 	@data = map {
 	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
 	} 0 .. $#data;
     }
-    $opt{page_height} ||= (@data + $panes - 1) / $panes;
+    my $height = $obj->{page_height} || div(0+@data, $panes);
 
     ## --no-topspace
     if (not $obj->{top_space}) {
-	remove_topspaces \@data, $opt{page_height};
+	remove_topspaces \@data, $height;
     }
 
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
     for (my $page = 0; @data_index; $page++) {
-	my @page = splice @data_index, 0, $opt{page_height} * $panes;
+	my @page = splice @data_index, 0, $height * $panes;
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
-	    if ($opt{fillrows}) {
-		map { [ splice @index, 0, $panes ] } 1 .. $opt{page_height};
+	    if ($obj->{fillrows}) {
+		map { [ splice @index, 0, $panes ] } 1 .. $height;
 	    } else {
-		zip map { [ splice @index, 0, $opt{page_height} ] } 1 .. $panes;
+		zip map { [ splice @index, 0, $height ] } 1 .. $panes;
 	    }
 	};
 	my @format = (("%s%-${span}s%s") x (@{$lines[0]} - 1), "%s%-${span}s");
@@ -221,20 +220,19 @@ sub column_out {
 
 sub table_out {
     my $obj = shift;
-    my %opt = %$obj;
     return unless @_;
     my $split = do {
-	if ($opt{separator} eq ' ') {
-	    $opt{ignore_space} ? ' ' : qr/ /;
+	if ($obj->{separator} eq ' ') {
+	    $obj->{ignore_space} ? ' ' : qr/ /;
 	} else {
-	    qr/[\Q$opt{separator}\E]/;
+	    qr/[\Q$obj->{separator}\E]/;
 	}
     };
     my @lines  = map { [ split $split, $_ ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
-    my @align  = map '-', 0 .. $#max;
-    map { $align[$_ - 1] = '' } split /,/, $opt{table_right};
+    my @align  = newlist(count => 0+@max, default => '-',
+			 [ map --$_, split /,/, $obj->{table_right} ] => '');
     my @format = map { '%' . $align[$_] . $max[$_] . 's' } 0 .. $#max;
     for my $line (@lines) {
 	my @fmt = @format[0 .. $#{$line}];
