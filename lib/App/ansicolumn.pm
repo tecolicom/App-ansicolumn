@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.11";
+our $VERSION = "0.12";
 
 use v5.14;
 use warnings;
@@ -14,7 +14,7 @@ Configure "bundling";
 
 use Data::Dumper;
 use List::Util qw(max reduce);
-use Text::Tabs qw(expand);
+use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
@@ -90,7 +90,7 @@ sub run {
 
     warn Dumper $obj if $obj->{debug};
 
-    chomp (my @lines = expand <>);
+    chomp(my @lines = <>);
     @lines = insert_space @lines if $obj->{insert_space};
 
     if ($obj->{table}) {
@@ -149,12 +149,18 @@ sub setup_options {
 
 sub column_out {
     my $obj = shift;
-    my @data = @_ or return;
-    chomp @data;
+    @_ or return;
+
+    my @data;
+    my @length;
+    for (@_) {
+	my($expanded, $dmy, $length)  = ansi_fold($_, -1, expand => 1);
+	push @data, $expanded;
+	push @length, $length;
+    }
 
     use integer;
     my $width = $obj->width;
-    my @length = map ansi_width($_), @data;
     my $max_length = max @length;
     my $unit = $obj->{columnunit} || 1;
 
