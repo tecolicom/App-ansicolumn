@@ -128,9 +128,9 @@ of panes implies -B<--fullwidth> option enabled.
 
 Specify pane width.  This includes border spaces.
 
-=item B<--pagelength>=#
+=item B<--page-height>=#
 
-Set page length and page mode on.
+Set page height and page mode on.
 
 =item B<--page>, B<-P>
 
