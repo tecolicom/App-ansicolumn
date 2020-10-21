@@ -8,3 +8,6 @@ static_install = "auto"
 
 [release]
 do_not_upload_to_cpan = true
+
+[FileGatherer]
+exclude_match=['^images/.*']
