@@ -6,6 +6,8 @@
 
 ![color-code](https://github.com/kaz-utashiro/App-ansicolumn/blob/images/color-code.png)
 
+![color-code](color-code.png)
+
 ### Using large screen
 
 ```
