@@ -103,9 +103,9 @@ sub run {
 sub setup_options {
     my $obj = shift;
 
-    if ($obj->{linestyle} !~ /^(?:|none|(wordwrap)|wrap|truncate)$/) {
+    if ($obj->{linestyle} !~ /^(?<style>|none|wordwrap|wrap|truncate)$/) {
 	die "$obj->{linestyle}: unknown style.\n";
-    } elsif ($1) {
+    } elsif ($+{style} eq 'wordwrap') {
 	$obj->{linestyle} = 'wrap';
 	$obj->{boundary} = 'word';
     }
