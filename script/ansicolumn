@@ -69,28 +69,28 @@ Some additional options are compatible with Linux extended version.
 
 =over 7
 
-=item B<--output-width>=#, B<-c>#
+=item B<-c>#, B<--output-width>=#
 
 Long name for B<-c>.
 
-=item B<--separator>=#, B<-s>#
+=item B<-s>#, B<--separator>=#
 
 Long name for B<-s>.
 
-=item B<--table>, B<-t>
+=item B<-t>, B<--table>
 
 Long name for B<-t>.
 
-=item B<--fillrows>, B<-x>
+=item B<-x>, B<--fillrows>
 
 Long name for B<-x>.
 
-=item B<--output-separator>=#, B<-o>#
+=item B<-o>#, B<--output-separator>=#
 
 When used B<--table> or B<-t> option, each columns are joined by two
 space characters (' ') by default.  This option will change it.
 
-=item B<--table-right>=I<columns>, B<-R>I<columns>
+=item B<-R>I<columns>, B<--table-right>=I<columns>
 
 Right align text in these columns.
 Support only numbers.
@@ -119,20 +119,20 @@ the number of unit.
 Use full width of the terminal.  Each panes are expanded to fill
 terminal width, unless B<--pane-width> is specified.
 
-=item B<--pane>=#, B<-C>#
+=item B<-C>#, B<--pane>=#
 
 Output is formatted in the specified number of panes.  Setting number
-of panes implies -B<--fullwidth> option enabled.
+of panes implies B<--fullwidth> option enabled.
 
-=item B<--pane-width>=#, B<--pw>=#, B<-S>#
+=item B<-S>#, B<--pane-width>=#, B<--pw>=#
 
 Specify pane width.  This includes border spaces.
 
-=item B<--page-height>=#
+=item B<--page-height>=#, B<--ph>=#
 
 Set page height and page mode on.
 
-=item B<--page>, B<-P>
+=item B<-P>, B<--page>
 
 Page mode.  Set following options.
 
@@ -140,11 +140,7 @@ Page mode.  Set following options.
     --linestyle=wrap
     --border
 
-=item B<--page-height>=#
-
-Set page height to be used in B<--page> mode.
-
-=item B<--document>, B<-D>
+=item B<-D>, B<--document>
 
 Document mode.  Set following options.
 
@@ -174,7 +170,7 @@ Set text wrap boundary.  If this option set to B<word>, text is
 wrapped at word boundary.  Option B<--document> set this automatically.
 Use something like `--boundary=none' to disable it.
 
-=item B<--linebreak>=I<none|all|runin|runout>
+=item B<--linebreak>=I<none|all|runin|runout>, B<--lb>=...
 
 Set the linebreak mode.
 
@@ -183,7 +179,7 @@ Set the linebreak mode.
 Set number of runin/runout column.
 Default is both 2.
 
-=item B<--border>
+=item B<-->[B<no->]B<border>
 
 Print border.  Enabled by B<--page> option automatically.  Use
 B<--no-border> to disable it.  Border theme is specified by

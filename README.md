@@ -44,28 +44,28 @@ From [column(1)](http://man.he.net/man1/column):
 
 Some additional options are compatible with Linux extended version.
 
-> - **--output-width**=#, **-c**#
+> - **-c**#, **--output-width**=#
 >
 >     Long name for **-c**.
 >
-> - **--separator**=#, **-s**#
+> - **-s**#, **--separator**=#
 >
 >     Long name for **-s**.
 >
-> - **--table**, **-t**
+> - **-t**, **--table**
 >
 >     Long name for **-t**.
 >
-> - **--fillrows**, **-x**
+> - **-x**, **--fillrows**
 >
 >     Long name for **-x**.
 >
-> - **--output-separator**=#, **-o**#
+> - **-o**#, **--output-separator**=#
 >
 >     When used **--table** or **-t** option, each columns are joined by two
 >     space characters (' ') by default.  This option will change it.
 >
-> - **--table-right**=_columns_, **-R**_columns_
+> - **-R**_columns_, **--table-right**=_columns_
 >
 >     Right align text in these columns.
 >     Support only numbers.
@@ -86,20 +86,20 @@ Some options are original.
 >     Use full width of the terminal.  Each panes are expanded to fill
 >     terminal width, unless **--pane-width** is specified.
 >
-> - **--pane**=#, **-C**#
+> - **-C**#, **--pane**=#
 >
 >     Output is formatted in the specified number of panes.  Setting number
->     of panes implies -**--fullwidth** option enabled.
+>     of panes implies **--fullwidth** option enabled.
 >
-> - **--pane-width**=#, **--pw**=#, **-S**#
+> - **-S**#, **--pane-width**=#, **--pw**=#
 >
 >     Specify pane width.  This includes border spaces.
 >
-> - **--pagelength**=#
+> - **--page-height**=#, **--ph**=#
 >
->     Set page length and page mode on.
+>     Set page height and page mode on.
 >
-> - **--page**, **-P**
+> - **-P**, **--page**
 >
 >     Page mode.  Set following options.
 >
@@ -107,11 +107,7 @@ Some options are original.
 >         --linestyle=wrap
 >         --border
 >
-> - **--page-height**=#
->
->     Set page height to be used in **--page** mode.
->
-> - **--document**, **-D**
+> - **-D**, **--document**
 >
 >     Document mode.  Set following options.
 >
@@ -141,7 +137,7 @@ Some options are original.
 >     wrapped at word boundary.  Option **--document** set this automatically.
 >     Use something like \`--boundary=none' to disable it.
 >
-> - **--linebreak**=_none|all|runin|runout_
+> - **--linebreak**=_none|all|runin|runout_, **--lb**=...
 >
 >     Set the linebreak mode.
 >
@@ -150,7 +146,7 @@ Some options are original.
 >     Set number of runin/runout column.
 >     Default is both 2.
 >
-> - **--border**
+> - **--**\[**no-**\]**border**
 >
 >     Print border.  Enabled by **--page** option automatically.  Use
 >     **--no-border** to disable it.  Border theme is specified by
