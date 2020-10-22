@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.13 2020-10-22T14:29:42Z
+
+    - Soft release version.
+
 0.12 2020-10-20T14:42:42Z
 
     - Update to use Text::ANSI::Fold 2.01 to improve tab expansion.
