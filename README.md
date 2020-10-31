@@ -172,11 +172,25 @@ Some options are original.
 >     Specifies how to treat Unicode ambiguous width characters.  Take a
 >     value of 'narrow' or 'wide.  Default is 'narrow'.
 
+# STARTUP
+
+This command is implemented with [Getopt::EX](https://metacpan.org/pod/Getopt::EX) module.  So
+
+    ~/.ansicolumnrc
+
+file is read at start up.  If you want **--no-top-space** always on,
+put this line in your `~/.ansicolumnrc`.
+
+    option default --no-top-space
+
+Also command can be extended by original modules with **-M**
+option. See \`perldoc Getopt::EX\` for detail.
+
 # INSTALL
 
 ## CPANMINUS
 
-    $ cpanm App::Greple
+    $ cpanm App::ansicolumn
     or
     $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 

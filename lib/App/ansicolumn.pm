@@ -207,7 +207,7 @@ sub column_out {
 	    }
 	};
 	my @format = (("%s%-${span}s%s") x (@{$lines[0]} - 1), "%s%-${span}s");
-	for my $i (0.. $#lines) {
+	for my $i (0 .. $#lines) {
 	    my $line = $lines[$i];
 	    my $pos = $i == 0 ? 0 : $i == $#lines ? 2 : 1;
 	    my @bdr = map $obj->border($_, $pos, $page), qw(left right);

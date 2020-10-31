@@ -209,11 +209,25 @@ value of 'narrow' or 'wide.  Default is 'narrow'.
 
 =back
 
+=head1 STARTUP
+
+This command is implemented with L<Getopt::EX> module.  So
+
+    ~/.ansicolumnrc
+
+file is read at start up.  If you want B<--no-top-space> always on,
+put this line in your F<~/.ansicolumnrc>.
+
+    option default --no-top-space
+
+Also command can be extended by original modules with B<-M>
+option. See `perldoc Getopt::EX` for detail.
+
 =head1 INSTALL
 
 =head2 CPANMINUS
 
-    $ cpanm App::Greple
+    $ cpanm App::ansicolumn
     or
     $ curl -sL http://cpanmin.us | perl - App::ansicolumn
 
