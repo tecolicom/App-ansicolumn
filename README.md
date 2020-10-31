@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.13
+Version 0.14
 
 # SYNOPSIS
 
@@ -150,11 +150,11 @@ Some options are original.
 >
 >     Print border.  Enabled by **--page** option automatically.  Use
 >     **--no-border** to disable it.  Border theme is specified by
->     **--border-theme** option.
+>     **--border-style** option.
 >
-> - **--border-theme**=_theme_
+> - **--border-style**=_theme_
 >
->     Set column border theme.  Default theme is **light-bar**, which is
+>     Set column border style.  Default theme is **light-bar**, which is
 >     light vertical line filling the page height.  My favorite is
 >     **light-block**.  These themes are experimental and subject to change.
 >     Use \`perldoc -m App::ansicolumn::Border\` for detail.

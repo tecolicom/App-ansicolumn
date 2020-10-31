@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.13";
+our $VERSION = "0.14";
 
 use v5.14;
 use warnings;
@@ -42,7 +42,7 @@ sub new {
 	runin            => 2,
 	runout           => 2,
 	border           => undef,
-	border_theme     => 'light-bar',
+	border_style     => 'light-bar',
 	document         => undef,
 	insert_space     => undef,
 	top_space        => 1,
@@ -76,7 +76,7 @@ sub run {
 	"boundary=s",
 	"linebreak|lb=s", "runin=i", "runout=i",
 	"border!",
-	"border_theme|border-theme|bt=s",
+	"border_style|border-style|bs=s",
 	"document|D",
 	"colormap|cm=s@",
 	"insert_space|insert-space!",
@@ -135,7 +135,7 @@ sub setup_options {
     ## --border
     if ($obj->{border}) {
 	($obj->{BORDER} = App::ansicolumn::Border->new)
-	    ->theme($obj->{border_theme}) // die "Unknown theme.\n";
+	    ->theme($obj->{border_style}) // die "Unknown theme.\n";
     }
 
     ## --ambiguous=wide
