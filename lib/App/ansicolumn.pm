@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.14";
+our $VERSION = "0.15";
 
 use v5.14;
 use warnings;
@@ -13,7 +13,7 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure "bundling";
 
 use Data::Dumper;
-use List::Util qw(max reduce);
+use List::Util qw(max);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);

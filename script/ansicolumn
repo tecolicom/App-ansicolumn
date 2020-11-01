@@ -17,73 +17,46 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.14
+Version 0.15
 
 =head1 SYNOPSIS
 
-ansicolumn [-tx] [-c columns] [-s sep] [file ...]
+ansicolumn [options] [file ...]
 
 =head1 DESCRIPTION
 
 B<ansicolumn> is a L<column(1)> command clone which can handle ANSI
-terminal sequences.
+terminal sequences.  It supports traditional options and some of Linux
+extended, and other original options.  Empty lines are B<not> ignored,
+though.
 
-From L<column(1)>:
-
-=over 4
+=head2 COMPATIBLE OPTIONS
 
 The column utility formats its input into multiple columns.  Rows are
-filled before columns.  Input is taken from file operands, or, by
-default, from the standard input.  Empty lines are ignored.
+filled before columns.  Input is taken from I<file> operands, or, by
+default, from the standard input.
 
 =over 7
 
-=item B<-c> #
+=item B<-c>#, B<--output-width>=#
 
 Output is formatted for a display columns wide.
 
-=item B<-s> #
+=item B<-s>#, B<--separator>=#
 
 Specify a set of characters to be used to delimit columns for the
 -t option.
 
-=item B<-t>
+=item B<-t>, B<--table>
 
 Determine the number of columns the input contains and create a
 table.  Columns are delimited with whitespace, by default, or
 with the characters supplied using the -s option.  Useful for
 pretty-printing displays.
 
-=item B<-x>
-
-Fill columns before filling rows.
-
-=back
-
-=back
-
-
-Some additional options are compatible with Linux extended version.
-
-=over 4
-
-=over 7
-
-=item B<-c>#, B<--output-width>=#
-
-Long name for B<-c>.
-
-=item B<-s>#, B<--separator>=#
-
-Long name for B<-s>.
-
-=item B<-t>, B<--table>
-
-Long name for B<-t>.
-
 =item B<-x>, B<--fillrows>
 
-Long name for B<-x>.
+Fill columns before filling rows.
 
 =item B<-o>#, B<--output-separator>=#
 
@@ -97,40 +70,9 @@ Support only numbers.
 
 =back
 
-=back
-
-Some options are original.
-
-=over 4
+=head2 EXTENDED OPTION
 
 =over 7
-
-=item B<--tabstop>=#
-
-Set tab width.
-
-=item B<--columnunit>=#
-
-Each columns are placed at unit of 8 by default.  This option changes
-the number of unit.
-
-=item B<--fullwidth>
-
-Use full width of the terminal.  Each panes are expanded to fill
-terminal width, unless B<--pane-width> is specified.
-
-=item B<-C>#, B<--pane>=#
-
-Output is formatted in the specified number of panes.  Setting number
-of panes implies B<--fullwidth> option enabled.
-
-=item B<-S>#, B<--pane-width>=#, B<--pw>=#
-
-Specify pane width.  This includes border spaces.
-
-=item B<--page-height>=#, B<--ph>=#
-
-Set page height and page mode on.
 
 =item B<-P>, B<--page>
 
@@ -154,10 +96,14 @@ L<App::optex::textconv>.
 
     optex -Mtextconv ansicolumn -DPC3 foo.docx | less
 
-=item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
+=item B<-C>#, B<--pane>=#
 
-When used B<-t> option, leading spaces are ignored by default.  Use
-B<--no-ignore-space> option to disable it.
+Output is formatted in the specified number of panes.  Setting number
+of panes implies B<--fullwidth> option enabled.
+
+=item B<-S>#, B<--pane-width>=#, B<--pw>=#
+
+Specify pane width.  This includes border spaces.
 
 =item B<--linestyle>=I<none>|I<truncate>|I<wrap>|I<wordwrap>, B<--ls>=I<...>
 
@@ -182,15 +128,29 @@ Default is both 2.
 =item B<-->[B<no->]B<border>
 
 Print border.  Enabled by B<--page> option automatically.  Use
-B<--no-border> to disable it.  Border theme is specified by
+B<--no-border> to disable it.  Border style is specified by
 B<--border-style> option.
 
-=item B<--border-style>=I<theme>
+=item B<--border-style>=I<style>, B<--bs>=...
 
-Set column border style.  Default theme is B<light-bar>, which is
+Set column border style.  Default style is B<light-bar>, which is
 light vertical line filling the page height.  My favorite is
-B<light-block>.  These themes are experimental and subject to change.
+B<light-block>.  These styles are experimental and subject to change.
 Use `perldoc -m App::ansicolumn::Border` for detail.
+
+=item B<--fullwidth>
+
+Use full width of the terminal.  Each panes are expanded to fill
+terminal width, unless B<--pane-width> is specified.
+
+=item B<--page-height>=#, B<--ph>=#
+
+Set page height and page mode on.
+
+=item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
+
+When used B<-t> option, leading spaces are ignored by default.  Use
+B<--no-ignore-space> option to disable it.
 
 =item B<--insert-space>
 
@@ -200,12 +160,19 @@ Insert empty line between every successive non-empty lines.
 
 Clean up empty lines at the top of each pages.
 
+=item B<--tabstop>=#
+
+Set tab width.
+
+=item B<--columnunit>=#
+
+Each columns are placed at unit of 8 by default.  This option changes
+the number of unit.
+
 =item B<--ambiguous>=I<width_spec>
 
 Specifies how to treat Unicode ambiguous width characters.  Take a
 value of 'narrow' or 'wide.  Default is 'narrow'.
-
-=back
 
 =back
 
@@ -215,8 +182,8 @@ This command is implemented with L<Getopt::EX> module.  So
 
     ~/.ansicolumnrc
 
-file is read at start up.  If you want B<--no-top-space> always on,
-put this line in your F<~/.ansicolumnrc>.
+file is read at start up.  If you want B<--no-top-space> always being
+on, put this line in your F<~/.ansicolumnrc>.
 
     option default --no-top-space
 
@@ -234,6 +201,10 @@ option. See `perldoc Getopt::EX` for detail.
 Until CPAN release, use this:
 
     $ cpanm https://github.com/kaz-utashiro/App-ansicolumn.git
+
+=head1 EXAMPLES
+
+L<https://github.com/kaz-utashiro/App-ansicolumn/tree/master/images>
 
 =head1 SEE ALSO
 
@@ -260,4 +231,5 @@ it under the same terms as Perl itself.
 
 #  LocalWords:  ansicolumn fillrows tabstop columnunit fullwidth DOCX
 #  LocalWords:  linestyle linebreak docx runin runout perldoc cpanm
-#  LocalWords:  CPANMINUS perl CPAN Kazumasa Utashiro
+#  LocalWords:  CPANMINUS perl CPAN Kazumasa Utashiro optex wordwrap
+#  LocalWords:  Unicode ansicolumnrc

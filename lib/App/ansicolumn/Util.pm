@@ -137,6 +137,7 @@ sub zip {
 }
 
 sub insert_space {
+    use List::Util qw(reduce);
     map { @$_ } reduce {
 	[ @$a, (@$a && $a->[-1] ne '' && $b ne '' ? '' : ()), $b ]
     } [], @_;

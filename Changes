@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.15 2020-11-01T16:40:09Z
+
+    - Document update.
+
 0.14 2020-10-31T04:19:07Z
 
     - Change option --border-theme to --border-style.
