@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.15
+Version 0.16
 
 # SYNOPSIS
 
@@ -119,6 +119,14 @@ default, from the standard input.
     light vertical line filling the page height.  My favorite is
     **light-block**.  These styles are experimental and subject to change.
     Use \`perldoc -m App::ansicolumn::Border\` for detail.
+
+    You can define your own style in module or startup file.  Put next
+    lines in your [".ansicolumnrc" in ~](https://metacpan.org/pod/~#ansicolumnrc) file, for example.
+
+        __PERL__
+        App::ansicolumn::Border->add_style(
+            ascii => { right => [ "+ ", "| " ] },
+        );
 
 - **--fullwidth**
 

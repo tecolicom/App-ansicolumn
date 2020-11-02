@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.15";
+our $VERSION = "0.16";
 
 use v5.14;
 use warnings;
@@ -135,7 +135,7 @@ sub setup_options {
     ## --border
     if ($obj->{border}) {
 	($obj->{BORDER} = App::ansicolumn::Border->new)
-	    ->theme($obj->{border_style}) // die "Unknown theme.\n";
+	    ->style($obj->{border_style}) // die "Unknown style.\n";
     }
 
     ## --ambiguous=wide
