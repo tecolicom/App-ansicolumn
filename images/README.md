@@ -60,3 +60,13 @@ w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.htm
 
 ![japanese-color-document](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-japanese-color-document.png)
 
+### man command output with backspaces
+
+Man commpand produces formatted output of boldface and underline
+sequence using backspaces.
+
+```
+man git-rebase | ansicolumn -PDC2 | less
+```
+
+![man](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-man.png)
