@@ -47,6 +47,7 @@ sub new {
 	insert_space     => undef,
 	top_space        => 2,
 	fillup           => undef,
+	fillup_str       => '',
 	ambiguous        => 'narrow',
 	colormap         => [],
 	COLORHASH        => {},
@@ -83,6 +84,7 @@ sub run {
 	"insert_space|insert-space!",
 	"top_space|top-space|ts!",
 	"fillup:s",
+	"fillup_str|fillup-str:s",
 	"ambiguous=s",
 	"debug",
 	"version|v",
@@ -211,7 +213,7 @@ sub column_out {
 	my $line = $height;
 	$line *= $panes if $obj->{fillup} eq 'page';
 	if (my $remmant = @data % $line) {
-	    push @data, ('') x ($line - $remmant);
+	    push @data, ($obj->{fillup_str}) x ($line - $remmant);
 	}
     }
 

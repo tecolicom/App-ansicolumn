@@ -13,7 +13,7 @@ is learned from terminal status, and can be given by **--page-height**
 option.
 
 ```
-$ jot 1000 | ansicolumn -P | less
+$ jot 1000 | greple --re .+ --ci=a | ansicolumn -P | less
 ```
 
 ![page-option](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-page-option.png)
@@ -24,7 +24,7 @@ Highlighted text in multiple columns.  Option **-C** specifies number
 of columns.
 
 ```
-$ ansicolumn -PC3
+$ src-hilite-lesspipe.sh `perldoc -ml App::ansicolumn::Border` | ansicolumn -PC3 | less
 ```
 
 ![color-code](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-color-code.png)
@@ -38,6 +38,13 @@ $ ansicolumn -PS82
 ```
 
 ![large-screen](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-large-screen.png)
+
+```
+$ curl https://tools.ietf.org/rfc/rfc3986.txt | ansicolumn -PC5 | less
+
+```
+
+![rfc](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-rfc.png)
 
 ### Japanese Document
 
