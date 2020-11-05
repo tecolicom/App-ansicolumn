@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.16
+Version 0.17
 
 # SYNOPSIS
 
@@ -63,6 +63,7 @@ default, from the standard input.
         --page-height=[ terminal height - 1 ]
         --linestyle=wrap
         --border
+        --fillup
 
 - **-D**, **--document**
 
@@ -72,6 +73,7 @@ default, from the standard input.
         --linebreak=all
         --linestyle=wrap
         --boundary=word
+        --no-top-space
 
     Next command display DOCX text in 3-up format using
     [App::optex::textconv](https://metacpan.org/pod/App::optex::textconv).
@@ -87,10 +89,18 @@ default, from the standard input.
 
     Specify pane width.  This includes border spaces.
 
+- **-F**, **--fullwidth**
+
+    Use full width of the terminal.  Each panes are expanded to fill
+    terminal width, unless **--pane-width** is specified.
+
 - **--linestyle**=_none_|_truncate_|_wrap_|_wordwrap_, **--ls**=_..._
 
     Set the style of treatment for longer lines.
     Default is _none_.
+
+    **--linestyle=wordrap** is equivalent to **--linestyle=wrap**
+    **--boundary=word**.
 
 - **--boundary**=_word_
 
@@ -121,17 +131,14 @@ default, from the standard input.
     Use \`perldoc -m App::ansicolumn::Border\` for detail.
 
     You can define your own style in module or startup file.  Put next
-    lines in your [".ansicolumnrc" in ~](https://metacpan.org/pod/~#ansicolumnrc) file, for example.
+    lines in your `$HOME/.ansicolumnrc` file, for example.
 
         __PERL__
         App::ansicolumn::Border->add_style(
-            ascii => { right => [ "+ ", "| " ] },
+            ascii => { center => [ "+ ", "| " ] },
         );
 
-- **--fullwidth**
-
-    Use full width of the terminal.  Each panes are expanded to fill
-    terminal width, unless **--pane-width** is specified.
+    This is experimental implementation and subject to change.
 
 - **--page-height**=#, **--ph**=#
 
@@ -146,9 +153,16 @@ default, from the standard input.
 
     Insert empty line between every successive non-empty lines.
 
-- **--no-top-space**
+- **--**\[**no-**\]**top-space**, **--**\[**no-**\]**ts**
 
     Clean up empty lines at the top of each pages.
+
+- **--fillup**\[=_pane|page|none_\]
+
+    Fill up final pane or page by empty lines.  Parameter is optional and
+    considered as 'pane' by default.  Set by **--page** option
+    automatically.  Use **--fillup=none** if you want to explicitly disable
+    it.
 
 - **--tabstop**=#
 

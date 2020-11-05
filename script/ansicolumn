@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.16
+Version 0.17
 
 =head1 SYNOPSIS
 
@@ -81,6 +81,7 @@ Page mode.  Set following options.
     --page-height=[ terminal height - 1 ]
     --linestyle=wrap
     --border
+    --fillup
 
 =item B<-D>, B<--document>
 
@@ -90,6 +91,7 @@ Document mode.  Set following options.
     --linebreak=all
     --linestyle=wrap
     --boundary=word
+    --no-top-space
 
 Next command display DOCX text in 3-up format using
 L<App::optex::textconv>.
@@ -105,10 +107,18 @@ of panes implies B<--fullwidth> option enabled.
 
 Specify pane width.  This includes border spaces.
 
+=item B<-F>, B<--fullwidth>
+
+Use full width of the terminal.  Each panes are expanded to fill
+terminal width, unless B<--pane-width> is specified.
+
 =item B<--linestyle>=I<none>|I<truncate>|I<wrap>|I<wordwrap>, B<--ls>=I<...>
 
 Set the style of treatment for longer lines.
 Default is I<none>.
+
+B<--linestyle=wordrap> is equivalent to B<--linestyle=wrap>
+B<--boundary=word>.
 
 =item B<--boundary>=I<word>
 
@@ -139,17 +149,14 @@ B<light-block>.  These styles are experimental and subject to change.
 Use `perldoc -m App::ansicolumn::Border` for detail.
 
 You can define your own style in module or startup file.  Put next
-lines in your L<~/.ansicolumnrc> file, for example.
+lines in your C<$HOME/.ansicolumnrc> file, for example.
 
     __PERL__
     App::ansicolumn::Border->add_style(
-        ascii => { right => [ "+ ", "| " ] },
+        ascii => { center => [ "+ ", "| " ] },
     );
 
-=item B<--fullwidth>
-
-Use full width of the terminal.  Each panes are expanded to fill
-terminal width, unless B<--pane-width> is specified.
+This is experimental implementation and subject to change.
 
 =item B<--page-height>=#, B<--ph>=#
 
@@ -164,9 +171,16 @@ B<--no-ignore-space> option to disable it.
 
 Insert empty line between every successive non-empty lines.
 
-=item B<--no-top-space>
+=item B<-->[B<no->]B<top-space>, B<-->[B<no->]B<ts>
 
 Clean up empty lines at the top of each pages.
+
+=item B<--fillup>[=I<pane|page|none>]
+
+Fill up final pane or page by empty lines.  Parameter is optional and
+considered as 'pane' by default.  Set by B<--page> option
+automatically.  Use B<--fillup=none> if you want to explicitly disable
+it.
 
 =item B<--tabstop>=#
 

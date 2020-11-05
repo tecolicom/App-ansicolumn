@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.17 2020-11-05T03:15:48Z
+
+    - Add --fillup option.
+    - Introduce `center' border with `left' and `right'.
+    - Shortcut -F for --fullwidth.
+
 0.16 2020-11-02T08:45:07Z
 
     - Update border staff.

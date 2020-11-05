@@ -62,7 +62,7 @@ w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.htm
 
 ### man command output with backspaces
 
-Man commpand produces formatted output of boldface and underline
+Man command produces formatted output of boldface and underline
 sequence using backspaces.
 
 ```

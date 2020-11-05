@@ -15,7 +15,7 @@ sub border {
 sub border_width {
     use List::Util qw(sum);
     my $obj = shift;
-    sum map length($obj->border($_)), qw(left right);
+    sum map length($obj->border($_)), @_;
 }
 
 use Text::ANSI::Fold qw(:constants);
