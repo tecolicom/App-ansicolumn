@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.18";
+our $VERSION = "0.19";
 
 use v5.14;
 use warnings;
@@ -46,10 +46,12 @@ sub new {
 	document         => undef,
 	insert_space     => undef,
 	top_space        => 2,
+	move_head        => undef,
 	fillup           => undef,
 	fillup_str       => '',
 	ambiguous        => 'narrow',
 	keep_el          => 0,
+	padchar          => ' ',
 	colormap         => [],
 	COLORHASH        => {},
 	COLORLIST        => [],
@@ -84,10 +86,12 @@ sub run {
 	"colormap|cm=s@",
 	"insert_space|insert-space!",
 	"top_space|top-space|ts!",
+	"move_head|move-head!",
 	"fillup:s",
 	"fillup_str|fillup-str:s",
 	"ambiguous=s",
 	"keep_el|keep-el!",
+	"padchar=s",
 	"debug",
 	"version|v",
 	) || pod2usage();
@@ -131,6 +135,7 @@ sub setup_options {
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{boundary}  ||= 'word';
 	$obj->{top_space} = 0 if $obj->{top_space} > 1;
+	$obj->{move_head} ||= 1;
     }
 
     ## --colormap
@@ -172,60 +177,57 @@ sub column_out {
     my $max_length = max @length;
     my $unit = $obj->{columnunit} || 1;
 
-    my $span;
-    my $panes;
-    if ($obj->{fullwidth} and not $obj->{pane_width}) {
-	my $min = $max_length + ($obj->border_width('center') || 1);
-	$panes = $obj->{pane} || $width / $min || 1;
-	$span = ($width + $obj->border_width('center')) / $panes;
-    } else {
-	$span = $obj->{pane_width} ||
-	    roundup($max_length + ($obj->border_width('center') || 1), $unit);
-	$panes = $obj->{pane} || $width / $span || 1;
+    {
+	my $span;
+	my $panes;
+	if ($obj->{fullwidth} and not $obj->{pane_width}) {
+	    my $min = $max_length + ($obj->border_width('center') || 1);
+	    $panes = $obj->{pane} || $width / $min || 1;
+	    $span = ($width + $obj->border_width('center')) / $panes;
+	} else {
+	    $span = $obj->{pane_width} ||
+		roundup($max_length + ($obj->border_width('center') || 1),
+			$unit);
+	    $panes = $obj->{pane} || $width / $span || 1;
+	}
+	$span -= $obj->border_width('center');
+	$obj->{span} = $span;
+	$obj->{panes} = $panes;
     }
-    $span -= $obj->border_width('center');
 
     ## Fold long lines.
-    (my $cell_width = $span - $obj->margin_width) < -1
+    (my $cell_width = $obj->{span} - $obj->margin_width) < -1
 	and die "Not enough space.\n";
     if ($obj->{linestyle} and $obj->{linestyle} ne 'none') {
 	my $sub = $obj->foldsub($cell_width) or die;
 	@data = map { $sub->($_) } @data;
     }
+
     my($bdr_top, $bdr_btm) = map $obj->border($_), qw(top bottom);
     my $height = do {
 	if ($obj->{page_height}) {
 	    $obj->{page_height} - !!$bdr_top - !!$bdr_btm;
 	} else {
-	    div(0+@data, $panes);
+	    div(0+@data, $obj->{panes});
 	}
     };
 
-    ## --no-topspace
-    if (not $obj->{top_space}) {
-	remove_topspaces \@data, $height;
-    }
+    ## --top-space, --move-head
+    $obj->space_layout(\@data, $height);
 
     ## --fillup
-    if (defined $obj->{fillup} and $obj->{fillup} !~ /^(?:no|none)$/) {
-	$obj->{fillup} ||= 'pane';
-	my $line = $height;
-	$line *= $panes if $obj->{fillup} eq 'page';
-	if (my $remmant = @data % $line) {
-	    push @data, ($obj->{fillup_str}) x ($line - $remmant);
-	}
-    }
+    $obj->fillup(\@data, $height);
 
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
     for (my $page = 0; @data_index; $page++) {
-	my @page = splice @data_index, 0, $height * $panes;
+	my @page = splice @data_index, 0, $height * $obj->{panes};
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($obj->{fillrows}) {
-		map { [ splice @index, 0, $panes ] } 1 .. $height;
+		map { [ splice @index, 0, $obj->{panes} ] } 1 .. $height;
 	    } else {
-		zip map { [ splice @index, 0, $height ] } 1 .. $panes;
+		zip map { [ splice @index, 0, $height ] } 1 .. $obj->{panes};
 	    }
 	};
 	for my $i (0 .. $#lines) {
@@ -233,7 +235,7 @@ sub column_out {
 	    my $pos = $i == 0 ? 0 : $i == $#lines ? 2 : 1;
 	    my @panes = map {
 		my $data_index = $page[${$line}[$_]];
-		ansi_sprintf "%-${span}s", $data[$data_index];
+		ansi_sprintf "%-$obj->{span}s", $data[$data_index];
 	    } 0 .. $#{$line};
 	    print      $obj->border('left',   $pos, $page);
 	    print join $obj->border('center', $pos, $page), @panes;

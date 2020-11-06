@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.19 2020-11-06T17:02:32Z
+
+    - Add experimental --move-head option.
+
 0.18 2020-11-06T04:40:25Z
 
     - Use Text::ANSI::Fold with padding.

@@ -3,6 +3,8 @@ package App::ansicolumn;
 use v5.14;
 use warnings;
 
+use utf8;
+
 ######################################################################
 # Object interface
 ######################################################################
@@ -71,6 +73,7 @@ sub foldobj {
 	runout    => $obj->{runout},
 	ambiguous => $obj->{ambiguous},
 	keep_el   => $obj->{keep_el},
+	padchar   => $obj->{padchar},
 	padding   => 1,
 	);
 }
@@ -85,6 +88,42 @@ sub foldsub {
 	sub {  $fold->text($_[0])->chops };
     } else {
 	undef;
+    }
+}
+
+sub space_layout {
+    my $obj = shift;
+    my($dp, $height, $start) = @_;
+    for (my $page = $start // 0; (my $top = $page * $height) < @$dp; $page++) {
+	if ($height >= 4 and $top > 2 and $obj->{move_head}) {
+	    if ($dp->[$top - 2] !~ /\S/ and
+		$dp->[$top - 1] =~ /\S/ and
+		$dp->[$top    ] =~ /\S/
+		) {
+		splice @$dp, $top - 1, 0, '';
+		next;
+	    }
+	}
+	if (not $obj->{top_space}) {
+	    while ($top < @$dp and $dp->[$top] !~ /\S/) {
+		splice @$dp, $top, 1;
+	    }
+	}
+
+    }
+    @$dp;
+}
+
+sub fillup {
+    my $obj = shift;
+    my($dp, $height) = @_;
+    defined $obj->{fillup} and $obj->{fillup} !~ /^(?:no|none)$/
+	or return;
+    $obj->{fillup} ||= 'pane';
+    my $line = $height;
+    $line *= $obj->{panes} if $obj->{fillup} eq 'page';
+    if (my $remmant = @$dp % $line) {
+	push @$dp, ($obj->{fillup_str}) x ($line - $remmant);
     }
 }
 
@@ -148,7 +187,7 @@ sub insert_space {
 sub remove_topspaces ($$;$) {
     my($lp, $len, $start) = @_;
     for (my $page = $start // 0; (my $top = $page * $len) < @$lp; $page++) {
-	while ($top < @$lp and $lp->[$top] eq '') {
+	while ($top < @$lp and $lp->[$top] !~ /\S/) {
 	    splice @$lp, $top, 1;
 	}
     }

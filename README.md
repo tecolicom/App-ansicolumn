@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.18
+Version 0.19
 
 # SYNOPSIS
 
@@ -74,6 +74,7 @@ default, from the standard input.
         --linestyle=wrap
         --boundary=word
         --no-top-space
+        --move-head
 
     Next command display DOCX text in 3-up format using
     [App::optex::textconv](https://metacpan.org/pod/App::optex::textconv).
@@ -155,7 +156,14 @@ default, from the standard input.
 
 - **--**\[**no-**\]**top-space**, **--**\[**no-**\]**ts**
 
-    Clean up empty lines at the top of each pages.
+    Allow empty lines at the top of each panes, or clean them up.  Default
+    true.  Disabled by **--document** option.
+
+- **--**\[**no-**\]**move-head**
+
+    If the first line of a paragraph (continuous non-space lines) is
+    placed at the bottom line of a pane, move it to the top of next pane.
+    Default false.  Enabled by **--document** option.
 
 - **--fillup**\[=_pane|page|none_\]
 

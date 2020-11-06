@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.18
+Version 0.19
 
 =head1 SYNOPSIS
 
@@ -92,6 +92,7 @@ Document mode.  Set following options.
     --linestyle=wrap
     --boundary=word
     --no-top-space
+    --move-head
 
 Next command display DOCX text in 3-up format using
 L<App::optex::textconv>.
@@ -173,7 +174,14 @@ Insert empty line between every successive non-empty lines.
 
 =item B<-->[B<no->]B<top-space>, B<-->[B<no->]B<ts>
 
-Clean up empty lines at the top of each pages.
+Allow empty lines at the top of each panes, or clean them up.  Default
+true.  Disabled by B<--document> option.
+
+=item B<-->[B<no->]B<move-head>
+
+If the first line of a paragraph (continuous non-space lines) is
+placed at the bottom line of a pane, move it to the top of next pane.
+Default false.  Enabled by B<--document> option.
 
 =item B<--fillup>[=I<pane|page|none>]
 
