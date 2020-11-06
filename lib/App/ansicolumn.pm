@@ -175,7 +175,7 @@ sub column_out {
     if ($obj->{fullwidth} and not $obj->{pane_width}) {
 	my $min = $max_length + ($obj->border_width('center') || 1);
 	$panes = $obj->{pane} || $width / $min || 1;
-	$span = $width / $panes;
+	$span = ($width + $obj->border_width('center')) / $panes;
     } else {
 	$span = $obj->{pane_width} ||
 	    roundup($max_length + ($obj->border_width('center') || 1), $unit);
