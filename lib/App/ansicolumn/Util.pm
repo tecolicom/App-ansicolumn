@@ -70,6 +70,8 @@ sub foldobj {
 	runin     => $obj->{runin},
 	runout    => $obj->{runout},
 	ambiguous => $obj->{ambiguous},
+	keep_el   => $obj->{keep_el},
+	padding   => 1,
 	);
 }
 

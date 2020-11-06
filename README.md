@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.17
+Version 0.18
 
 # SYNOPSIS
 

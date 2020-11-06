@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.17";
+our $VERSION = "0.18";
 
 use v5.14;
 use warnings;
@@ -49,6 +49,7 @@ sub new {
 	fillup           => undef,
 	fillup_str       => '',
 	ambiguous        => 'narrow',
+	keep_el          => 0,
 	colormap         => [],
 	COLORHASH        => {},
 	COLORLIST        => [],
@@ -86,6 +87,7 @@ sub run {
 	"fillup:s",
 	"fillup_str|fillup-str:s",
 	"ambiguous=s",
+	"keep_el|keep-el!",
 	"debug",
 	"version|v",
 	) || pod2usage();
@@ -186,12 +188,9 @@ sub column_out {
     ## Fold long lines.
     (my $cell_width = $span - $obj->margin_width) < -1
 	and die "Not enough space.\n";
-    if ($max_length > $cell_width and
-	$obj->{linestyle} and $obj->{linestyle} ne 'none') {
+    if ($obj->{linestyle} and $obj->{linestyle} ne 'none') {
 	my $sub = $obj->foldsub($cell_width) or die;
-	@data = map {
-	    $length[$_] <= $cell_width ? $data[$_] : $sub->($data[$_])
-	} 0 .. $#data;
+	@data = map { $sub->($_) } @data;
     }
     my($bdr_top, $bdr_btm) = map $obj->border($_), qw(top bottom);
     my $height = do {

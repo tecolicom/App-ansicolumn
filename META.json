@@ -45,7 +45,7 @@
             "Getopt::EX" : "v1.19.1",
             "List::Util" : "1.45",
             "Term::ReadKey" : "0",
-            "Text::ANSI::Fold" : "2.02",
+            "Text::ANSI::Fold" : "2.04",
             "Text::ANSI::Fold::Util" : "0",
             "Text::ANSI::Printf" : "1.03",
             "perl" : "v5.14.0"
@@ -69,7 +69,7 @@
          "web" : "https://github.com/kaz-utashiro/App-ansicolumn"
       }
    },
-   "version" : "0.17",
+   "version" : "0.18",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"

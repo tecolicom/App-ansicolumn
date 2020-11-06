@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.18 2020-11-06T04:40:25Z
+
+    - Use Text::ANSI::Fold with padding.
+    - Add --keep-el option to control Erase Line sequence.
+
 0.17 2020-11-05T03:15:48Z
 
     - Add --fillup option.
