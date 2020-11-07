@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.20 2020-11-07T00:49:58Z
+
+    - Change option name: --white-space, --isolation
+
 0.19 2020-11-06T17:02:32Z
 
     - Add experimental --move-head option.

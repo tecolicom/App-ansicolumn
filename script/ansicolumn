@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.19
+Version 0.20
 
 =head1 SYNOPSIS
 
@@ -91,8 +91,8 @@ Document mode.  Set following options.
     --linebreak=all
     --linestyle=wrap
     --boundary=word
-    --no-top-space
-    --move-head
+    --no-white-space
+    --no-isolation
 
 Next command display DOCX text in 3-up format using
 L<App::optex::textconv>.
@@ -172,16 +172,16 @@ B<--no-ignore-space> option to disable it.
 
 Insert empty line between every successive non-empty lines.
 
-=item B<-->[B<no->]B<top-space>, B<-->[B<no->]B<ts>
+=item B<-->[B<no->]B<white-space>
 
-Allow empty lines at the top of each panes, or clean them up.  Default
-true.  Disabled by B<--document> option.
+Allow white spaces at the top of each panes, or clean them up.
+Default true.  Disabled by B<--document> option.
 
-=item B<-->[B<no->]B<move-head>
+=item B<-->[B<no->]B<isolation>
 
-If the first line of a paragraph (continuous non-space lines) is
-placed at the bottom line of a pane, move it to the top of next pane.
-Default false.  Enabled by B<--document> option.
+Allow the first line of a paragraph (continuous non-space lines) is
+placed at the bottom of a pane.  Default true.  If false, move it to
+the top of next pane.  Disabled by B<--document> option.
 
 =item B<--fillup>[=I<pane|page|none>]
 
@@ -212,10 +212,10 @@ This command is implemented with L<Getopt::EX> module.  So
 
     ~/.ansicolumnrc
 
-file is read at start up.  If you want B<--no-top-space> always being
-on, put this line in your F<~/.ansicolumnrc>.
+file is read at start up.  If you want use B<--no-white-space> always,
+put this line in your F<~/.ansicolumnrc>.
 
-    option default --no-top-space
+    option default --no-white-space
 
 Also command can be extended by original modules with B<-M>
 option. See `perldoc Getopt::EX` for detail.

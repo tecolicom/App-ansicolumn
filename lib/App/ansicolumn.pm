@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.19";
+our $VERSION = "0.20";
 
 use v5.14;
 use warnings;
@@ -45,8 +45,8 @@ sub new {
 	border_style     => 'light-bar',
 	document         => undef,
 	insert_space     => undef,
-	top_space        => 2,
-	move_head        => undef,
+	white_space      => 2,
+	isolation        => 2,
 	fillup           => undef,
 	fillup_str       => '',
 	ambiguous        => 'narrow',
@@ -85,8 +85,8 @@ sub run {
 	"document|D",
 	"colormap|cm=s@",
 	"insert_space|insert-space!",
-	"top_space|top-space|ts!",
-	"move_head|move-head!",
+	"white_space|white-space!",
+	"isolation!",
 	"fillup:s",
 	"fillup_str|fillup-str:s",
 	"ambiguous=s",
@@ -134,8 +134,8 @@ sub setup_options {
 	$obj->{linebreak} ||= 'all';
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{boundary}  ||= 'word';
-	$obj->{top_space} = 0 if $obj->{top_space} > 1;
-	$obj->{move_head} ||= 1;
+	$obj->{white_space} = 0 if $obj->{white_space} > 1;
+	$obj->{isolation} = 0 if $obj->{isolation} > 1;
     }
 
     ## --colormap
@@ -212,7 +212,7 @@ sub column_out {
 	}
     };
 
-    ## --top-space, --move-head
+    ## --white-space, --isolation
     $obj->space_layout(\@data, $height);
 
     ## --fillup

@@ -95,7 +95,7 @@ sub space_layout {
     my $obj = shift;
     my($dp, $height, $start) = @_;
     for (my $page = $start // 0; (my $top = $page * $height) < @$dp; $page++) {
-	if ($height >= 4 and $top > 2 and $obj->{move_head}) {
+	if ($height >= 4 and $top > 2 and !$obj->{isolation}) {
 	    if ($dp->[$top - 2] !~ /\S/ and
 		$dp->[$top - 1] =~ /\S/ and
 		$dp->[$top    ] =~ /\S/

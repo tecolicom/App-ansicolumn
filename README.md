@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.19
+Version 0.20
 
 # SYNOPSIS
 
@@ -73,8 +73,8 @@ default, from the standard input.
         --linebreak=all
         --linestyle=wrap
         --boundary=word
-        --no-top-space
-        --move-head
+        --no-white-space
+        --no-isolation
 
     Next command display DOCX text in 3-up format using
     [App::optex::textconv](https://metacpan.org/pod/App::optex::textconv).
@@ -154,16 +154,16 @@ default, from the standard input.
 
     Insert empty line between every successive non-empty lines.
 
-- **--**\[**no-**\]**top-space**, **--**\[**no-**\]**ts**
+- **--**\[**no-**\]**white-space**
 
-    Allow empty lines at the top of each panes, or clean them up.  Default
-    true.  Disabled by **--document** option.
+    Allow white spaces at the top of each panes, or clean them up.
+    Default true.  Disabled by **--document** option.
 
-- **--**\[**no-**\]**move-head**
+- **--**\[**no-**\]**isolation**
 
-    If the first line of a paragraph (continuous non-space lines) is
-    placed at the bottom line of a pane, move it to the top of next pane.
-    Default false.  Enabled by **--document** option.
+    Allow the first line of a paragraph (continuous non-space lines) is
+    placed at the bottom of a pane.  Default true.  If false, move it to
+    the top of next pane.  Disabled by **--document** option.
 
 - **--fillup**\[=_pane|page|none_\]
 
@@ -192,10 +192,10 @@ This command is implemented with [Getopt::EX](https://metacpan.org/pod/Getopt::E
 
     ~/.ansicolumnrc
 
-file is read at start up.  If you want **--no-top-space** always being
-on, put this line in your `~/.ansicolumnrc`.
+file is read at start up.  If you want use **--no-white-space** always,
+put this line in your `~/.ansicolumnrc`.
 
-    option default --no-top-space
+    option default --no-white-space
 
 Also command can be extended by original modules with **-M**
 option. See \`perldoc Getopt::EX\` for detail.
