@@ -2,7 +2,6 @@ package App::ansicolumn;
 
 use v5.14;
 use warnings;
-
 use utf8;
 
 ######################################################################
@@ -104,12 +103,11 @@ sub space_layout {
 		next;
 	    }
 	}
-	if (not $obj->{top_space}) {
+	if (not $obj->{white_space}) {
 	    while ($top < @$dp and $dp->[$top] !~ /\S/) {
 		splice @$dp, $top, 1;
 	    }
 	}
-
     }
     @$dp;
 }

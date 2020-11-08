@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.20";
+our $VERSION = "0.21";
 
 use v5.14;
 use warnings;
@@ -30,7 +30,7 @@ sub new {
 	separator        => ' ',
 	output_separator => '  ',
 	page_height      => 0,
-	columnunit       => 8,
+	column_unit      => 8,
 	pane             => 0,
 	pane_width       => undef,
 	tabstop          => \$Text::Tabs::tabstop,
@@ -63,34 +63,35 @@ sub run {
     local @ARGV = map { utf8::is_utf8($_) ? $_ : decode('utf8', $_) } @_;
     GetOptions(
 	$obj,
-	"output_width|output-width|c=i",
+	map { s/^(?=\w*_)(\w+)\K/"|" . $1 =~ tr[_][-]r/er }
+	"output_width|c=i",
 	"fillrows|x",
 	"table|t",
-	"table_right|table-right|R=s",
+	"table_right|R=s",
 	"separator|s=s",
-	"output_separator|output-separator|o=s",
+	"output_separator|o=s",
 	"page|P",
-	"page_height|page-height|ph=i",
-	"columnunit|cu=i",
+	"page_height|ph=i",
+	"column_unit|cu=i",
 	"pane|C=i",
-	"pane_width|pane-width|pw|S=i",
+	"pane_width|pw|S=i",
 	"tabstop=i",
-	"ignore_space|ignore-space|is!",
+	"ignore_space|is!",
 	"fullwidth|F!",
 	"linestyle|ls=s",
 	"boundary=s",
 	"linebreak|lb=s", "runin=i", "runout=i",
 	"border!",
-	"border_style|border-style|bs=s",
+	"border_style|bs=s",
 	"document|D",
 	"colormap|cm=s@",
-	"insert_space|insert-space!",
-	"white_space|white-space!",
+	"insert_space!",
+	"white_space!",
 	"isolation!",
 	"fillup:s",
-	"fillup_str|fillup-str:s",
+	"fillup_str:s",
 	"ambiguous=s",
-	"keep_el|keep-el!",
+	"keep_el!",
 	"padchar=s",
 	"debug",
 	"version|v",
@@ -124,16 +125,17 @@ sub setup_options {
     ## -P
     if ($obj->{page}) {
 	$obj->{page_height} ||= $obj->term_height - 1;
-	$obj->{linestyle}  ||= 'wrap';
+	$obj->{linestyle} ||= 'wrap';
 	$obj->{border} //= 1;
 	$obj->{fillup} //= 'pane';
     }
+
     ## -D
     if ($obj->{document}) {
 	$obj->{fullwidth} = 1;
 	$obj->{linebreak} ||= 'all';
 	$obj->{linestyle} ||= 'wrap';
-	$obj->{boundary}  ||= 'word';
+	$obj->{boundary} ||= 'word';
 	$obj->{white_space} = 0 if $obj->{white_space} > 1;
 	$obj->{isolation} = 0 if $obj->{isolation} > 1;
     }

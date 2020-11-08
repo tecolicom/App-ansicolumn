@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.21 2020-11-08T10:05:12Z
+
+    - --columnunit -> --column-unit
+    - Add image.
+
 0.20 2020-11-07T00:49:58Z
 
     - Change option name: --white-space, --isolation

@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.20
+Version 0.21
 
 # SYNOPSIS
 
@@ -58,7 +58,7 @@ default, from the standard input.
 
 - **-P**, **--page**
 
-    Page mode.  Set following options.
+    Page mode.  Set these options.
 
         --page-height=[ terminal height - 1 ]
         --linestyle=wrap
@@ -67,7 +67,7 @@ default, from the standard input.
 
 - **-D**, **--document**
 
-    Document mode.  Set following options.
+    Document mode.  Set these options.
 
         --fullwidth
         --linebreak=all
@@ -176,7 +176,7 @@ default, from the standard input.
 
     Set tab width.
 
-- **--columnunit**=#
+- **--column-unit**=#
 
     Each columns are placed at unit of 8 by default.  This option changes
     the number of unit.

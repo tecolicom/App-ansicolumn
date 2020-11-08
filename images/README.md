@@ -77,3 +77,16 @@ man git-rebase | ansicolumn -PDC2 | less
 ```
 
 ![man](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-man.png)
+
+### ANSI Erase Line emulation
+
+cdif uses ANSI Erase Line sequence to display horizontal bar.
+ansicolumn emulates Erase Line by applying remembered color for
+padding characters.  This is done by Text::ANSI::Fold module in fact.
+
+```
+git show | cdif | ansicolumn -PC2 | less
+```
+
+![cdif](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-cdif.png)
+
