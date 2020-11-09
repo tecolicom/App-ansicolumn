@@ -33,7 +33,7 @@ sub new {
 	column_unit      => 8,
 	pane             => 0,
 	pane_width       => undef,
-	tabstop          => \$Text::Tabs::tabstop,
+	tabstop          => 8,
 	ignore_space     => 1,
 	fullwidth        => undef,
 	linestyle        => '',
@@ -169,7 +169,8 @@ sub column_out {
     my @data;
     my @length;
     for (@_) {
-	my($expanded, $dmy, $length) = ansi_fold($_, -1, expand => 1);
+	my($expanded, $dmy, $length) =
+	    ansi_fold($_, -1, expand => 1, tabstop => $obj->{tabstop});
 	push @data, $expanded;
 	push @length, $length;
     }
