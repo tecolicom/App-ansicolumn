@@ -178,9 +178,9 @@ sub column_out {
     use integer;
     my $width = $obj->width - $obj->border_width(qw(left right));
     my $max_length = max @length;
-    my $unit = $obj->{columnunit} || 1;
+    my $unit = $obj->{column_unit} || 1;
 
-    {
+    ($obj->{span}, $obj->{panes}) = do {
 	my $span;
 	my $panes;
 	if ($obj->{fullwidth} and not $obj->{pane_width}) {
@@ -194,9 +194,8 @@ sub column_out {
 	    $panes = $obj->{pane} || $width / $span || 1;
 	}
 	$span -= $obj->border_width('center');
-	$obj->{span} = $span;
-	$obj->{panes} = $panes;
-    }
+	($span, $panes);
+    };
 
     ## Fold long lines.
     (my $cell_width = $obj->{span} - $obj->margin_width) < -1
