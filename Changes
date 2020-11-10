@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.23 2020-11-10T15:20:30Z
+
+    - Fix --column-unit option handling error.
+    - Add simple test code, using App::cdif::Command module.
+
 0.22 2020-11-09T08:30:52Z
 
     - Make --tabstop option to work.
