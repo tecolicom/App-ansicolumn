@@ -2,7 +2,7 @@ requires 'perl', 'v5.14';
 
 requires 'List::Util', '1.45';
 requires 'Term::ReadKey';
-requires 'Getopt::EX', 'v1.19.1';
+requires 'Getopt::EX', 'v1.21.0';
 requires 'Text::ANSI::Fold', '2.04';
 requires 'Text::ANSI::Fold::Util';
 requires 'Text::ANSI::Printf', '1.03';

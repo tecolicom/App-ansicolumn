@@ -1,5 +1,3 @@
-before_install:
-  - cpanm -n https://github.com/kaz-utashiro/Text-ANSI-Printf.git
 language: perl
 matrix:
   include:
