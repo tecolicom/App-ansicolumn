@@ -2,8 +2,6 @@ use strict;
 use Test::More 0.98;
 
 use lib './t';
-
-use Data::Dumper;
 use ac;
 
 my $stdin = join '', map "$_\n", 1.. 100;
