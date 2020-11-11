@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.23
+Version 0.24
 
 # SYNOPSIS
 
@@ -60,7 +60,7 @@ default, from the standard input.
 
     Page mode.  Set these options.
 
-        --page-height=[ terminal height - 1 ]
+        --height=[ terminal height - 1 ]
         --linestyle=wrap
         --border
         --fillup
@@ -141,7 +141,7 @@ default, from the standard input.
 
     This is experimental implementation and subject to change.
 
-- **--page-height**=#, **--ph**=#
+- **--height**=#
 
     Set page height and page mode on.
 
@@ -157,13 +157,13 @@ default, from the standard input.
 - **--**\[**no-**\]**white-space**
 
     Allow white spaces at the top of each panes, or clean them up.
-    Default true.  Disabled by **--document** option.
+    Default true.  Negated by **--document** option.
 
 - **--**\[**no-**\]**isolation**
 
     Allow the first line of a paragraph (continuous non-space lines) is
     placed at the bottom of a pane.  Default true.  If false, move it to
-    the top of next pane.  Disabled by **--document** option.
+    the top of next pane.  Negated by **--document** option.
 
 - **--fillup**\[=_pane|page|none_\]
 

@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.24 2020-11-11T11:37:44Z
+
+    - Implement top and bottom borders.
+
 0.23 2020-11-10T15:20:30Z
 
     - Fix --column-unit option handling error.
