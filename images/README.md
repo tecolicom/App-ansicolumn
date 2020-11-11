@@ -90,3 +90,13 @@ git show | cdif | ansicolumn -PC2 | less
 
 ![cdif](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-cdif.png)
 
+### Borders
+
+Five borders: left, center, right, top, bottom.
+
+```
+hilite-lesspipe.sh lib/App/ansicolumn/Border.pm | ansicolumn -PC4 --bs=light-box | less
+```
+
+![ac-border-light-box](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-border-light-box.png)
+
