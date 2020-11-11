@@ -29,7 +29,7 @@ sub new {
 	table_right      => '',
 	separator        => ' ',
 	output_separator => '  ',
-	page_height      => 0,
+	height           => 0,
 	column_unit      => 8,
 	pane             => 0,
 	pane_width       => undef,
@@ -71,7 +71,7 @@ sub run {
 	"separator|s=s",
 	"output_separator|o=s",
 	"page|P",
-	"page_height|ph=i",
+	"height=i",
 	"column_unit|cu=i",
 	"pane|C=i",
 	"pane_width|pw|S=i",
@@ -124,7 +124,7 @@ sub setup_options {
 
     ## -P
     if ($obj->{page}) {
-	$obj->{page_height} ||= $obj->term_height - 1;
+	$obj->{height} ||= $obj->term_height - 1;
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{border} //= 1;
 	$obj->{fillup} //= 'pane';
@@ -206,7 +206,7 @@ sub column_out {
     }
 
     $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
-    $obj->{page_height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
+    $obj->{height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
 
     ## --white-space, --isolation
     $obj->space_layout(\@data);
@@ -220,13 +220,13 @@ sub column_out {
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
     for (my $page = 0; @data_index; $page++) {
-	my @page = splice @data_index, 0, $obj->{page_height} * $obj->{panes};
+	my @page = splice @data_index, 0, $obj->{height} * $obj->{panes};
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($obj->{fillrows}) {
-		map { [ splice @index, 0, $obj->{panes} ] } 1 .. $obj->{page_height};
+		map { [ splice @index, 0, $obj->{panes} ] } 1 .. $obj->{height};
 	    } else {
-		zip map { [ splice @index, 0, $obj->{page_height} ] } 1 .. $obj->{panes};
+		zip map { [ splice @index, 0, $obj->{height} ] } 1 .. $obj->{panes};
 	    }
 	};
 	for my $i (0 .. $#lines) {

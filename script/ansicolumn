@@ -78,7 +78,7 @@ Support only numbers.
 
 Page mode.  Set these options.
 
-    --page-height=[ terminal height - 1 ]
+    --height=[ terminal height - 1 ]
     --linestyle=wrap
     --border
     --fillup
@@ -159,7 +159,7 @@ lines in your C<$HOME/.ansicolumnrc> file, for example.
 
 This is experimental implementation and subject to change.
 
-=item B<--page-height>=#, B<--ph>=#
+=item B<--height>=#
 
 Set page height and page mode on.
 
@@ -175,13 +175,13 @@ Insert empty line between every successive non-empty lines.
 =item B<-->[B<no->]B<white-space>
 
 Allow white spaces at the top of each panes, or clean them up.
-Default true.  Disabled by B<--document> option.
+Default true.  Negated by B<--document> option.
 
 =item B<-->[B<no->]B<isolation>
 
 Allow the first line of a paragraph (continuous non-space lines) is
 placed at the bottom of a pane.  Default true.  If false, move it to
-the top of next pane.  Disabled by B<--document> option.
+the top of next pane.  Negated by B<--document> option.
 
 =item B<--fillup>[=I<pane|page|none>]
 
