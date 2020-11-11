@@ -9,13 +9,13 @@ App::ansicolumn::Border - App::ansicolumn Border module
 =head1 DESCRIPTION
 
 Each item has five elements; L<right>, L<center>, L<left>, L<top>,
-L<bottom>.  However L<top> and L<bottom> are not implemented yet.
+L<bottom>.
 
 L<right>, L<left> and L<center> items can hold string value or list
 reference.  String value is equivalent to a list of single item.  If
 the list has single item, it is used on all position.  If the second
-item exists, it is used on middle positions.  Third item is used on
-bottom position.
+item exists, it is used on middle positions.  Third item is for bottom
+position.
 
 Class method L<add_style> can be used to add new border style.
 
@@ -67,36 +67,86 @@ my %template = (
 		    "│"   , # "\x{2502} "
 		    "╵"  ], # "\x{2575} "
     },
+    ascii_frame => {
+	top    =>   "-",
+	bottom =>   "-",
+	left   => [ "+-"  ,
+		    "| "  ,
+		    "+-" ],
+	center => [ "+ +-"  ,
+		    "| | "  ,
+		    "+ +-" ],
+	right  => [ "+"    ,
+		    "|"    ,
+		    "+"   ],
+    },
+    ascii_box => {
+	top    =>    "-",
+	bottom =>    "-",
+	left   => [ "+-"  ,
+		    "| "  ,
+		    "+-" ],
+	center => [ "+-"  ,
+		    "| "  ,
+		    "+-" ],
+	right  => [ "+"   ,
+		    "|"   ,
+		    "+"  ],
+    },
     light_frame => {
 	top    =>     "─",
 	bottom =>     "─",
-	left   => [  "┌─"  , # "\x{250C}\x{2500}"
-		     "│ "  , # "\x{2502} "
-		     "└─" ], # "\x{2514}\x{2500}"
-	center => [ "┐┌─"  , # "\x{2510}\x{250C}"
-		    "││ "  , # "\x{2502} "
-		    "┘└─" ], # "\x{2518}\x{2514}"
-	right  => [ "┐"    , # "\x{2510}"
-		    "│"    , # "\x{2502}"
-		    "┘"   ], # "\x{2518}"
+	left   => [  "┌─"  ,
+		     "│ "  ,
+		     "└─" ],
+	center => [ "┐┌─"  ,
+		    "││ "  ,
+		    "┘└─" ],
+	right  => [ "┐"    ,
+		    "│"    ,
+		    "┘"   ],
     },
-    light_scale => {
+    light_box => {
 	top    =>    "─",
 	bottom =>    "─",
-	left   => [ "┌─"  , # "\x{250C}\x{2500}"
-		    "│ "  , # "\x{2502} "
-		    "└─" ], # "\x{2514}\x{2500}"
-	center => [ "┬─"  , # "\x{252C}\x{250C}"
-		    "│ "  , # "\x{2502} "
-		    "┴─" ], # "\x{2534}\x{2514}"
-	right  => [ "┐"   , # "\x{2510}"
-		    "│"   , # "\x{2502}"
-		    "┘"  ], # "\x{2518}"
+	left   => [ "┌─"  ,
+		    "│ "  ,
+		    "└─" ],
+	center => [ "┬─"  ,
+		    "│ "  ,
+		    "┴─" ],
+	right  => [ "┐"   ,
+		    "│"   ,
+		    "┘"  ],
+    },
+    light_box2 => {
+	top    =>    "─",
+	left   => [ "┌─"  ,
+		    "│ "  ,
+		    "│ " ],
+	center => [ "┬─"  ,
+		    "│ "  ,
+		    "│ " ],
+	right  => [ "┐"   ,
+		    "│"   ,
+		    "│"  ],
+    },
+    light_mesh => {
+	top    =>   "─",
+	left   => [ "┼"  ,
+		    "│"  ,
+		    "│" ],
+	center => [ "┼"  ,
+		    "│"  ,
+		    "│" ],
+	right  => [ "┼"  ,
+		    "│"  ,
+		    "│" ],
     },
     heavy_bar => {
 	center => [ "╻ "  , # "\x{257B} "
 		    "┃ "  , # "\x{2503} "
-		    "╹ " ], # "\x{2579} " ]
+		    "╹ " ], # "\x{2579} "
     },
     light_heavy => {
 	center => [ "╿ "  , # "\x{257F} "
@@ -123,28 +173,28 @@ my %template = (
 		    "┃ "  , # "\x{2503} "
 		    "▀ " ], # "\x{2580} "
     },
-    light_box => {
+    light_tape => {
 	center => [ "┌┐ "  , # "\x{250c}\x{2510}"
 		    "││ "  , # "\x{2502}\x{2502}"
 		    "└┘ " ], # "\x{2514}\x{2518}"
 	left => ' ',
     },
-    light_roundbox => {
+    light_roundtape => {
 	center => [ "╭╮"  , # "\x{256D}\x{256E}"
 		    "││"  , # "\x{2502}\x{2502}"
 		    "╰╯" ], # "\x{2570}\x{256F}"
     },
-    light_doublebox => {
+    light_doubletape => {
 	center => [ "╒╕"  , # "\x{2552}\x{2555}"
 		    "││"  , # "\x{2502}\x{2502}"
 		    "╘╛" ], # "\x{2558}\x{255B}"
     },
-    double_box => {
+    double_tape => {
 	center => [ "╔╗"  , # "\x{2554}\x{2557}"
 		    "║║"  , # "\x{2551}\x{2551}"
 		    "╚╝" ], # "\x{255A}\x{255D}"
     },
-    heavy_box => {
+    heavy_tape => {
 	center => [ "┏┓"  , # "\x{250F}\x{2513}"
 		    "┃┃"  , # "\x{2503}\x{2503}"
 		    "┗┛" ], # "\x{2517}\x{251B}"

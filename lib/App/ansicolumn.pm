@@ -208,14 +208,8 @@ sub column_out {
     $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
     $obj->{height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
 
-    ## --white-space, --isolation
-    $obj->space_layout(\@data);
-
-    ## --fillup
-    $obj->fillup(\@data);
-
-    ## top/bottom border
-    $obj->insert_border(\@data);
+    ## --white-space, --isolation, --fillup, top/bottom border
+    $obj->layout(\@data);
 
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };

@@ -90,11 +90,19 @@ sub foldsub {
     }
 }
 
+sub layout {
+    my $obj = shift;
+    my $dp = shift;
+    $obj->space_layout($dp);
+    $obj->fillup($dp);
+    $obj->insert_border($dp);
+}
+
 sub space_layout {
     my $obj = shift;
-    my($dp, $start) = @_;
+    my($dp) = @_;
     my $height = $obj->{height} - $obj->{border_height};
-    for (my $page = $start // 0; (my $top = $page * $height) < @$dp; $page++) {
+    for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
 	if ($height >= 4 and $top > 2 and !$obj->{isolation}) {
 	    if ($dp->[$top - 2] !~ /\S/ and
 		$dp->[$top - 1] =~ /\S/ and
