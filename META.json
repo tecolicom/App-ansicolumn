@@ -42,7 +42,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Getopt::EX" : "v1.19.1",
+            "Getopt::EX" : "v1.21.0",
             "List::Util" : "1.45",
             "Term::ReadKey" : "0",
             "Text::ANSI::Fold" : "2.04",

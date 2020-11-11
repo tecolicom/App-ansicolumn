@@ -205,31 +205,28 @@ sub column_out {
 	@data = map { $sub->($_) } @data;
     }
 
-    my($bdr_top, $bdr_btm) = map $obj->border($_), qw(top bottom);
-    my $height = do {
-	if ($obj->{page_height}) {
-	    $obj->{page_height} - !!$bdr_top - !!$bdr_btm;
-	} else {
-	    div(0+@data, $obj->{panes});
-	}
-    };
+    $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
+    $obj->{page_height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
 
     ## --white-space, --isolation
-    $obj->space_layout(\@data, $height);
+    $obj->space_layout(\@data);
 
     ## --fillup
-    $obj->fillup(\@data, $height);
+    $obj->fillup(\@data);
+
+    ## top/bottom border
+    $obj->insert_border(\@data);
 
     my @data_index = 0 .. $#data;
     my $is_last_data = sub { $_[0] == $#data };
     for (my $page = 0; @data_index; $page++) {
-	my @page = splice @data_index, 0, $height * $obj->{panes};
+	my @page = splice @data_index, 0, $obj->{page_height} * $obj->{panes};
 	my @index = 0 .. $#page;
 	my @lines = grep { @$_ } do {
 	    if ($obj->{fillrows}) {
-		map { [ splice @index, 0, $obj->{panes} ] } 1 .. $height;
+		map { [ splice @index, 0, $obj->{panes} ] } 1 .. $obj->{page_height};
 	    } else {
-		zip map { [ splice @index, 0, $height ] } 1 .. $obj->{panes};
+		zip map { [ splice @index, 0, $obj->{page_height} ] } 1 .. $obj->{panes};
 	    }
 	};
 	for my $i (0 .. $#lines) {

@@ -92,7 +92,8 @@ sub foldsub {
 
 sub space_layout {
     my $obj = shift;
-    my($dp, $height, $start) = @_;
+    my($dp, $start) = @_;
+    my $height = $obj->{page_height} - $obj->{border_height};
     for (my $page = $start // 0; (my $top = $page * $height) < @$dp; $page++) {
 	if ($height >= 4 and $top > 2 and !$obj->{isolation}) {
 	    if ($dp->[$top - 2] !~ /\S/ and
@@ -114,7 +115,8 @@ sub space_layout {
 
 sub fillup {
     my $obj = shift;
-    my($dp, $height) = @_;
+    my $dp = shift;
+    my $height = $obj->{page_height} - $obj->{border_height};
     defined $obj->{fillup} and $obj->{fillup} !~ /^(?:no|none)$/
 	or return;
     $obj->{fillup} ||= 'pane';
@@ -123,6 +125,25 @@ sub fillup {
     if (my $remmant = @$dp % $line) {
 	push @$dp, ($obj->{fillup_str}) x ($line - $remmant);
     }
+}
+
+sub insert_border {
+    my $obj = shift;
+    my $dp = shift;
+    my $height = $obj->{page_height};
+    my $span = $obj->{span};
+    my($bdr_top, $bdr_btm) = map { $obj->border($_) x $span } qw(top bottom);
+    $bdr_top or $bdr_btm or return;
+    for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
+	if ($bdr_top) {
+	    splice @$dp, $top, 0, $bdr_top;
+	}
+	my $bottom_line = $top + $height - 1;
+	if ($bdr_btm and $bottom_line <= @$dp) {
+	    splice @$dp, $bottom_line, 0, $bdr_btm;
+	}
+    }
+    @$dp;
 }
 
 ######################################################################

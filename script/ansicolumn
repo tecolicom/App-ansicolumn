@@ -133,7 +133,7 @@ Set the linebreak mode.
 
 =item B<--runin>=#, B<--runout>=#
 
-Set number of runin/runout column.
+Set the number of runin/runout column.
 Default is both 2.
 
 =item B<-->[B<no->]B<border>

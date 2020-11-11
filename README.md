@@ -115,7 +115,7 @@ default, from the standard input.
 
 - **--runin**=#, **--runout**=#
 
-    Set number of runin/runout column.
+    Set the number of runin/runout column.
     Default is both 2.
 
 - **--**\[**no-**\]**border**
