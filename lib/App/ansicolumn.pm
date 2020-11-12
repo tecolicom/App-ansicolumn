@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.26";
+our $VERSION = "1.01";
 
 use v5.14;
 use warnings;
