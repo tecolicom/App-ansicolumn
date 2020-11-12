@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "0.24";
+our $VERSION = "0.25";
 
 use v5.14;
 use warnings;
@@ -29,6 +29,7 @@ sub new {
 	table_right      => '',
 	separator        => ' ',
 	output_separator => '  ',
+	page             => undef,
 	height           => 0,
 	column_unit      => 8,
 	pane             => 0,
@@ -42,7 +43,7 @@ sub new {
 	runin            => 2,
 	runout           => 2,
 	border           => undef,
-	border_style     => 'light-bar',
+	border_style     => 'vbar',
 	document         => undef,
 	insert_space     => undef,
 	white_space      => 2,
@@ -70,7 +71,7 @@ sub run {
 	"table_right|R=s",
 	"separator|s=s",
 	"output_separator|o=s",
-	"page|P",
+	"page|P:i",
 	"height=i",
 	"column_unit|cu=i",
 	"pane|C=i",
@@ -123,8 +124,8 @@ sub setup_options {
     $obj->{fullwidth} = 1 if $obj->{pane} and not $obj->{pane_width};
 
     ## -P
-    if ($obj->{page}) {
-	$obj->{height} ||= $obj->term_height - 1;
+    if (defined $obj->{page}) {
+	$obj->{height} ||= $obj->{page} || $obj->term_height - 1;
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{border} //= 1;
 	$obj->{fillup} //= 'pane';
@@ -149,8 +150,9 @@ sub setup_options {
 
     ## --border
     if ($obj->{border}) {
+	my $style =$obj->{border_style};
 	($obj->{BORDER} = App::ansicolumn::Border->new)
-	    ->style($obj->{border_style}) // die "Unknown style.\n";
+	    ->style($style) // die "$style: Unknown style.\n";
     }
 
     ## --ambiguous=wide

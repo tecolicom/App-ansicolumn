@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.24
+Version 0.25
 
 # SYNOPSIS
 
@@ -56,7 +56,7 @@ default, from the standard input.
 
 ## EXTENDED OPTION
 
-- **-P**, **--page**
+- **-P**\[_#_\], **--page**\[=_#_\]
 
     Page mode.  Set these options.
 
@@ -64,6 +64,9 @@ default, from the standard input.
         --linestyle=wrap
         --border
         --fillup
+
+    If optional number is given, it is used as a page height unless option
+    **--height** exists.
 
 - **-D**, **--document**
 
@@ -126,10 +129,11 @@ default, from the standard input.
 
 - **--border-style**=_style_, **--bs**=...
 
-    Set column border style.  Default style is **light-bar**, which is
-    light vertical line filling the page height.  My favorite is
-    **light-block**.  These styles are experimental and subject to change.
-    Use \`perldoc -m App::ansicolumn::Border\` for detail.
+    Set column border style.  Default style is **vbar**, which is light
+    vertical line filling the page height.  My favorite is **dumbbell**.
+    Style **frame** or **box** can be used to enclose text box.  These
+    styles are experimental and subject to change.  Use \`perldoc -m
+    App::ansicolumn::Border\` for detail.
 
     You can define your own style in module or startup file.  Put next
     lines in your `$HOME/.ansicolumnrc` file, for example.

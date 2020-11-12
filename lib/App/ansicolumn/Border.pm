@@ -45,18 +45,18 @@ my %template = (
     },
     side  => { right => ' ' , left => ' ' },
     left  => { right => ''  , left => '  ' },
-    light => {
+    line => {
 	center => "│ ", # "\x{2502} "
     },
-    heavy => {
+    heavy_line => {
 	center => "┃ ", # "\x{2503} "
     },
-    light_bar => {
+    vbar => {
 	center => [ "╷ "  , # "\x{2577} "
 		    "│ "  , # "\x{2502} "
 		    "╵ " ], # "\x{2575} "
     },
-    light_fence => {
+    fence => {
 	left   => [ "╷ "  , # "\x{2577} "
 		    "│ "  , # "\x{2502} "
 		    "╵ " ], # "\x{2575} "
@@ -68,32 +68,20 @@ my %template = (
 		    "╵"  ], # "\x{2575} "
     },
     ascii_frame => {
-	top    =>   "-",
-	bottom =>   "-",
-	left   => [ "+-"  ,
-		    "| "  ,
-		    "+-" ],
-	center => [ "+ +-"  ,
-		    "| | "  ,
-		    "+ +-" ],
-	right  => [ "+"    ,
-		    "|"    ,
-		    "+"   ],
+	top    => "-",
+	bottom => "-",
+	left   => [   "+" ,   "|" ],
+	center => [ "+ +" , "| |" ],
+	right  => [ "+"   , "|"   ],
     },
     ascii_box => {
-	top    =>    "-",
-	bottom =>    "-",
-	left   => [ "+-"  ,
-		    "| "  ,
-		    "+-" ],
-	center => [ "+-"  ,
-		    "| "  ,
-		    "+-" ],
-	right  => [ "+"   ,
-		    "|"   ,
-		    "+"  ],
+	top    =>   "-",
+	bottom =>   "-",
+	left   => [ "+" , "|" ],
+	center => [ "+" , "|" ],
+	right  => [ "+" , "|" ],
     },
-    light_frame => {
+    box => {
 	top    =>     "─",
 	bottom =>     "─",
 	left   => [  "┌─"  ,
@@ -106,7 +94,7 @@ my %template = (
 		    "│"    ,
 		    "┘"   ],
     },
-    light_box => {
+    frame => {
 	top    =>    "─",
 	bottom =>    "─",
 	left   => [ "┌─"  ,
@@ -119,7 +107,20 @@ my %template = (
 		    "│"   ,
 		    "┘"  ],
     },
-    light_box2 => {
+    page_frame => {
+	top    =>    "─",
+	bottom =>    "─",
+	left   => [ "┌─"  ,
+		    "│ "  ,
+		    "└─" ],
+	center => [ "──"  ,
+		    "  "  ,
+		    "──" ],
+	right  => [ "┐"   ,
+		    "│"   ,
+		    "┘"  ],
+    },
+    comb => {
 	top    =>    "─",
 	left   => [ "┌─"  ,
 		    "│ "  ,
@@ -131,70 +132,74 @@ my %template = (
 		    "│"   ,
 		    "│"  ],
     },
-    light_mesh => {
+    rake => {
+	bottom =>    "─",
+	left   => [ "│ "  ,
+		    "│ "  ,
+		    "└─" ],
+	center => [ "│ "  ,
+		    "│ "  ,
+		    "┴─" ],
+	right  => [ "│"   ,
+		    "│"   ,
+		    "┘"  ],
+    },
+    mesh => {
+	bottom =>   "─",
+	left   => [ "│"  ,
+		    "│"  ,
+		    "├" ],
+	center => [ "│"  ,
+		    "│"  ,
+		    "┼" ],
+	right  => [ "│"  ,
+		    "│"  ,
+		    "┤" ],
+    },
+    mesh2 => {
 	top    =>   "─",
-	left   => [ "┼"  ,
+	left   => [ "├"  ,
 		    "│"  ,
 		    "│" ],
 	center => [ "┼"  ,
 		    "│"  ,
 		    "│" ],
-	right  => [ "┼"  ,
+	right  => [ "┤"  ,
 		    "│"  ,
 		    "│" ],
     },
-    heavy_bar => {
-	center => [ "╻ "  , # "\x{257B} "
-		    "┃ "  , # "\x{2503} "
-		    "╹ " ], # "\x{2579} "
-    },
-    light_heavy => {
-	center => [ "╿ "  , # "\x{257F} "
-		    "│ "  , # "\x{2502} "
-		    "╽ " ], # "\x{257D} "
-    },
-    heavy_light => {
-	center => [ "╽ "  , # "\x{257D} "
-		    "┃ "  , # "\x{2503} "
-		    "╿ " ], # "\x{257F} "
-    },
-    heavydash_bar => {
-	center => [ "╻ "  , # "\x{257B} "
-		    "╏ "  , # "\x{254F} "
-		    "╹ " ], # "\x{2579} "
-    },
-    light_block => {
+    dumbbell => {
 	center => [ "▄ "  , # "\x{2584} "
 		    "│ "  , # "\x{2502} "
 		    "▀ " ], # "\x{2580} "
     },
-    heavy_block => {
+    heavy_dumbbell => {
 	center => [ "▄ "  , # "\x{2584} "
 		    "┃ "  , # "\x{2503} "
 		    "▀ " ], # "\x{2580} "
     },
-    light_tape => {
+    ribbon => {
 	center => [ "┌┐ "  , # "\x{250c}\x{2510}"
 		    "││ "  , # "\x{2502}\x{2502}"
 		    "└┘ " ], # "\x{2514}\x{2518}"
 	left => ' ',
     },
-    light_roundtape => {
+    round_ribbon => {
 	center => [ "╭╮"  , # "\x{256D}\x{256E}"
 		    "││"  , # "\x{2502}\x{2502}"
 		    "╰╯" ], # "\x{2570}\x{256F}"
     },
-    light_doubletape => {
+    double_ribbon => {
 	center => [ "╒╕"  , # "\x{2552}\x{2555}"
 		    "││"  , # "\x{2502}\x{2502}"
 		    "╘╛" ], # "\x{2558}\x{255B}"
     },
-    double_tape => {
+    double_ribbon => {
 	center => [ "╔╗"  , # "\x{2554}\x{2557}"
 		    "║║"  , # "\x{2551}\x{2551}"
 		    "╚╝" ], # "\x{255A}\x{255D}"
     },
-    heavy_tape => {
+    heavy_ribbon => {
 	center => [ "┏┓"  , # "\x{250F}\x{2513}"
 		    "┃┃"  , # "\x{2503}\x{2503}"
 		    "┗┛" ], # "\x{2517}\x{251B}"

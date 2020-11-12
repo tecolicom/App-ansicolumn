@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 0.24
+Version 0.25
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,7 @@ Support only numbers.
 
 =over 7
 
-=item B<-P>, B<--page>
+=item B<-P>[I<#>], B<--page>[=I<#>]
 
 Page mode.  Set these options.
 
@@ -82,6 +82,9 @@ Page mode.  Set these options.
     --linestyle=wrap
     --border
     --fillup
+
+If optional number is given, it is used as a page height unless option
+B<--height> exists.
 
 =item B<-D>, B<--document>
 
@@ -144,10 +147,11 @@ B<--border-style> option.
 
 =item B<--border-style>=I<style>, B<--bs>=...
 
-Set column border style.  Default style is B<light-bar>, which is
-light vertical line filling the page height.  My favorite is
-B<light-block>.  These styles are experimental and subject to change.
-Use `perldoc -m App::ansicolumn::Border` for detail.
+Set column border style.  Default style is B<vbar>, which is light
+vertical line filling the page height.  My favorite is B<dumbbell>.
+Style B<frame> or B<box> can be used to enclose text box.  These
+styles are experimental and subject to change.  Use `perldoc -m
+App::ansicolumn::Border` for detail.
 
 You can define your own style in module or startup file.  Put next
 lines in your C<$HOME/.ansicolumnrc> file, for example.
