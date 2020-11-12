@@ -45,7 +45,7 @@
             "Getopt::EX" : "v1.21.0",
             "List::Util" : "1.45",
             "Term::ReadKey" : "0",
-            "Text::ANSI::Fold" : "2.05",
+            "Text::ANSI::Fold" : "2.06",
             "Text::ANSI::Fold::Util" : "0",
             "Text::ANSI::Printf" : "1.03",
             "perl" : "v5.14.0"

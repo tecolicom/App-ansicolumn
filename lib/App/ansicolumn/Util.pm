@@ -71,7 +71,7 @@ sub foldobj {
 	runin     => $obj->{runin},
 	runout    => $obj->{runout},
 	ambiguous => $obj->{ambiguous},
-	keep_el   => $obj->{keep_el},
+	discard   => [ $obj->{keep_el} ? () : 'EL' ],
 	padchar   => $obj->{padchar},
 	padding   => 1,
 	);
