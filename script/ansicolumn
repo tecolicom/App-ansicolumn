@@ -206,9 +206,9 @@ value of 'narrow' or 'wide.  Default is 'narrow'.
 
 =begin comment
 
-=item B<-->[B<no->]B<keep-el>
+=item B<-->[B<no->]B<discard-el>
 
-Keep ANSI Erase Line sequence or not.
+Discard ANSI Erase Line sequence.  Default true.
 
 =item B<--padchar>=I<char>
 

@@ -64,17 +64,20 @@ sub foldobj {
     my $obj = shift;
     my $width = shift;
     use Text::ANSI::Fold;
-    Text::ANSI::Fold->new(
+    my $fold = Text::ANSI::Fold->new(
 	width     => $width,
 	boundary  => $obj->{boundary},
 	linebreak => $obj->lb_flag,
 	runin     => $obj->{runin},
 	runout    => $obj->{runout},
 	ambiguous => $obj->{ambiguous},
-	discard   => [ $obj->{keep_el} ? () : 'EL' ],
 	padchar   => $obj->{padchar},
 	padding   => 1,
 	);
+    if ($obj->{discard_el}) {
+	$fold->configure(discard => [ 'EL' ] );
+    }
+    $fold;
 }
 
 sub foldsub {
