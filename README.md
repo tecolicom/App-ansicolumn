@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 0.25
+Version 0.26
 
 # SYNOPSIS
 
@@ -129,21 +129,35 @@ default, from the standard input.
 
 - **--border-style**=_style_, **--bs**=...
 
-    Set column border style.  Default style is **vbar**, which is light
-    vertical line filling the page height.  My favorite is **dumbbell**.
-    Style **frame** or **box** can be used to enclose text box.  These
-    styles are experimental and subject to change.  Use \`perldoc -m
-    App::ansicolumn::Border\` for detail.
+    Set the border style.  Current default style is **vbar**, which is
+    light vertical line filling the page height.
+
+    Sample styles:
+    none,
+    vbar, fence,
+    line, heavy-line,
+    ascii-frame, ascii-box,
+    box, frame, page-frame,
+    comb, rake, mesh,
+    dumbbell, heavy-dumbbell,
+    ribbon, round-ribbon, double-ribbon, double-double-ribbon, heavy-ribbon
+
+    These are experimental and subject to change, and this document is not
+    always up-to-date.  See \`perldoc -m App::ansicolumn::Border\` for
+    actual data.
 
     You can define your own style in module or startup file.  Put next
     lines in your `$HOME/.ansicolumnrc` file, for example.
 
+        option default --border-style myheart
         __PERL__
         App::ansicolumn::Border->add_style(
-            ascii => { center => [ "+ ", "| " ] },
+            myheart  => {
+            left   => [ "\N{WHITE HEART SUIT} ", "\N{BLACK HEART SUIT} " ],
+            center => [ "\N{WHITE HEART SUIT} ", "\N{BLACK HEART SUIT} " ],
+            right  => [ "\N{WHITE HEART SUIT}" , "\N{BLACK HEART SUIT}"  ],
+        },
         );
-
-    This is experimental implementation and subject to change.
 
 - **--height**=#
 

@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+0.26 2020-11-12T10:30:33Z
+
+    - Final cleanup for CPAN release.
+
 0.25 2020-11-12T05:41:14Z
 
     - -P option takes optional height.
