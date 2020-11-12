@@ -30,17 +30,17 @@ use Data::Dumper;
 
 my %template = (
     DEFAULT => {
-	right  => '',
-	center => '  ',
-	left   => '',
 	top    => '',
+	left   => '',
+	center => '  ',
+	right  => '',
 	bottom => '',
     },
     none => {
-	right  => '',
-	center => '',
-	left   => '',
 	top    => '',
+	left   => '',
+	center => '',
+	right  => '',
 	bottom => '',
     },
     side  => { right => ' ' , left => ' ' },
@@ -69,21 +69,20 @@ my %template = (
     },
     ascii_frame => {
 	top    => "-",
-	bottom => "-",
 	left   => [   "+" ,   "|" ],
 	center => [ "+ +" , "| |" ],
 	right  => [ "+"   , "|"   ],
+	bottom => "-",
     },
     ascii_box => {
 	top    =>   "-",
-	bottom =>   "-",
 	left   => [ "+" , "|" ],
 	center => [ "+" , "|" ],
 	right  => [ "+" , "|" ],
+	bottom =>   "-",
     },
     box => {
 	top    =>     "─",
-	bottom =>     "─",
 	left   => [  "┌─"  ,
 		     "│ "  ,
 		     "└─" ],
@@ -93,6 +92,7 @@ my %template = (
 	right  => [ "┐"    ,
 		    "│"    ,
 		    "┘"   ],
+	bottom =>     "─",
     },
     frame => {
 	top    =>    "─",
@@ -109,7 +109,6 @@ my %template = (
     },
     page_frame => {
 	top    =>    "─",
-	bottom =>    "─",
 	left   => [ "┌─"  ,
 		    "│ "  ,
 		    "└─" ],
@@ -119,6 +118,7 @@ my %template = (
 	right  => [ "┐"   ,
 		    "│"   ,
 		    "┘"  ],
+	bottom =>    "─",
     },
     comb => {
 	top    =>    "─",
@@ -133,7 +133,6 @@ my %template = (
 		    "│"  ],
     },
     rake => {
-	bottom =>    "─",
 	left   => [ "│ "  ,
 		    "│ "  ,
 		    "└─" ],
@@ -143,9 +142,9 @@ my %template = (
 	right  => [ "│"   ,
 		    "│"   ,
 		    "┘"  ],
+	bottom =>    "─",
     },
     mesh => {
-	bottom =>   "─",
 	left   => [ "│"  ,
 		    "│"  ,
 		    "├" ],
@@ -155,6 +154,7 @@ my %template = (
 	right  => [ "│"  ,
 		    "│"  ,
 		    "┤" ],
+	bottom =>   "─",
     },
     mesh2 => {
 	top    =>   "─",
