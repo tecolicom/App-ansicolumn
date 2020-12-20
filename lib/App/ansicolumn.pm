@@ -86,7 +86,7 @@ sub run {
 	"border_style|bs=s",
 	"document|D",
 	"colormap|cm=s@",
-	"insert_space!",
+	"insert_space|paragraph!",
 	"white_space!",
 	"isolation!",
 	"fillup:s",

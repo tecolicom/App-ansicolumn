@@ -168,7 +168,8 @@ default, from the standard input.
     When used **-t** option, leading spaces are ignored by default.  Use
     **--no-ignore-space** option to disable it.
 
-- **--insert-space**
+- **--**\[**no-**\]**insert-space**
+- **--**\[**no-**\]**paragraph**
 
     Insert empty line between every successive non-empty lines.
 
