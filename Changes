@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.03 2020-12-22T07:19:47Z
+
+    - Add --tabhead, --tabspace options.
+
 1.02 2020-11-13T03:45:54Z
 
     - Remove mswin from supported os.
