@@ -169,8 +169,9 @@ sub setup_options {
     use charnames ':loose';
     for my $opt (qw(tabhead tabspace)) {
 	for ($obj->{$opt}) {
-	    defined or length or next;
-	    $_ = do { eval qq("\\N{$_}") or die "$!" } if length > 1;
+	    defined && length or next;
+	    $_ = charnames::string_vianame($_) || die "$_: invalid name\n"
+		if length > 1;
 	    Text::ANSI::Fold->configure($opt => $_);
 	}
     }
