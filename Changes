@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.04 2020-12-29T02:13:32Z
+
+    - Add --pagebreak option and form feed character handling.
+    - Add "shadow" and "shadow-box" border style.
+
 1.03 2020-12-22T07:19:47Z
 
     - Add --tabhead, --tabspace options.
