@@ -231,7 +231,7 @@ sub column_out {
     };
 
     ## Fold long lines.
-    (my $cell_width = $obj->span - $obj->margin_width) < -1
+    (my $cell_width = $obj->span - $obj->margin_width) < 1
 	and die "Not enough space.\n";
     if ($obj->linestyle and $obj->linestyle ne 'none') {
 	my $sub = $obj->foldsub($cell_width) or die;
