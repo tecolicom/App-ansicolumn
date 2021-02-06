@@ -67,42 +67,42 @@ sub run {
     local @ARGV = map { utf8::is_utf8($_) ? $_ : decode('utf8', $_) } @_;
     GetOptions(
 	$obj,
-	map { s/^(?=\w+_)(\w+)\K/"|".$1=~tr[_][-]r."|".$1=~tr[_][]dr/er }
-	"output_width|c=i",
-	"fillrows|x",
-	"table|t",
-	"table_right|R=s",
-	"separator|s=s",
-	"output_separator|o=s",
-	"page|P:i",
-	"height=i",
-	"column_unit|cu=i",
-	"pane|C=i",
-	"pane_width|pw|S=i",
-	"tabstop=i",
-	"tabhead=s",
-	"tabspace=s",
-	"ignore_space|is!",
-	"fullwidth|F!",
-	"linestyle|ls=s",
-	"boundary=s",
-	"linebreak|lb=s", "runin=i", "runout=i",
-	"pagebreak!",
-	"border:s",
-	"border_style|bs=s",
-	"document|D",
-	"colormap|cm=s@",
-	"insert_space|paragraph!",
-	"white_space!",
-	"isolation!",
-	"fillup:s",
-	"fillup_str:s",
-	"ambiguous=s",
-	"discard_el!",
-	"padchar=s",
-	"debug",
-	"version|v",
-	) || pod2usage();
+	map { s/^(?=\w+_)(\w+)\K/"|".$1=~tr[_][-]r."|".$1=~tr[_][]dr/er } qw(
+	output_width|c=i
+	fillrows|x
+	table|t
+	table_right|R=s
+	separator|s=s
+	output_separator|o=s
+	page|P:i
+	height=i
+	column_unit|cu=i
+	pane|C=i
+	pane_width|pw|S=i
+	tabstop=i
+	tabhead=s
+	tabspace=s
+	ignore_space|is!
+	fullwidth|F!
+	linestyle|ls=s
+	boundary=s
+	linebreak|lb=s runin=i runout=i
+	pagebreak!
+	border:s
+	border_style|bs=s
+	document|D
+	colormap|cm=s@
+	insert_space|paragraph!
+	white_space!
+	isolation!
+	fillup:s
+	fillup_str:s
+	ambiguous=s
+	discard_el!
+	padchar=s
+	debug
+	version|v
+	)) || pod2usage();
     $obj->{version} and do { say $VERSION; exit };
     $obj->setup_options;
 
