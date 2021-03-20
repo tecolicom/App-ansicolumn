@@ -14,6 +14,7 @@ Configure "bundling";
 
 use Data::Dumper;
 use List::Util qw(max);
+use Hash::Util qw(lock_keys lock_keys_plus unlock_keys);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
@@ -22,7 +23,7 @@ use App::ansicolumn::Border;
 
 sub new {
     my $class = shift;
-    bless {
+    my $obj = bless {
 	width            => undef,
 	fillrows         => undef,
 	table            => undef,
@@ -57,10 +58,23 @@ sub new {
 	ambiguous        => 'narrow',
 	discard_el       => 1,
 	padchar          => ' ',
+	term_size        => undef,
+	debug            => undef,
+	version          => undef,
 	colormap         => [],
 	COLORHASH        => {},
 	COLORLIST        => [],
-    }, $class;
+	COLOR            => undef,
+	BORDER           => undef,
+	}, $class;
+    lock_keys %{$obj};
+    $obj;
+}
+
+sub use_keys {
+    my $obj = shift;
+    unlock_keys %{$obj};
+    lock_keys_plus %{$obj}, @_;
 }
 
 sub run {
@@ -227,6 +241,7 @@ sub column_out {
     my $max_length = max @length;
     my $unit = $obj->{column_unit} || 1;
 
+    $obj->use_keys(qw(span panes));
     ($obj->{span}, $obj->{panes}) = do {
 	my $span;
 	my $panes;
@@ -253,6 +268,7 @@ sub column_out {
 	@data = map { $sub->($_) } @data;
     }
 
+    $obj->use_keys(qw(border_height));
     $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
     $obj->{height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
 
