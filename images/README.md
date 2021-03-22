@@ -103,7 +103,7 @@ hilite-lesspipe.sh lib/App/ansicolumn/Border.pm | ansicolumn -PC4 --bs=light-box
 ### Matrix
 
 ```
-ansicolumn -PS1 --no-border
+ansicolumn -PS1 --border=none
 ```
 
 ![ac-matrix](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-matrix.png)
