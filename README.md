@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/kaz-utashiro/App-ansicolumn.svg?branch=master)](https://travis-ci.com/kaz-utashiro/App-ansicolumn)
+[![Actions Status](https://github.com/kaz-utashiro/App-ansicolumn/workflows/test/badge.svg)](https://github.com/kaz-utashiro/App-ansicolumn/actions) [![MetaCPAN Release](https://badge.fury.io/pl/App-ansicolumn.svg)](https://metacpan.org/release/App-ansicolumn)
 # NAME
 
 ansicolumn - ANSI terminal sequence aware column command
