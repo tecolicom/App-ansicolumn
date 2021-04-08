@@ -234,7 +234,7 @@ as a Reverse Polish Notation with the terminal size pushed on the
 stack.
 
     OPTION              VALUE
-    =============       =========================
+    =================   =========================
     --height 1-         height - 1
     --height 2/         height / 2
     --height 1-2/       (height - 1) / 2
