@@ -54,6 +54,12 @@ table.  Columns are delimited with whitespace, by default, or
 with the characters supplied using the -s option.  Useful for
 pretty-printing displays.
 
+=item B<-l>I<#>, B<--table-columns-limit> I<number>
+
+Specify maximal number of the input columns. The last column will
+contain all remaining line data if the limit is smaller than the
+number of the columns in the input data.
+
 =item B<-x>, B<--fillrows>
 
 Fill columns before filling rows.

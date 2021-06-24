@@ -24,48 +24,49 @@ use App::ansicolumn::Border;
 sub new {
     my $class = shift;
     my $obj = bless {
-	width            => undef,
-	fillrows         => undef,
-	table            => undef,
-	table_right      => '',
-	separator        => ' ',
-	output_separator => '  ',
-	page             => undef,
-	height           => 0,
-	column_unit      => 8,
-	pane             => 0,
-	pane_width       => undef,
-	tabstop          => 8,
-	tabhead          => undef,
-	tabspace         => undef,
-	tabstyle         => undef,
-	ignore_space     => 1,
-	fullwidth        => undef,
-	linestyle        => '',
-	boundary         => '',
-	linebreak        => '',
-	pagebreak        => 1,
-	runin            => 2,
-	runout           => 2,
-	border           => undef,
-	border_style     => 'vbar',
-	document         => undef,
-	insert_space     => undef,
-	white_space      => 2,
-	isolation        => 2,
-	fillup           => undef,
-	fillup_str       => '',
-	ambiguous        => 'narrow',
-	discard_el       => 1,
-	padchar          => ' ',
-	term_size        => undef,
-	debug            => undef,
-	version          => undef,
-	colormap         => [],
-	COLORHASH        => {},
-	COLORLIST        => [],
-	COLOR            => undef,
-	BORDER           => undef,
+	width               => undef,
+	fillrows            => undef,
+	table               => undef,
+	table_columns_limit => 0,
+	table_right         => '',
+	separator           => ' ',
+	output_separator    => '  ',
+	page                => undef,
+	height              => 0,
+	column_unit         => 8,
+	pane                => 0,
+	pane_width          => undef,
+	tabstop             => 8,
+	tabhead             => undef,
+	tabspace            => undef,
+	tabstyle            => undef,
+	ignore_space        => 1,
+	fullwidth           => undef,
+	linestyle           => '',
+	boundary            => '',
+	linebreak           => '',
+	pagebreak           => 1,
+	runin               => 2,
+	runout              => 2,
+	border              => undef,
+	border_style        => 'vbar',
+	document            => undef,
+	insert_space        => undef,
+	white_space         => 2,
+	isolation           => 2,
+	fillup              => undef,
+	fillup_str          => '',
+	ambiguous           => 'narrow',
+	discard_el          => 1,
+	padchar             => ' ',
+	term_size           => undef,
+	debug               => undef,
+	version             => undef,
+	colormap            => [],
+	COLORHASH           => {},
+	COLORLIST           => [],
+	COLOR               => undef,
+	BORDER              => undef,
 	}, $class;
     lock_keys %{$obj};
     $obj;
@@ -86,6 +87,7 @@ sub run {
 	width|output_width|c=s
 	fillrows|x
 	table|t
+	table_columns_limit|l=i
 	table_right|R=s
 	separator|s=s
 	output_separator|o=s
@@ -315,7 +317,7 @@ sub table_out {
 	    qr/[\Q$obj->{separator}\E]/;
 	}
     };
-    my @lines  = map { [ split $split, $_ ] } @_;
+    my @lines  = map { [ split $split, $_, $obj->{table_columns_limit} ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } zip @length;
     my @align  = newlist(count => 0+@max, default => '-',

@@ -40,6 +40,12 @@ default, from the standard input.
     with the characters supplied using the -s option.  Useful for
     pretty-printing displays.
 
+- **-l**_#_, **--table-columns-limit** _number_
+
+    Specify maximal number of the input columns. The last column will
+    contain all remaining line data if the limit is smaller than the
+    number of the columns in the input data.
+
 - **-x**, **--fillrows**
 
     Fill columns before filling rows.
