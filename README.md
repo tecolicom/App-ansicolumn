@@ -11,6 +11,42 @@ Version 1.07
 
 ansicolumn \[options\] \[file ...\]
 
+    -c#                  output width
+    -s#                  separator string
+    -t                   table style output
+    -l#                  maximum number of table columns
+    -x                   exchange rows and columns
+    -o#                  output separator
+    -R#                  right adjust table columns
+
+    -P[#]                page mode, with optional page length
+    -D                   document mode
+    -C#                  number of panes
+    -S#                  pane width
+    -F                   full-width
+
+    --height=#           page height
+    --column-unit=#      column unit (default 8)
+    --linestyle=#        folding style (none|truncate|wrap|wordwrap)
+    --boundary=#         line-end boundary
+    --linebreak=#        line-break mode (none|all|runin|runout)
+    --runin=#            run-in width
+    --runout=#           run-out width
+    --[no-]pagebreak     allow page break
+    --border=#           print border
+    --border-style=#     border style
+    --[no-]ignore-space  ignore space in table output
+    --[no-]insert-space  insert empty line
+    --[no-]paragraph     same as --insert-space
+    --[no-]white-space   allow page top white spaces
+    --[no-]isolation     page-end line isolation
+    --fillup=#           fill-up unit (pane|page|none)
+    --tabstop=#          tab-stop character
+    --tabhead=#          tab-head character
+    --tabspace=#         tab-space width
+    --tabstyle=#         tab style
+    --ambiguous=#        ambiguous character width (narrow|wide)
+
 # DESCRIPTION
 
 **ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone which can handle ANSI
