@@ -62,7 +62,8 @@ default, from the standard input.
 
 - **-c**#, **--width**=#, **--output-width**=#
 
-    Output is formatted for a display columns wide.
+    Output is formatted for a display columns wide.  See ["CALCULATION"](#calculation)
+    section.
 
 - **-s**#, **--separator**=#
 
@@ -102,13 +103,14 @@ default, from the standard input.
 
     Page mode.  Set these options.
 
-        --height=[ terminal height - 1 ]
+        --height=# or 1-
         --linestyle=wrap
         --border
         --fillup
 
     If optional number is given, it is used as a page height unless option
-    **--height** exists.
+    **--height** exists.  Otherwise page height is set to terminal height
+    minus one.
 
 - **-D**, **--document**
 
@@ -133,7 +135,8 @@ default, from the standard input.
 
 - **-S**#, **--pane-width**=#, **--pw**=#
 
-    Specify pane width.  This includes border spaces.
+    Specify pane width.  This includes border spaces.  See ["CALCULATION"](#calculation)
+    section.
 
 - **-F**, **--fullwidth**
 
@@ -142,7 +145,7 @@ default, from the standard input.
 
 - **--height**=#
 
-    Set page height and page mode on.
+    Set page height and page mode on.  See ["CALCULATION"](#calculation) section.
 
 - **--column-unit**=#
 

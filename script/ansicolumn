@@ -76,7 +76,8 @@ default, from the standard input.
 
 =item B<-c>#, B<--width>=#, B<--output-width>=#
 
-Output is formatted for a display columns wide.
+Output is formatted for a display columns wide.  See L</CALCULATION>
+section.
 
 =item B<-s>#, B<--separator>=#
 
@@ -120,13 +121,14 @@ Support only numbers.
 
 Page mode.  Set these options.
 
-    --height=[ terminal height - 1 ]
+    --height=# or 1-
     --linestyle=wrap
     --border
     --fillup
 
 If optional number is given, it is used as a page height unless option
-B<--height> exists.
+B<--height> exists.  Otherwise page height is set to terminal height
+minus one.
 
 =item B<-D>, B<--document>
 
@@ -151,7 +153,8 @@ of panes implies B<--fullwidth> option enabled.
 
 =item B<-S>#, B<--pane-width>=#, B<--pw>=#
 
-Specify pane width.  This includes border spaces.
+Specify pane width.  This includes border spaces.  See L</CALCULATION>
+section.
 
 =item B<-F>, B<--fullwidth>
 
@@ -160,7 +163,7 @@ terminal width, unless B<--pane-width> is specified.
 
 =item B<--height>=#
 
-Set page height and page mode on.
+Set page height and page mode on.  See L</CALCULATION> section.
 
 =item B<--column-unit>=#
 
