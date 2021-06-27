@@ -79,7 +79,7 @@ default, from the standard input.
 
 - **-l**_#_, **--table-columns-limit** _number_
 
-    Specify maximal number of the input columns. The last column will
+    Specify maximal number of the input columns.  The last column will
     contain all remaining line data if the limit is smaller than the
     number of the columns in the input data.
 
@@ -321,7 +321,8 @@ To get the latest code, use this:
 
 # SEE ALSO
 
-[column(1)](http://man.he.net/man1/column)
+[column(1)](http://man.he.net/man1/column),
+[https://man7.org/linux/man-pages/man1/column.1.html](https://man7.org/linux/man-pages/man1/column.1.html)
 
 [App::ansicolumn](https://metacpan.org/pod/App::ansicolumn),
 [https://github.com/kaz-utashiro/App-ansicolumn](https://github.com/kaz-utashiro/App-ansicolumn)
