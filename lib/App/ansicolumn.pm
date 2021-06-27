@@ -24,6 +24,7 @@ use App::ansicolumn::Border;
 sub new {
     my $class = shift;
     my $obj = bless {
+	help                => undef,
 	width               => undef,
 	fillrows            => undef,
 	table               => undef,
@@ -84,6 +85,7 @@ sub run {
     GetOptions(
 	$obj,
 	map { s/^(?=\w+_)(\w+)\K/"|".$1=~tr[_][-]r."|".$1=~tr[_][]dr/er } qw(
+	help|h
 	width|output_width|c=s
 	fillrows|x
 	table|t
@@ -120,8 +122,15 @@ sub run {
 	padchar=s
 	debug
 	version|v
-	)) || pod2usage();
-    $obj->{version} and do { say $VERSION; exit };
+	)) || pod2usage(2);
+    if ($obj->{help}) {
+	pod2usage(-verbose => 0, -exitval => "NOEXIT");
+	$obj->{version}++;
+    }
+    if ($obj->{version}) {
+	say "Version: $VERSION";
+	exit;
+    }
     $obj->setup_options;
 
     warn Dumper $obj if $obj->{debug};
