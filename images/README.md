@@ -100,6 +100,17 @@ hilite-lesspipe.sh lib/App/ansicolumn/Border.pm | ansicolumn -PC4 --bs=light-box
 
 ![ac-border-light-box](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-border-light-box.png)
 
+Various box border styles.
+
+```
+ansicolumn --border=box
+ansicolumn --border=c-box
+ansicolumn --border=shadow-box
+ansicolumn --border=ascii-box
+```
+
+![ac-boxes](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-boxes.png)
+
 ### Matrix
 
 ```
