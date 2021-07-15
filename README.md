@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 1.08
+Version 1.09
 
 # SYNOPSIS
 
@@ -198,6 +198,7 @@ default, from the standard input.
     vbar, fence,
     line, heavy-line,
     ascii-frame, ascii-box,
+    c-box,
     box, frame, page-frame,
     shadow, shadow-box,
     comb, rake, mesh,
@@ -336,7 +337,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-Copyright 2020- Kazumasa Utashiro.
+Copyright 2020-2021 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
