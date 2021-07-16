@@ -24,6 +24,7 @@ use App::ansicolumn::Border;
 sub new {
     my $class = shift;
     my $obj = bless {
+	debug               => undef,
 	help                => undef,
 	width               => undef,
 	fillrows            => undef,
@@ -32,11 +33,12 @@ sub new {
 	table_right         => '',
 	separator           => ' ',
 	output_separator    => '  ',
+	document            => undef,
 	page                => undef,
-	height              => 0,
-	column_unit         => 8,
 	pane                => 0,
 	pane_width          => undef,
+	height              => 0,
+	column_unit         => 8,
 	tabstop             => 8,
 	tabhead             => undef,
 	tabspace            => undef,
@@ -51,7 +53,6 @@ sub new {
 	runout              => 2,
 	border              => undef,
 	border_style        => 'vbar',
-	document            => undef,
 	insert_space        => undef,
 	white_space         => 2,
 	isolation           => 2,
@@ -61,7 +62,6 @@ sub new {
 	discard_el          => 1,
 	padchar             => ' ',
 	term_size           => undef,
-	debug               => undef,
 	version             => undef,
 	colormap            => [],
 	COLORHASH           => {},
@@ -82,47 +82,48 @@ sub use_keys {
 sub run {
     my $obj = shift;
     local @ARGV = map { utf8::is_utf8($_) ? $_ : decode('utf8', $_) } @_;
-    GetOptions(
-	$obj,
-	map { s/^(?=\w+_)(\w+)\K/"|".$1=~tr[_][-]r."|".$1=~tr[_][]dr/er } qw(
-	help|h
-	width|output_width|c=s
-	fillrows|x
-	table|t
-	table_columns_limit|l=i
-	table_right|R=s
-	separator|s=s
-	output_separator|o=s
-	page|P:i
-	height=s
-	column_unit|cu=i
-	pane|C=i
-	pane_width|pw|S=s
-	tabstop=i
-	tabhead=s
-	tabspace=s
-	tabstyle=s
-	ignore_space|is!
-	fullwidth|F!
-	linestyle|ls=s
-	boundary=s
-	linebreak|lb=s runin=i runout=i
-	pagebreak!
-	border:s
-	border_style|bs=s
-	document|D
-	colormap|cm=s@
-	insert_space|paragraph!
-	white_space!
-	isolation!
-	fillup:s
-	fillup_str:s
-	ambiguous=s
-	discard_el!
-	padchar=s
+    GetOptions($obj, make_options(<< 'END')) || pod2usage(2);
 	debug
-	version|v
-	)) || pod2usage(2);
+	help                 | h
+	version              | v
+	width | output_width | c =s
+	fillrows             | x
+	table                | t
+	table_columns_limit  | l =i
+	table_right          | R =s
+	separator            | s =s
+	output_separator     | o =s
+	document             | D
+	page                 | P :i
+	pane                 | C =i
+	pane_width | pw      | S =s
+	fullwidth            | F  !
+	height                   =s
+	column_unit | cu         =i
+	tabstop                  =i
+	tabhead                  =s
+	tabspace                 =s
+	tabstyle                 =s
+	ignore_space | is         !
+	linestyle | ls           =s
+	boundary                 =s
+	linebreak | lb           =s
+	runin                    =i
+	runout                   =i
+	pagebreak                 !
+	border                   :s
+	border_style | bs        =s
+	colormap | cm            =s@
+	insert_space | paragraph  !
+	white_space               !
+	isolation                 !
+	fillup                   :s
+	fillup_str               :s
+	ambiguous                =s
+	discard_el                !
+	padchar                  =s
+END
+
     if ($obj->{help}) {
 	pod2usage(-verbose => 0, -exitval => "NOEXIT");
 	$obj->{version}++;
