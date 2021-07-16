@@ -247,6 +247,13 @@ sub insert_space {
     } [], @_;
 }
 
+sub decode_argv {
+    map {
+	utf8::is_utf8($_) ? $_ : decode('utf8', $_);
+    }
+    @_;
+}
+
 sub make_options {
     map {
 	# "foo_bar" -> "foo_bar|foo-bar|foobar"

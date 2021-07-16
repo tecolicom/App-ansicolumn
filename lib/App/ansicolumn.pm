@@ -81,8 +81,8 @@ sub use_keys {
 
 sub run {
     my $obj = shift;
-    local @ARGV = map { utf8::is_utf8($_) ? $_ : decode('utf8', $_) } @_;
-    GetOptions($obj, make_options(<< 'END')) || pod2usage(2);
+    local @ARGV = decode_argv(@_);
+    GetOptions($obj, make_options(<<'END')) || pod2usage(2);
 	debug
 	help                 | h
 	version              | v
