@@ -6,14 +6,15 @@ Getopt::EX::Hashed - Hash store object automation
 
 =head1 SYNOPSIS
 
-  use Foo;
-  Foo->new->run();
+  use App::foo;
+  App::foo->new->run();
 
-  package Foo;
+  package App::foo;
+
   use Getopt::EX::Hashed;
   has start => ( spec => "=i s begin", default => 1 );
   has end   => ( spec => "=i e" );
-  no Getopt::EX::Hashed;
+  no  Getopt::EX::Hashed;
 
   sub run {
       my $obj = shift;
@@ -23,16 +24,25 @@ Getopt::EX::Hashed - Hash store object automation
 
 =head1 DESCRIPTION
 
-This is an experimental module to automate an hash object to store
-option values.  Using Getopt::Long is assumed in this implementation.
-Major objective of this module is to integrate initialization and
-specification into single place.
+This is an experimental module to automate a hash object to store
+option values.  Major objective of this module is to integrate
+initialization and specification into single place.  Module name
+shares B<Getopt::EX>, but it works totally independent from other
+modules included in B<Getopt::EX>, so far.
+
+Using B<Getopt::Long>, or compatible module such as
+B<Getopt::EX::Long>, is assumed in current implementation.  It is
+configurable, but no other module is supported now.
+
+=head2 FUNCTION
+
+=head3 B<has>
 
 Declare option parameters in a form of:
 
     has option_name => ( param => value, ... );
 
-If array reference is given, multiple names can declared at once.
+If array reference is given, multiple names can be declared at once.
 
     has [ 'left', 'right' ] => ( param => value, ... );
 
@@ -41,7 +51,7 @@ current value.
 
     has '+left' => ( default => 1 );
 
-There are following parameters:
+Following parameters are available.
 
 =over 7
 
@@ -118,6 +128,10 @@ C<< "<>" >> too.
 
 Return initialized hash object.
 
+=item B<configure>
+
+There should be some configurable variables, but not fixed yet.
+
 =item B<getopt>
 
 Call C<GetOptions> function defined in caller's context with
@@ -181,12 +195,35 @@ use Carp;
 use Data::Dumper;
 
 use Exporter 'import';
-our @EXPORT = qw(has new optspec getopt use_keys);
+our @EXPORT = qw(has new);
 
 my %Member;
 
-our $LOCK_KEYS = 1;
-our $REPLACE_UNDERSCORE = 1;
+my %Config = (
+    LOCK_KEYS          => 1,
+    REPLACE_UNDERSCORE => 1,
+    GETOPT             => 'GetOptions',
+    );
+lock_keys %Config;
+
+sub configure {
+    my $obj = shift;
+    while (my($key, $value) = splice @_, 0, 2) {
+	$Config{$key} = $value;
+    }
+    return $obj;
+}
+
+sub unimport {
+    no strict 'refs';
+    my $caller = caller;
+    delete ${"$caller\::"}{has};
+}
+
+sub reset {
+    %Member = ();
+    return $_[0];
+}
 
 sub has {
     my($name, %param) = @_;
@@ -203,7 +240,8 @@ sub has {
 
 sub new {
     my $class = shift;
-    my $obj = bless {}, $class;
+    my $obj = bless {}, __PACKAGE__;
+    our @ISA = $class;
     for my $key (keys %Member) {
 	my $member = $Member{$key};
 	$obj->{$key} = do {
@@ -214,7 +252,7 @@ sub new {
 	    }
 	};
     }
-    lock_keys %{$obj} if $LOCK_KEYS;
+    lock_keys %{$obj} if $Config{LOCK_KEYS};
     $obj;
 }
 
@@ -231,7 +269,10 @@ sub _action {
 sub optspec {
     my $obj = shift;
     map  { _optspec($obj, @$_) }
-    grep { defined $_->[1] }
+    grep {
+	$_->[0] eq '<>' and $_->[1] //= '';
+	defined $_->[1];
+    }
     map  { [ $_ => $Member{$_}->{spec} ] }
     keys %Member;
 }
@@ -251,7 +292,7 @@ sub _optspec {
     };
     my @alias = grep !/$spec_re/, @args;
     my @names = ($name, @alias);
-    if ($REPLACE_UNDERSCORE) {
+    if ($Config{REPLACE_UNDERSCORE}) {
 	for ($name, @alias) {
 	    push @names, tr[_][-]r if /_/;
 	}
@@ -261,9 +302,9 @@ sub _optspec {
 
 sub getopt {
     my $obj = shift;
-    my $caller = caller;
+    my $getopt = caller . "::" . $Config{GETOPT};
     no strict 'refs';
-    &{"$caller\::GetOptions"}($obj, $obj->optspec);
+    &{$getopt}($obj, $obj->optspec);
 }
 
 sub use_keys {
