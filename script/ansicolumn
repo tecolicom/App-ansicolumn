@@ -36,6 +36,7 @@ ansicolumn [options] [file ...]
     -C#                  number of panes
     -S#                  pane width
     -F                   full-width
+    -p                   paragraph mode
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
@@ -49,8 +50,6 @@ ansicolumn [options] [file ...]
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
     --[no-]insert-space  insert empty line
-    --[no-]paragraph     same as --insert-space
-    --[no-]white-space   allow page top white spaces
     --[no-]isolation     page-end line isolation
     --fillup=#           fill-up unit (pane|page|none)
     --tabstop=#          tab-stop character
@@ -161,6 +160,14 @@ section.
 Use full width of the terminal.  Each panes are expanded to fill
 terminal width, unless B<--pane-width> is specified.
 
+=item B<-p>
+
+=item B<-->[B<no->]B<paragraph>
+
+=item B<-->[B<no->]B<insert-space>
+
+Insert empty line between every successive non-empty lines.
+
 =item B<--height>=#
 
 Set page height and page mode on.  See L</CALCULATION> section.
@@ -244,12 +251,6 @@ lines in your C<$HOME/.ansicolumnrc> file, for example.
 
 When used B<-t> option, leading spaces are ignored by default.  Use
 B<--no-ignore-space> option to disable it.
-
-=item B<-->[B<no->]B<insert-space>
-
-=item B<-->[B<no->]B<paragraph>
-
-Insert empty line between every successive non-empty lines.
 
 =item B<-->[B<no->]B<white-space>
 

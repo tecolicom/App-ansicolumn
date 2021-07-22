@@ -23,46 +23,47 @@ use App::ansicolumn::Border;
 
 use Getopt::EX::Hashed;
 
-has debug               => spec => '              ' , ;
-has help                => spec => '    h         ' , ;
-has width               => spec => ' =s c         ' , ;
-has fillrows            => spec => '    x         ' , ;
-has table               => spec => '    t         ' , ;
-has table_columns_limit => spec => ' =i l         ' , default => 0 ;
-has table_right         => spec => ' =s R         ' , default => '' ;
-has separator           => spec => ' =s s         ' , default => ' ' ;
-has output_separator    => spec => ' =s o         ' , default => '  ' ;
-has document            => spec => '    D         ' , ;
-has page                => spec => ' :i P         ' , ;
-has pane                => spec => ' =i C         ' , default => 0 ;
-has pane_width          => spec => ' =s S pw      ' , ;
-has fullwidth           => spec => ' !  F         ' , ;
-has height              => spec => ' =s           ' , default => 0 ;
-has column_unit         => spec => ' =i cu        ' , default => 8 ;
-has tabstop             => spec => ' =i           ' , default => 8 ;
-has tabhead             => spec => ' =s           ' , ;
-has tabspace            => spec => ' =s           ' , ;
-has tabstyle            => spec => ' =s           ' , ;
-has ignore_space        => spec => ' !  is        ' , default => 1 ;
-has linestyle           => spec => ' =s ls        ' , default => '' ;
-has boundary            => spec => ' =s           ' , default => '' ;
-has linebreak           => spec => ' =s lb        ' , default => '' ;
-has runin               => spec => ' =i           ' , default => 2 ;
-has runout              => spec => ' =i           ' , default => 2 ;
-has pagebreak           => spec => ' !            ' , default => 1 ;
-has border              => spec => ' :s           ' , ;
-has border_style        => spec => ' =s bs        ' , default => 'vbar' ;
-has insert_space        => spec => ' !  paragraph ' , ;
-has white_space         => spec => ' !            ' , default => 2 ;
-has isolation           => spec => ' !            ' , default => 2 ;
-has fillup              => spec => ' :s           ' , ;
-has fillup_str          => spec => ' :s           ' , default => '' ;
-has ambiguous           => spec => ' =s           ' , default => 'narrow' ;
-has discard_el          => spec => ' !            ' , default => 1 ;
-has padchar             => spec => ' =s           ' , default => ' ' ;
-has term_size           => spec => '              ' , ;
-has version             => spec => '              ' , ;
-has colormap            => spec => ' =s@ cm       ' , default => [] ;
+has debug               => spec  => '           ' , ;
+has help                => spec  => '    h      ' , ;
+has width               => spec  => ' =s c      ' , ;
+has fillrows            => spec  => '    x      ' , ;
+has table               => spec  => '    t      ' , ;
+has table_columns_limit => spec  => ' =i l      ' , default => 0 ;
+has table_right         => spec  => ' =s R      ' , default => '' ;
+has separator           => spec  => ' =s s      ' , default => ' ' ;
+has output_separator    => spec  => ' =s o      ' , default => '  ' ;
+has document            => spec  => '    D      ' , ;
+has page                => spec  => ' :i P      ' , ;
+has pane                => spec  => ' =i C      ' , default => 0 ;
+has pane_width          => spec  => ' =s S pw   ' , ;
+has fullwidth           => spec  => ' !  F      ' , ;
+has insert_space        => spec  => ' !  p      ' ,
+                        => alias => ' paragraph ' ;
+has height              => spec  => ' =s        ' , default => 0 ;
+has column_unit         => spec  => ' =i cu     ' , default => 8 ;
+has tabstop             => spec  => ' =i        ' , default => 8 ;
+has tabhead             => spec  => ' =s        ' , ;
+has tabspace            => spec  => ' =s        ' , ;
+has tabstyle            => spec  => ' =s        ' , ;
+has ignore_space        => spec  => ' !  is     ' , default => 1 ;
+has linestyle           => spec  => ' =s ls     ' , default => '' ;
+has boundary            => spec  => ' =s        ' , default => '' ;
+has linebreak           => spec  => ' =s lb     ' , default => '' ;
+has runin               => spec  => ' =i        ' , default => 2 ;
+has runout              => spec  => ' =i        ' , default => 2 ;
+has pagebreak           => spec  => ' !         ' , default => 1 ;
+has border              => spec  => ' :s        ' , ;
+has border_style        => spec  => ' =s bs     ' , default => 'vbar' ;
+has white_space         => spec  => ' !         ' , default => 2 ;
+has isolation           => spec  => ' !         ' , default => 2 ;
+has fillup              => spec  => ' :s        ' , ;
+has fillup_str          => spec  => ' :s        ' , default => '' ;
+has ambiguous           => spec  => ' =s        ' , default => 'narrow' ;
+has discard_el          => spec  => ' !         ' , default => 1 ;
+has padchar             => spec  => ' =s        ' , default => ' ' ;
+has term_size           => spec  => '           ' , ;
+has version             => spec  => '           ' , ;
+has colormap            => spec  => ' =s@ cm    ' , default => [] ;
 
 has COLORHASH           => default => {};
 has COLORLIST           => default => [];
@@ -76,11 +77,9 @@ sub run {
     local @ARGV = decode_argv(@_);
     $obj->getopt || pod2usage(2);
 
-    if ($obj->{help}) {
-	pod2usage(-verbose => 0, -exitval => "NOEXIT");
-	$obj->{version}++;
-    }
-    if ($obj->{version}) {
+    if ($obj->{help} or $obj->{version}) {
+	pod2usage(-verbose => 0, -exitval => "NOEXIT")
+	    if $obj->{help};
 	say "Version: $VERSION";
 	exit;
     }

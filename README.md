@@ -24,6 +24,7 @@ ansicolumn \[options\] \[file ...\]
     -C#                  number of panes
     -S#                  pane width
     -F                   full-width
+    -p                   paragraph mode
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
@@ -37,8 +38,6 @@ ansicolumn \[options\] \[file ...\]
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
     --[no-]insert-space  insert empty line
-    --[no-]paragraph     same as --insert-space
-    --[no-]white-space   allow page top white spaces
     --[no-]isolation     page-end line isolation
     --fillup=#           fill-up unit (pane|page|none)
     --tabstop=#          tab-stop character
@@ -143,6 +142,12 @@ default, from the standard input.
     Use full width of the terminal.  Each panes are expanded to fill
     terminal width, unless **--pane-width** is specified.
 
+- **-p**
+- **--**\[**no-**\]**paragraph**
+- **--**\[**no-**\]**insert-space**
+
+    Insert empty line between every successive non-empty lines.
+
 - **--height**=#
 
     Set page height and page mode on.  See ["CALCULATION"](#calculation) section.
@@ -226,11 +231,6 @@ default, from the standard input.
 
     When used **-t** option, leading spaces are ignored by default.  Use
     **--no-ignore-space** option to disable it.
-
-- **--**\[**no-**\]**insert-space**
-- **--**\[**no-**\]**paragraph**
-
-    Insert empty line between every successive non-empty lines.
 
 - **--**\[**no-**\]**white-space**
 
