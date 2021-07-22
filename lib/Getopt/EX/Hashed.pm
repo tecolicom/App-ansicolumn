@@ -17,26 +17,26 @@ Getopt::EX::Hashed - Hash store object automation
   no  Getopt::EX::Hashed;
 
   sub run {
-      my $obj = shift;
-      $obj->getopt or pod2usage();
-      if ($obj->{start}) {
+      my $app = shift;
+      $app->getopt or pod2usage();
+      if ($app->{start}) {
           ...
 
 =head1 DESCRIPTION
 
-This is an experimental module to automate a hash object to store
-option values.  Major objective of this module is to integrate
-initialization and specification into single place.  Module name
-shares B<Getopt::EX>, but it works totally independent from other
+B<Getopt::EX::Hashed> is an module to automate a hash object to store
+command line option values.  Major objective of this module is to
+integrate initialization and specification into single place.  Module
+name shares B<Getopt::EX>, but it works independently from other
 modules included in B<Getopt::EX>, so far.
 
-Using B<Getopt::Long>, or compatible module such as
-B<Getopt::EX::Long>, is assumed in current implementation.  It is
-configurable, but no other module is supported now.
+In the current implementation, using B<Getopt::Long>, or compatible
+module such as B<Getopt::EX::Long> is assumed.  It is configurable,
+but no other module is supported now.
 
-=head2 FUNCTION
+=head1 FUNCTION
 
-=head3 B<has>
+=head2 B<has>
 
 Declare option parameters in a form of:
 
@@ -62,7 +62,7 @@ by white space, and can show up in any order.
 
 Declaration
 
-    has start => ( spec => ":i s begin" );
+    has start => ( spec => "=i s begin" );
 
 will be compiled into string:
 
@@ -71,12 +71,12 @@ will be compiled into string:
 which conform to C<Getopt::Long> definition.  Of course, you can write
 this as this:
 
-    has start => ( spec => "s|begin:i" );
+    has start => ( spec => "s|begin=i" );
 
 If the name and aliases contain underscore (C<_>), another alias name
 is defined with dash (C<->) in place of underscores.  So
 
-    has a_to_z => ( spec => ":s" );
+    has a_to_z => ( spec => "=s" );
 
 will be compiled into:
 
@@ -84,6 +84,11 @@ will be compiled into:
 
 If nothing special is necessary, give empty (or white space only)
 string as a value.  Otherwise, it is not concidered as an option.
+
+=item B<alias> => I<string>
+
+Additional alias names can be specified by B<alias> parameter too.
+There is no difference with ones in B<spec> parameter.
 
 =item B<default> => I<value>
 
@@ -99,7 +104,7 @@ Because hash object does not exist at the time of declaration, it is
 impossible to access it.  So B<action> parameter takes a code
 reference to receive the object and produce new code reference.
 
-    has [ qw(left right both) ] => spec => ':i';
+    has [ qw(left right both) ] => spec => '=i';
     has "+both" => action => sub {
         my $obj = shift;
         sub {
@@ -126,7 +131,7 @@ C<< "<>" >> too.
 
 =item B<new>
 
-Return initialized hash object.
+Class method to get initialized hash object.
 
 =item B<configure>
 
@@ -141,7 +146,7 @@ appropriate parameters.
 
 is just a shortcut for:
 
-    Getoptions($obj, $obj->optspec)
+    GetOptions($obj, $obj->optspec)
 
 =item B<optspec>
 
@@ -241,14 +246,16 @@ sub has {
 sub new {
     my $class = shift;
     my $obj = bless {}, __PACKAGE__;
+    my $member = $obj->{__Member__} = { %Member };
+    %Member = ();
     our @ISA = $class;
-    for my $key (keys %Member) {
-	my $member = $Member{$key};
+    for my $key (keys %{$member}) {
+	my $m = $member->{$key};
 	$obj->{$key} = do {
-	    if (my $action = $member->{action}) {
-		_action($obj, $action);
+	    if (my $action = $m->{action}) {
+		_do_action($obj, $action);
 	    } else {
-		$member->{default};
+		$m->{default};
 	    }
 	};
     }
@@ -256,7 +263,7 @@ sub new {
     $obj;
 }
 
-sub _action {
+sub _do_action {
     my($obj, $action) = @_;
     ref $action eq 'CODE'
 	or die "action must be coderef.\n";
@@ -268,13 +275,20 @@ sub _action {
 
 sub optspec {
     my $obj = shift;
+    my $member = $obj->{__Member__};
     map  { _optspec($obj, @$_) }
+    map  {
+	if (my $alias = $member->{$_->[0]}) {
+	    $_->[1] .= " $alias";
+	}
+	$_;
+    }
     grep {
 	$_->[0] eq '<>' and $_->[1] //= '';
 	defined $_->[1];
     }
-    map  { [ $_ => $Member{$_}->{spec} ] }
-    keys %Member;
+    map  { [ $_ => $member->{$_}->{spec} ] }
+    keys %{$member};
 }
 
 my $spec_re = qr/[!+=:]/;
