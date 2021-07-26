@@ -5,7 +5,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 # VERSION
 
-Version 1.09
+Version 1.10
 
 # SYNOPSIS
 
@@ -37,7 +37,6 @@ ansicolumn \[options\] \[file ...\]
     --border=#           print border
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
-    --[no-]insert-space  insert empty line
     --[no-]isolation     page-end line isolation
     --fillup=#           fill-up unit (pane|page|none)
     --tabstop=#          tab-stop character
@@ -142,9 +141,7 @@ default, from the standard input.
     Use full width of the terminal.  Each panes are expanded to fill
     terminal width, unless **--pane-width** is specified.
 
-- **-p**
-- **--**\[**no-**\]**paragraph**
-- **--**\[**no-**\]**insert-space**
+- **-p**, **--paragraph**
 
     Insert empty line between every successive non-empty lines.
 

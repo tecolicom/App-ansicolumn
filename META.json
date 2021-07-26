@@ -22,8 +22,7 @@
          "eg",
          "examples",
          "author",
-         "builder",
-         "lib/Getopt"
+         "builder"
       ]
    },
    "prereqs" : {
@@ -72,7 +71,7 @@
          "web" : "https://github.com/kaz-utashiro/App-ansicolumn"
       }
    },
-   "version" : "1.09",
+   "version" : "1.10",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"

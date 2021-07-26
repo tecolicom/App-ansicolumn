@@ -13,6 +13,3 @@ exclude_match=['^images/.*']
 os = [
     "MSWin32",
 ]
-
-[no_index]
-directory=[ "t", "xt", "inc", "share", "eg", "examples", "author", "builder", "lib/Getopt" ]

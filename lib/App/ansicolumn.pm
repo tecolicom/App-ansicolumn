@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "1.09";
+our $VERSION = "1.10";
 
 use v5.14;
 use warnings;
@@ -37,8 +37,7 @@ has page                => spec  => ' :i P      ' , ;
 has pane                => spec  => ' =i C      ' , default => 0 ;
 has pane_width          => spec  => ' =s S pw   ' , ;
 has fullwidth           => spec  => ' !  F      ' , ;
-has insert_space        => spec  => ' !  p      ' ,
-                        => alias => ' paragraph ' ;
+has paragraph           => spec  => ' !  p      ' , ;
 has height              => spec  => ' =s        ' , default => 0 ;
 has column_unit         => spec  => ' =i cu     ' , default => 8 ;
 has tabstop             => spec  => ' =i        ' , default => 8 ;
@@ -88,7 +87,7 @@ sub run {
     warn Dumper $obj if $obj->{debug};
 
     chomp(my @lines = <>);
-    @lines = insert_space @lines if $obj->{insert_space};
+    @lines = insert_space @lines if $obj->{paragraph};
 
     if ($obj->{table}) {
 	$obj->table_out(@lines);

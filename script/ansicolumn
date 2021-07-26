@@ -17,7 +17,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 =head1 VERSION
 
-Version 1.09
+Version 1.10
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,6 @@ ansicolumn [options] [file ...]
     --border=#           print border
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
-    --[no-]insert-space  insert empty line
     --[no-]isolation     page-end line isolation
     --fillup=#           fill-up unit (pane|page|none)
     --tabstop=#          tab-stop character
@@ -160,11 +159,7 @@ section.
 Use full width of the terminal.  Each panes are expanded to fill
 terminal width, unless B<--pane-width> is specified.
 
-=item B<-p>
-
-=item B<-->[B<no->]B<paragraph>
-
-=item B<-->[B<no->]B<insert-space>
+=item B<-p>, B<--paragraph>
 
 Insert empty line between every successive non-empty lines.
 
