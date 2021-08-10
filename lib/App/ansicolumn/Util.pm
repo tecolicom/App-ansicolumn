@@ -8,7 +8,7 @@ use utf8;
 # Object interface
 ######################################################################
 
-sub border {
+sub get_border {
     my $border = shift->{BORDER} or return "";
     $border->get(@_);
 }
@@ -16,7 +16,7 @@ sub border {
 sub border_width {
     use List::Util qw(sum);
     my $obj = shift;
-    sum map length($obj->border($_)), @_;
+    sum map length($obj->get_border($_)), @_;
 }
 
 use Text::ANSI::Fold qw(:constants);
@@ -33,18 +33,14 @@ sub lb_flag {
     $lb_flag{shift->{linebreak}};
 }
 
-sub runin {
+sub margin_width {
     my $obj = shift;
     return 0 if not $lb_flag{$obj->{linebreak}} & LINEBREAK_RUNIN;
     $obj->{runin};
 }
 
-sub margin_width {
-    shift->runin;
-}
-
 sub term_size {
-    @{ shift->{term_size} //= [ terminal_size() ] };
+    @{ shift->{TERM_SIZE} //= [ terminal_size() ] };
 }
 
 sub term_width {
@@ -55,7 +51,7 @@ sub term_height {
     (shift->term_size)[1];
 }
 
-sub width {
+sub get_width {
     my $obj = shift;
     $obj->{width} || $obj->term_width;
 }
@@ -108,12 +104,12 @@ sub foldsub {
 sub layout {
     my $obj = shift;
     my $dp = shift;
-    $obj->pagebreak($dp);
-    $obj->space_layout($dp);
-    $obj->fillup($dp);
+    $obj->do_pagebreak($dp);
+    $obj->do_space_layout($dp);
+    $obj->do_fillup($dp);
 }
 
-sub space_layout {
+sub do_space_layout {
     my $obj = shift;
     my($dp) = @_;
     my $height = $obj->{height} - $obj->{border_height};
@@ -143,7 +139,7 @@ sub _fillup {
     }
 }
 
-sub fillup {
+sub do_fillup {
     my $obj = shift;
     my $dp = shift;
     my $line = $obj->{height} - $obj->{border_height};
@@ -154,7 +150,7 @@ sub fillup {
     _fillup $dp, $line, $obj->{fillup_str};
 }
 
-sub pagebreak {
+sub do_pagebreak {
     my $obj = shift;
     $obj->{pagebreak} or return;
     my $dp = shift;
@@ -175,7 +171,7 @@ sub insert_border {
     my $dp = shift;
     my $height = $obj->{height};
     my $span = $obj->{span};
-    my($bdr_top, $bdr_btm) = map { $obj->border($_) x $span } qw(top bottom);
+    my($bdr_top, $bdr_btm) = map { $obj->get_border($_) x $span } qw(top bottom);
     $bdr_top or $bdr_btm or return;
     for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
 	if ($bdr_top) {

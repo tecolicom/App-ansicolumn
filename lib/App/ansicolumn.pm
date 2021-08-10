@@ -23,6 +23,8 @@ use App::ansicolumn::Border;
 
 use Getopt::EX::Hashed;
 
+Getopt::EX::Hashed->configure( DEFAULT => [ is => 'ro' ] );
+
 has debug               => spec  => '           ' , ;
 has help                => spec  => '    h      ' , ;
 has width               => spec  => ' =s c      ' , ;
@@ -60,10 +62,12 @@ has fillup_str          => spec  => ' :s        ' , default => '' ;
 has ambiguous           => spec  => ' =s        ' , default => 'narrow' ;
 has discard_el          => spec  => ' !         ' , default => 1 ;
 has padchar             => spec  => ' =s        ' , default => ' ' ;
-has term_size           => spec  => '           ' , ;
 has version             => spec  => '           ' , ;
 has colormap            => spec  => ' =s@ cm    ' , default => [] ;
 
+Getopt::EX::Hashed->configure( DEFAULT => [] );
+
+has TERM_SIZE           => ;
 has COLORHASH           => default => {};
 has COLORLIST           => default => [];
 has COLOR               => ;
@@ -199,7 +203,7 @@ sub column_out {
     }
 
     use integer;
-    my $width = $obj->width - $obj->border_width(qw(left right));
+    my $width = $obj->get_width - $obj->border_width(qw(left right));
     my $max_length = max @length;
     my $unit = $obj->{column_unit} || 1;
 
@@ -231,7 +235,7 @@ sub column_out {
     }
 
     $obj->use_keys(qw(border_height));
-    $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
+    $obj->{border_height} = grep length, map $obj->get_border($_), qw(top bottom);
     $obj->{height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
 
     ## --white-space, --isolation, --fillup, top/bottom border
@@ -259,9 +263,9 @@ sub column_out {
 		my $data_index = $page[${$line}[$_]];
 		ansi_sprintf "%-$obj->{span}s", $data[$data_index];
 	    } 0 .. $#{$line};
-	    print      $obj->border('left',   $pos, $page);
-	    print join $obj->border('center', $pos, $page), @panes;
-	    print      $obj->border('right',  $pos, $page);
+	    print      $obj->get_border('left',   $pos, $page);
+	    print join $obj->get_border('center', $pos, $page), @panes;
+	    print      $obj->get_border('right',  $pos, $page);
 	    print      "\n";
 	}
     }
