@@ -30,13 +30,13 @@ my %lb_flag = (
     );
 
 sub lb_flag {
-    $lb_flag{shift->{linebreak}};
+    $lb_flag{shift->linebreak};
 }
 
 sub margin_width {
     my $obj = shift;
-    return 0 if not $lb_flag{$obj->{linebreak}} & LINEBREAK_RUNIN;
-    $obj->{runin};
+    return 0 if not $lb_flag{$obj->linebreak} & LINEBREAK_RUNIN;
+    $obj->runin;
 }
 
 sub term_size {
@@ -53,7 +53,7 @@ sub term_height {
 
 sub get_width {
     my $obj = shift;
-    $obj->{width} || $obj->term_width;
+    $obj->width || $obj->term_width;
 }
 
 sub rpn_calc {
@@ -74,15 +74,15 @@ sub foldobj {
     use Text::ANSI::Fold;
     my $fold = Text::ANSI::Fold->new(
 	width     => $width,
-	boundary  => $obj->{boundary},
+	boundary  => $obj->boundary,
 	linebreak => $obj->lb_flag,
-	runin     => $obj->{runin},
-	runout    => $obj->{runout},
-	ambiguous => $obj->{ambiguous},
-	padchar   => $obj->{padchar},
+	runin     => $obj->runin,
+	runout    => $obj->runout,
+	ambiguous => $obj->ambiguous,
+	padchar   => $obj->padchar,
 	padding   => 1,
 	);
-    if ($obj->{discard_el}) {
+    if ($obj->discard_el) {
 	$fold->configure(discard => [ 'EL' ] );
     }
     $fold;
@@ -92,7 +92,7 @@ sub foldsub {
     my $obj = shift;
     my $width = shift;
     my $fold = $obj->foldobj($width);
-    if ((my $ls = $obj->{linestyle}) eq 'truncate') {
+    if ((my $ls = $obj->linestyle) eq 'truncate') {
 	sub { ($fold->fold($_[0]))[0] };
     } elsif ($ls eq 'wrap') {
 	sub {  $fold->text($_[0])->chops };
@@ -112,9 +112,9 @@ sub layout {
 sub do_space_layout {
     my $obj = shift;
     my($dp) = @_;
-    my $height = $obj->{height} - $obj->{border_height};
+    my $height = $obj->height - $obj->border_height;
     for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
-	if ($height >= 4 and $top > 2 and !$obj->{isolation}) {
+	if ($height >= 4 and $top > 2 and !$obj->isolation) {
 	    if ($dp->[$top - 2] !~ /\S/ and
 		$dp->[$top - 1] =~ /\S/ and
 		$dp->[$top    ] =~ /\S/
@@ -123,7 +123,7 @@ sub do_space_layout {
 		next;
 	    }
 	}
-	if (not $obj->{white_space}) {
+	if (not $obj->white_space) {
 	    while ($top < @$dp and $dp->[$top] !~ /\S/) {
 		splice @$dp, $top, 1;
 	    }
@@ -142,26 +142,26 @@ sub _fillup {
 sub do_fillup {
     my $obj = shift;
     my $dp = shift;
-    my $line = $obj->{height} - $obj->{border_height};
-    defined $obj->{fillup} and $obj->{fillup} !~ /^(?:no|none)$/
+    my $line = $obj->height - $obj->border_height;
+    defined $obj->fillup and $obj->fillup !~ /^(?:no|none)$/
 	or return;
     $obj->{fillup} ||= 'pane';
-    $line *= $obj->{panes} if $obj->{fillup} eq 'page';
-    _fillup $dp, $line, $obj->{fillup_str};
+    $line *= $obj->panes if $obj->fillup eq 'page';
+    _fillup $dp, $line, $obj->fillup_str;
 }
 
 sub do_pagebreak {
     my $obj = shift;
-    $obj->{pagebreak} or return;
+    $obj->pagebreak or return;
     my $dp = shift;
-    my $height = $obj->{height} - $obj->{border_height};
+    my $height = $obj->height - $obj->border_height;
     my @up;
     use List::Util qw(first);
     while (defined(my $i = first { $dp->[$_] =~ /\f/ } 0 .. $#{$dp})) {
 	push @up, splice @$dp, 0, $i;
 	$dp->[0] =~ s/^([^\f]*)\f// or die;
 	push @up, $1, if $1 ne '';
-	_fillup \@up, $height, $obj->{fillup_str};
+	_fillup \@up, $height, $obj->fillup_str;
     }
     unshift @$dp, @up if @up;
 }
@@ -169,8 +169,8 @@ sub do_pagebreak {
 sub insert_border {
     my $obj = shift;
     my $dp = shift;
-    my $height = $obj->{height};
-    my $span = $obj->{span};
+    my $height = $obj->height;
+    my $span = $obj->span;
     my($bdr_top, $bdr_btm) = map { $obj->get_border($_) x $span } qw(top bottom);
     $bdr_top or $bdr_btm or return;
     for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
