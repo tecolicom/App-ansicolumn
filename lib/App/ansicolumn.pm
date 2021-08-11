@@ -13,7 +13,7 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure "bundling";
 
 use Data::Dumper;
-use List::Util qw(max);
+use List::Util qw(max sum);
 use Hash::Util qw(lock_keys lock_keys_plus unlock_keys);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
@@ -234,9 +234,13 @@ sub column_out {
 	@data = map { $sub->($_) } @data;
     }
 
-    $obj->use_keys(qw(border_height));
-    $obj->{border_height} = grep length, map $obj->get_border($_), qw(top bottom);
-    $obj->{height} ||= div(0+@data, $obj->{panes}) + $obj->{border_height};
+    $obj->{border_height} = do {
+	sum map { length > 0 }
+	    map { $obj->get_border($_) }
+	    qw(top bottom);
+    };
+    $obj->{height} ||=
+	div(0+@data, $obj->panes) + $obj->border_height;
 
     ## --white-space, --isolation, --fillup, top/bottom border
     $obj->layout(\@data);
