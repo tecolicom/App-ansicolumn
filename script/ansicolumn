@@ -15,10 +15,6 @@ __END__
 
 ansicolumn - ANSI terminal sequence aware column command
 
-=head1 VERSION
-
-Version 1.11
-
 =head1 SYNOPSIS
 
 ansicolumn [options] [file ...]
@@ -56,6 +52,10 @@ ansicolumn [options] [file ...]
     --tabspace=#         tab-space width
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
+
+=head1 VERSION
+
+Version 1.11
 
 =head1 DESCRIPTION
 

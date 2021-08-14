@@ -78,6 +78,17 @@ use Getopt::EX::Hashed; {
     has COLOR               => ;
     has BORDER              => ;
 
+    has '+help' => action => sub {
+	pod2usage
+	    -verbose  => 99,
+	    -sections => [ qw(SYNOPSIS VERSION) ];
+    };
+
+    has '+version' => action  => sub {
+	say "Version: $VERSION";
+	exit;
+    };
+
 } no Getopt::EX::Hashed;
 
 sub run {
@@ -85,12 +96,6 @@ sub run {
     local @ARGV = decode_argv(@_);
     $obj->getopt || pod2usage(2);
 
-    if ($obj->help or $obj->version) {
-	pod2usage(-verbose => 0, -exitval => "NOEXIT")
-	    if $obj->help;
-	say "Version: $VERSION";
-	exit;
-    }
     $obj->setup_options;
 
     warn Dumper $obj if $obj->debug;

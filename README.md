@@ -3,10 +3,6 @@
 
 ansicolumn - ANSI terminal sequence aware column command
 
-# VERSION
-
-Version 1.11
-
 # SYNOPSIS
 
 ansicolumn \[options\] \[file ...\]
@@ -44,6 +40,10 @@ ansicolumn \[options\] \[file ...\]
     --tabspace=#         tab-space width
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
+
+# VERSION
+
+Version 1.11
 
 # DESCRIPTION
 
