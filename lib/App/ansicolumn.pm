@@ -60,11 +60,14 @@ use Getopt::EX::Hashed; {
     has isolation           => spec => ' !       ' , default => 2 ;
     has fillup              => spec => ' :s      ' ;
     has fillup_str          => spec => ' :s      ' , default => '' ;
-    has ambiguous           => spec => ' =s      ' , re => qr/^(wide|narrow)$/ ,
-	()					   , default => 'narrow' ;
+    has ambiguous           => spec => ' =s      ' , default => 'narrow' ;
     has discard_el          => spec => ' !       ' , default => 1 ;
     has padchar             => spec => ' =s      ' , default => ' ' ;
     has colormap            => spec => ' =s@  cm ' , default => [] ;
+
+    has '+boundary'  => re => qr/^(none|word|space)$/;
+    has '+linestyle' => re => qr/^(none|wordwrap|wrap|truncate)$/;
+    has '+ambiguous' => re => qr/^(wide|narrow)$/ ;
 
     has '+help' => action => sub {
 	pod2usage
@@ -134,9 +137,7 @@ sub setup_options {
     }
 
     ## --linestyle
-    if ($obj->linestyle !~ /^(?<style>|none|wordwrap|wrap|truncate)$/) {
-	die "$obj->{linestyle}: unknown style.\n";
-    } elsif ($+{style} eq 'wordwrap') {
+    if ($obj->linestyle eq 'wordwrap') {
 	$obj->{linestyle} = 'wrap';
 	$obj->{boundary} = 'word';
     }
