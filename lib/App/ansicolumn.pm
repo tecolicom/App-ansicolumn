@@ -25,45 +25,57 @@ use Getopt::EX::Hashed; {
 
     Getopt::EX::Hashed->configure( DEFAULT => [ is => 'ro' ] );
 
-    has debug               => spec => '         ' , ;
-    has help                => spec => '    h    ' , ;
-    has version             => spec => '    v    ' , ;
-    has width               => spec => ' =s c    ' , ;
-    has fillrows            => spec => '    x    ' , ;
-    has table               => spec => '    t    ' , ;
+    has debug               => spec => '         ' ;
+    has help                => spec => '    h    ' ;
+    has version             => spec => '    v    ' ;
+    has width               => spec => ' =s c    ' ;
+    has fillrows            => spec => '    x    ' ;
+    has table               => spec => '    t    ' ;
     has table_columns_limit => spec => ' =i l    ' , default => 0 ;
     has table_right         => spec => ' =s R    ' , default => '' ;
     has separator           => spec => ' =s s    ' , default => ' ' ;
     has output_separator    => spec => ' =s o    ' , default => '  ' ;
-    has document            => spec => '    D    ' , ;
-    has page                => spec => ' :i P    ' , ;
-    has pane                => spec => ' =i C    ' , default => 0 ;
-    has pane_width          => spec => ' =s S pw ' , ;
-    has fullwidth           => spec => ' !  F    ' , ;
-    has paragraph           => spec => ' !  p    ' , ;
+    has document            => spec => '    D    ' ;
+    has page                => spec => ' :i P    ' , min => 0;
+    has pane                => spec => ' =i C    ' , min => 1, default => 0 ;
+    has pane_width          => spec => ' =s S pw ' , min => 1;
+    has fullwidth           => spec => ' !  F    ' ;
+    has paragraph           => spec => ' !  p    ' ;
     has height              => spec => ' =s      ' , default => 0 ;
-    has column_unit         => spec => ' =i   cu ' , default => 8 ;
-    has tabstop             => spec => ' =i      ' , default => 8 ;
-    has tabhead             => spec => ' =s      ' , ;
-    has tabspace            => spec => ' =s      ' , ;
-    has tabstyle            => spec => ' =s      ' , ;
+    has column_unit         => spec => ' =i   cu ' , min => 1, default => 8 ;
+    has tabstop             => spec => ' =i      ' , min => 1, default => 8 ;
+    has tabhead             => spec => ' =s      ' ;
+    has tabspace            => spec => ' =s      ' ;
+    has tabstyle            => spec => ' =s      ' ;
     has ignore_space        => spec => ' !    is ' , default => 1 ;
     has linestyle           => spec => ' =s   ls ' , default => '' ;
     has boundary            => spec => ' =s      ' , default => '' ;
     has linebreak           => spec => ' =s   lb ' , default => '' ;
-    has runin               => spec => ' =i      ' , default => 2 ;
-    has runout              => spec => ' =i      ' , default => 2 ;
+    has runin               => spec => ' =i      ' , min => 1, default => 2 ;
+    has runout              => spec => ' =i      ' , min => 1, default => 2 ;
     has pagebreak           => spec => ' !       ' , default => 1 ;
-    has border              => spec => ' :s      ' , ;
+    has border              => spec => ' :s      ' ;
     has border_style        => spec => ' =s   bs ' , default => 'vbar' ;
     has white_space         => spec => ' !       ' , default => 2 ;
     has isolation           => spec => ' !       ' , default => 2 ;
-    has fillup              => spec => ' :s      ' , ;
+    has fillup              => spec => ' :s      ' ;
     has fillup_str          => spec => ' :s      ' , default => '' ;
-    has ambiguous           => spec => ' =s      ' , default => 'narrow' ;
+    has ambiguous           => spec => ' =s      ' , re => qr/^(wide|narrow)$/ ,
+	()					   , default => 'narrow' ;
     has discard_el          => spec => ' !       ' , default => 1 ;
     has padchar             => spec => ' =s      ' , default => ' ' ;
     has colormap            => spec => ' =s@  cm ' , default => [] ;
+
+    has '+help' => action => sub {
+	pod2usage
+	    -verbose  => 99,
+	    -sections => [ qw(SYNOPSIS VERSION) ];
+    };
+
+    has '+version' => action  => sub {
+	say "Version: $VERSION";
+	exit;
+    };
 
     # for run-time use
     has span                => ;
@@ -77,17 +89,6 @@ use Getopt::EX::Hashed; {
     has COLORLIST           => default => [];
     has COLOR               => ;
     has BORDER              => ;
-
-    has '+help' => action => sub {
-	pod2usage
-	    -verbose  => 99,
-	    -sections => [ qw(SYNOPSIS VERSION) ];
-    };
-
-    has '+version' => action  => sub {
-	say "Version: $VERSION";
-	exit;
-    };
 
 } no Getopt::EX::Hashed;
 
