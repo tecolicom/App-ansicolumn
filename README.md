@@ -43,7 +43,7 @@ ansicolumn \[options\] \[file ...\]
 
 # VERSION
 
-Version 1.11
+Version 1.12
 
 # DESCRIPTION
 
