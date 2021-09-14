@@ -54,7 +54,7 @@ use Getopt::EX::Hashed; {
     has runin               => spec => ' =i      ' , min => 1, default => 2 ;
     has runout              => spec => ' =i      ' , min => 1, default => 2 ;
     has pagebreak           => spec => ' !       ' , default => 1 ;
-    has border              => spec => ' :s      ' ;
+    has border              => spec => ' :s B    ' ;
     has border_style        => spec => ' =s   bs ' , default => 'vbar' ;
     has white_space         => spec => ' !       ' , default => 2 ;
     has isolation           => spec => ' !       ' , default => 2 ;
