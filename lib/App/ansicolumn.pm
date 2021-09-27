@@ -58,7 +58,7 @@ use Getopt::EX::Hashed; {
     has border_style        => ' =s   bs ' , default => 'vbar' ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;
-    has fillup              => ' :s      ' ;
+    has fillup              => ' :s U    ' ;
     has fillup_str          => ' :s      ' , default => '' ;
     has ambiguous           => ' =s      ' , default => 'narrow' ;
     has discard_el          => ' !       ' , default => 1 ;
