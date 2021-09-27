@@ -65,9 +65,9 @@ use Getopt::EX::Hashed; {
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
 
-    has '+boundary'  => re => qr/^(none|word|space)$/;
-    has '+linestyle' => re => qr/^(none|wordwrap|wrap|truncate)$/;
-    has '+ambiguous' => re => qr/^(wide|narrow)$/ ;
+    has '+boundary'  => any => [ qw(none word space) ];
+    has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ];
+    has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
     has '+help' => action => sub {
 	pod2usage
