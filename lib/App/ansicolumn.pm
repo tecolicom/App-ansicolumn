@@ -65,8 +65,9 @@ use Getopt::EX::Hashed; {
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
 
-    has '+boundary'  => any => [ qw(none word space) ];
-    has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ];
+    has '+boundary'  => any => [ qw(none word space) ] ;
+    has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
+    has '+fillup'    => any => [ qw(pane page none) ] ;
     has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
     has '+help' => action => sub {
