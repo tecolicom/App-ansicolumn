@@ -51,8 +51,8 @@ use Getopt::EX::Hashed; {
     has linestyle           => ' =s   ls ' , default => '' ;
     has boundary            => ' =s      ' , default => '' ;
     has linebreak           => ' =s   lb ' , default => '' ;
-    has runin               => ' =i      ' , min => 1, default => 2 ;
-    has runout              => ' =i      ' , min => 1, default => 2 ;
+    has runin               => ' =i      ' , min => 0, default => 2 ;
+    has runout              => ' =i      ' , min => 0, default => 2 ;
     has pagebreak           => ' !       ' , default => 1 ;
     has border              => ' :s B    ' ;
     has border_style        => ' =s   bs ' , default => 'vbar' ;
