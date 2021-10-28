@@ -1,11 +1,10 @@
 #!/usr/bin/env perl
 
-use v5.14;
+use strict;
 use warnings;
 
-use App::ansicolumn;
-
-App::ansicolumn->new->run(@ARGV);
+use  App::ansicolumn;
+exit App::ansicolumn->new->run(splice @ARGV);
 
 __END__
 
@@ -56,7 +55,7 @@ ansicolumn [options] [file ...]
 
 =head1 VERSION
 
-Version 1.14
+Version 1.15
 
 =head1 DESCRIPTION
 

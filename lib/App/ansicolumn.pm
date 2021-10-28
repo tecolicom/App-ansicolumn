@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "1.14";
+our $VERSION = "1.15";
 
 use v5.14;
 use warnings;
@@ -113,6 +113,8 @@ sub run {
     } else {
 	$obj->column_out(@lines);
     }
+
+    return 0
 }
 
 sub setup_options {
