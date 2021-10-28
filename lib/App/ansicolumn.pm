@@ -39,7 +39,7 @@ use Getopt::EX::Hashed; {
     has page                => ' :i P    ' , min => 0;
     has pane                => ' =i C    ' , min => 1, default => 0 ;
     has pane_width          => ' =s S pw ' , min => 1;
-    has fullwidth           => ' !  F    ' ;
+    has widen               => ' !  W    ' ;
     has paragraph           => ' !  p    ' ;
     has height              => ' =s      ' , default => 0 ;
     has column_unit         => ' =i   cu ' , min => 1, default => 8 ;
@@ -54,11 +54,11 @@ use Getopt::EX::Hashed; {
     has runin               => ' =i      ' , min => 0, default => 2 ;
     has runout              => ' =i      ' , min => 0, default => 2 ;
     has pagebreak           => ' !       ' , default => 1 ;
-    has border              => ' :s B    ' ;
+    has border              => ' :s      ' ; has B => '' , action => sub { $_->{border} = '' } ;
     has border_style        => ' =s   bs ' , default => 'vbar' ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;
-    has fillup              => ' :s U    ' ;
+    has fillup              => ' :s      ' ; has F => '' , action => sub { $_->{fillup} = '' } ;
     has fillup_str          => ' :s      ' , default => '' ;
     has ambiguous           => ' =s      ' , default => 'narrow' ;
     has discard_el          => ' !       ' , default => 1 ;
@@ -67,7 +67,7 @@ use Getopt::EX::Hashed; {
 
     has '+boundary'  => any => [ qw(none word space) ] ;
     has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
-    has '+fillup'    => any => [ qw(pane page none) ] ;
+    has '+fillup'    => any => [ qw(pane page none), '' ] ;
     has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
     has '+help' => action => sub {
@@ -145,7 +145,7 @@ sub setup_options {
 
     ## -P
     if (defined $obj->page) {
-	$obj->{fullwidth} = 1 if $obj->pane and not $obj->pane_width;
+	$obj->{widen} = 1 if $obj->pane and not $obj->pane_width;
 	$obj->{height} ||= $obj->page || $obj->term_height - 1;
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{border} //= 1;
@@ -154,7 +154,7 @@ sub setup_options {
 
     ## -D
     if ($obj->document) {
-	$obj->{fullwidth} = 1;
+	$obj->{widen} = 1;
 	$obj->{linebreak} ||= 'all';
 	$obj->{linestyle} ||= 'wrap';
 	$obj->{boundary} ||= 'word';
@@ -223,7 +223,7 @@ sub column_out {
     ($obj->{span}, $obj->{panes}) = do {
 	my $span;
 	my $panes;
-	if ($obj->fullwidth and not $obj->pane_width) {
+	if ($obj->widen and not $obj->pane_width) {
 	    my $min = $max_length + ($obj->border_width('center') || 1);
 	    $panes = $obj->pane || $width / $min || 1;
 	    $span = ($width + $obj->border_width('center')) / $panes;
