@@ -35,6 +35,7 @@ ansicolumn \[options\] \[file ...\]
     --[no-]pagebreak     allow page break
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
+    --[no-]white-space   allow white spaces at the top of each panes
     --[no-]isolation     page-end line isolation
     --tabstop=#          tab-stop character
     --tabhead=#          tab-head character
