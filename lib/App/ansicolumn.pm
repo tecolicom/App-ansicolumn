@@ -37,7 +37,7 @@ use Getopt::EX::Hashed; {
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
     has page                => ' :i P    ' , min => 0;
-    has pane                => ' =i C    ' , min => 1, default => 0 ;
+    has pane                => ' =s C    ' , default => 0 ;
     has pane_width          => ' =s S pw ' , min => 1;
     has widen               => ' !  W    ' ;
     has paragraph           => ' !  p    ' ;
@@ -79,6 +79,16 @@ use Getopt::EX::Hashed; {
     has '+version' => action  => sub {
 	say "Version: $VERSION";
 	exit;
+    };
+
+    # RPN calc for --height, --width, --pane, --pane-width
+    has [ qw(+height +width +pane +pane_width) ] => action => sub {
+	my $obj = $_;
+	my($name, $val) = @_;
+	$obj->{$name} = $val !~ /\D/ ? $val : do {
+	    my $init = $name =~ /height/ ? $obj->term_height : $obj->term_width;
+	    rpn_calc($init, $val) or die "$val: invalid $name.\n";
+	};
     };
 
     # for run-time use
@@ -126,17 +136,6 @@ sub setup_options {
 	    $obj->{border_style} = $border;
 	}
 	$obj->{border} = 1;
-    }
-
-    ## RPN calc for --height, --width, --pane-width
-    for my $param ([ 'height',      $obj->term_height ],
-		   [ 'width',       $obj->term_width  ],
-		   [ 'pane_width',  $obj->term_width  ]) {
-	my($name, @stack) = @$param;
-	my $exp = $obj->{$name} or next;
-	$exp =~ /\D/ or next;
-	$obj->{$name} = rpn_calc(@stack, $exp)
-	    or die "$exp: invalid $name.\n";
     }
 
     ## --linestyle

@@ -131,7 +131,8 @@ default, from the standard input.
 - **-C**#, **--pane**=#
 
     Output is formatted in the specified number of panes.  Setting number
-    of panes implies **--widen** option enabled.
+    of panes implies **--widen** option enabled.  See ["CALCULATION"](#calculation)
+    section.
 
 - **-S**#, **--pane-width**=#, **--pw**=#
 
@@ -275,11 +276,11 @@ default, from the standard input.
 
 # CALCULATION
 
-As for **--height**, **--width** and **--pane-width** options, besides
-giving numeric digits, you can calculate the number using terminal
-size.  If the expression contains non-digit character, it is evaluated
-as a Reverse Polish Notation with the terminal size pushed on the
-stack.
+As for **--height**, **--width**, $**--pane** and **--pane-width**
+options, besides giving numeric digits, you can calculate the number
+using terminal size.  If the expression contains non-digit character,
+it is evaluated as a Reverse Polish Notation with the terminal size
+pushed on the stack.
 
     OPTION              VALUE
     =================   =========================
