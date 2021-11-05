@@ -70,6 +70,13 @@ use Getopt::EX::Hashed; {
     has '+fillup'    => any => [ qw(pane page none), '' ] ;
     has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
+    # for run-time use
+    has span                => ;
+    has panes               => ;
+    has border_height       => ;
+
+    Getopt::EX::Hashed->configure( DEFAULT => [] );
+
     has '+help' => action => sub {
 	pod2usage
 	    -verbose  => 99,
@@ -81,7 +88,7 @@ use Getopt::EX::Hashed; {
 	exit;
     };
 
-    # RPN calc for --height, --width, --pane, --pane-width
+    ### RPN calc for --height, --width, --pane, --pane-width
     has [ qw(+height +width +pane +pane_width) ] => action => sub {
 	my $obj = $_;
 	my($name, $val) = @_;
@@ -91,12 +98,28 @@ use Getopt::EX::Hashed; {
 	};
     };
 
-    # for run-time use
-    has span                => ;
-    has panes               => ;
-    has border_height       => ;
+    ### --ambiguous=wide
+    has '+ambiguous' => action => sub {
+	if ($_[1] eq 'wide') {
+	    $Text::VisualWidth::PP::EastAsian = 1;
+	    Text::ANSI::Fold->configure(ambiguous => 'wide');
+	}
+    };
 
-    Getopt::EX::Hashed->configure( DEFAULT => [] );
+    ### --tabstop, --tabstyle
+    has [ qw(+tabstop +tabstyle) ] => action => sub {
+	my($name, $val) = map "$_", @_;
+	Text::ANSI::Fold->configure($name => $val);
+    };
+
+    ### --tabhead, --tabspace
+    use charnames ':loose';
+    has [ qw(+tabhead +tabspace) ] => action => sub {
+	my($name, $c) = map "$_", @_;
+	$c = charnames::string_vianame($c) || die "$c: invalid name\n"
+	    if length($c) > 1;
+	Text::ANSI::Fold->configure($name => $c);
+    };
 
     has TERM_SIZE           => ;
     has COLORHASH           => default => {};
@@ -175,30 +198,6 @@ sub setup_options {
 	my $style = $obj->{border_style};
 	($obj->{BORDER} = App::ansicolumn::Border->new)
 	    ->style($style) // die "$style: Unknown style.\n";
-    }
-
-    ## --ambiguous=wide
-    if ($obj->ambiguous eq 'wide') {
-	$Text::VisualWidth::PP::EastAsian = 1;
-	Text::ANSI::Fold->configure(ambiguous => 'wide');
-    }
-
-    ## --tabstop, --tabstyle
-    for my $opt (qw(tabstop tabstyle)) {
-	if (my $v = $obj->{$opt}) {
-	    Text::ANSI::Fold->configure($opt => $v);
-	}
-    }
-
-    ## --tabhead, --tabspace
-    use charnames ':loose';
-    for my $opt (qw(tabhead tabspace)) {
-	for ($obj->{$opt}) {
-	    defined && length or next;
-	    $_ = charnames::string_vianame($_) || die "$_: invalid name\n"
-		if length > 1;
-	    Text::ANSI::Fold->configure($opt => $_);
-	}
     }
 
     $obj;
