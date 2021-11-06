@@ -94,7 +94,7 @@ use Getopt::EX::Hashed; {
 	my($name, $val) = @_;
 	$obj->{$name} = $val !~ /\D/ ? $val : do {
 	    my $init = $name =~ /height/ ? $obj->term_height : $obj->term_width;
-	    rpn_calc($init, $val) or die "$val: invalid $name.\n";
+	    rpn_calc($init, $val) // die "$val: invalid $name.\n";
 	};
     };
 

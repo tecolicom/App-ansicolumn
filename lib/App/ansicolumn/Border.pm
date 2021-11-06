@@ -50,18 +50,15 @@ my %template = (
     line => {
 	center => "│ ", # "\x{2502} "
     },
-    heavy_line => {
-	center => "┃ ", # "\x{2503} "
-    },
     vbar => {
 	center => [ "╷ "  , # "\x{2577} "
 		    "│ "  , # "\x{2502} "
 		    "╵ " ], # "\x{2575} "
     },
-    heavy_vbar => {
-	center => [ "╻ "  , # "\x{257b} "
-		    "┃ "  , # "\x{2503} "
-		    "╹ " ], # "\x{2579} "
+    stick => {
+	center => [ "╻ "  , # "\x{2577} "
+		    "│ "  , # "\x{2502} "
+		    "╹ " ], # "\x{2575} "
     },
     fence => {
 	left   => [ "╷ "  , # "\x{2577} "
@@ -189,6 +186,58 @@ my %template = (
 		    "▄▟" ],
 	bottom =>   "▄",
     },
+    fat_box => {
+	top    =>   "▀",
+	left   => [ "█▀"  ,
+		    "█ "  ,
+		    "█▄" ],
+	center => [ "▀█ █▀"  ,
+		    " █ █ "  ,
+		    "▄█ █▄" ],
+	right  => [ "▀█" ,
+		    " █" ,
+		    "▄█" ],
+	bottom =>   "▄",
+    },
+    very_fat_box => {
+	top    =>   "█",
+	left   => [ "███"  ,
+		    "██ "  ,
+		    "███" ],
+	center => [ "███  ███"  ,
+		    " ██  ██ "  ,
+		    "███  ███" ],
+	right  => [ "███" ,
+		    " ██" ,
+		    "███" ],
+	bottom =>   "█",
+    },
+    fat_frame => {
+	top    =>   "▀",
+	left   => [ "█▀"  ,
+		    "█ "  ,
+		    "█▄" ],
+	center => [ "▀█▀"  ,
+		    " █ "  ,
+		    "▄█▄" ],
+	right  => [ "▀█" ,
+		    " █" ,
+		    "▄█" ],
+	bottom =>   "▄",
+    },
+    very_fat_frame => {
+	top    =>   "█",
+	left   => [ "███"  ,
+		    "██ "  ,
+		    "███" ],
+	center => [ "████"  ,
+		    " ██ "  ,
+		    "████" ],
+	right  => [ "███" ,
+		    " ██" ,
+		    "███" ],
+	bottom =>   "█",
+    },
     comb => {
 	top    =>    "─",
 	left   => [ "┌─"  ,
@@ -242,11 +291,6 @@ my %template = (
 		    "│ "  , # "\x{2502} "
 		    "▀ " ], # "\x{2580} "
     },
-    heavy_dumbbell => {
-	center => [ "▄ "  , # "\x{2584} "
-		    "┃ "  , # "\x{2503} "
-		    "▀ " ], # "\x{2580} "
-    },
     ribbon => {
 	center => [ "┌┐ "  , # "\x{250c}\x{2510}"
 		    "││ "  , # "\x{2502}\x{2502}"
@@ -268,11 +312,6 @@ my %template = (
 		    "║║"  , # "\x{2551}\x{2551}"
 		    "╚╝" ], # "\x{255A}\x{255D}"
     },
-    heavy_ribbon => {
-	center => [ "┏┓"  , # "\x{250F}\x{2513}"
-		    "┃┃"  , # "\x{2503}\x{2503}"
-		    "┗┛" ], # "\x{2517}\x{251B}"
-    },
     block_element => {
 	center => [ "▄ "  , # "\x{2584} "
 		    "█ "  , # "\x{2588} "
@@ -284,6 +323,18 @@ my %template = (
 		    "▝ " ], # "\x{259D} "
     },
     );
+
+use Clone qw(clone);
+
+for my $style (qw(line vbar fence box round_box shadow_box frame page_frame comb rake mesh mesh2
+		  dumbbell ribbon)) {
+    my $new = $template{"heavy_$style"} = clone $template{$style};
+    while (my($k, $v) = each %$new) {
+	for (ref $v ? @$v : $new->{$k}) {
+	    tr[─│┌┐└┘├┤┬┴┼╴╵╶╷][━┃┏┓┗┛┣┫┳┻╋╸╹╺╻];
+	}
+    }
+}
 
 sub new {
     my $class = shift;

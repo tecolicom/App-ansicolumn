@@ -211,14 +211,21 @@ default, from the standard input.
     Sample styles:
     none,
     vbar, fence,
-    line, heavy-line,
+    line, stick,
     ascii-frame, ascii-box,
     c-box,
     box, frame, page-frame,
+    fat-box, fat-frame,
+    very-fat-box, very-fat-frame,
     shadow, shadow-box,
     comb, rake, mesh,
-    dumbbell, heavy-dumbbell,
-    ribbon, round-ribbon, double-ribbon, double-double-ribbon, heavy-ribbon
+    dumbbell,
+    ribbon, round-ribbon, double-ribbon, double-double-ribbon
+    heavy-line,
+    heavy-fence, heavy-box, heavy-round-box, heavy-shadow-box,
+    heavy-frame, heavy-page-frame, heavy-comb, heavy-rake, heavy-mesh,
+    heavy-dumbbell, heavy-ribbon,
+    etc.
 
     These are experimental and subject to change, and this document is not
     always up-to-date.  See \`perldoc -m App::ansicolumn::Border\` for
@@ -280,7 +287,8 @@ As for **--height**, **--width**, **--pane** and **--pane-width** options,
 besides giving numeric digits, you can calculate the number using
 terminal size.  If the expression contains non-digit character, it is
 evaluated as a Reverse Polish Notation with the terminal size pushed
-on the stack.
+on the stack.  Initial value for **--height** options is terminal
+height, and terminal width for others.
 
     OPTION              VALUE
     =================   =========================
@@ -290,8 +298,16 @@ on the stack.
     --height dup2%-2/   (height - height % 2) / 2
 
 Space and comma characters are ignored in the expression.  So `1-2/`
-and `1 - 2 /` and `1,-,2,/` are all same.  See \`perldoc Math::RPN\`
-for the expression detail.
+and `1&nbsp;-&nbsp;2&nbsp;/` and `1,-,2,/` are all same.  See \`perldoc
+Math::RPN\` for the expression detail.
+
+Next example select number of panes by dividing terminal width by 85:
+
+    ansicolumn --pane 85/
+
+If you consider the case the terminal width is less than 85:
+
+    ansicolumn --pane 85/,DUP,1>,EXCH,1,IF
 
 # STARTUP
 
