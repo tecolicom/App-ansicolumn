@@ -308,11 +308,11 @@ Set padding chracter.
 
 =head1 CALCULATION
 
-As for B<--height>, B<--width>, $B<--pane> and B<--pane-width>
-options, besides giving numeric digits, you can calculate the number
-using terminal size.  If the expression contains non-digit character,
-it is evaluated as a Reverse Polish Notation with the terminal size
-pushed on the stack.
+As for B<--height>, B<--width>, B<--pane> and B<--pane-width> options,
+besides giving numeric digits, you can calculate the number using
+terminal size.  If the expression contains non-digit character, it is
+evaluated as a Reverse Polish Notation with the terminal size pushed
+on the stack.
 
     OPTION              VALUE
     =================   =========================
