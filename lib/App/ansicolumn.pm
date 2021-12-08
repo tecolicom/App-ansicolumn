@@ -78,19 +78,19 @@ use Getopt::EX::Hashed; {
 
     Getopt::EX::Hashed->configure( DEFAULT => [] );
 
-    has '+help' => action => sub {
+    has '+help' => sub {
 	pod2usage
 	    -verbose  => 99,
 	    -sections => [ qw(SYNOPSIS VERSION) ];
     };
 
-    has '+version' => action  => sub {
+    has '+version' => sub {
 	say "Version: $VERSION";
 	exit;
     };
 
     ### RPN calc for --height, --width, --pane, --pane-width
-    has [ qw(+height +width +pane +pane_width) ] => action => sub {
+    has [ qw(+height +width +pane +pane_width) ] => sub {
 	my $obj = $_;
 	my($name, $val) = @_;
 	$obj->{$name} = $val !~ /\D/ ? $val : do {
@@ -100,7 +100,7 @@ use Getopt::EX::Hashed; {
     };
 
     ### --ambiguous=wide
-    has '+ambiguous' => action => sub {
+    has '+ambiguous' => sub {
 	if ($_[1] eq 'wide') {
 	    $Text::VisualWidth::PP::EastAsian = 1;
 	    Text::ANSI::Fold->configure(ambiguous => 'wide');
@@ -108,14 +108,14 @@ use Getopt::EX::Hashed; {
     };
 
     ### --tabstop, --tabstyle
-    has [ qw(+tabstop +tabstyle) ] => action => sub {
+    has [ qw(+tabstop +tabstyle) ] => sub {
 	my($name, $val) = map "$_", @_;
 	Text::ANSI::Fold->configure($name => $val);
     };
 
     ### --tabhead, --tabspace
     use charnames ':loose';
-    has [ qw(+tabhead +tabspace) ] => action => sub {
+    has [ qw(+tabhead +tabspace) ] => sub {
 	my($name, $c) = map "$_", @_;
 	$c = charnames::string_vianame($c) || die "$c: invalid name\n"
 	    if length($c) > 1;
