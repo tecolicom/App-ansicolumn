@@ -27,6 +27,7 @@ ansicolumn [options] [file ...]
     -R#                  right adjust table columns
 
     -P[#]                page mode, with optional page length
+    -U[#]                show in N-up format (-WC# --linestyle=wrap)
     -D                   document mode
     -C#                  number of panes
     -S#                  pane width
@@ -128,6 +129,12 @@ Page mode.  Set these options.
 If optional number is given, it is used as a page height unless option
 B<--height> exists.  Otherwise page height is set to terminal height
 minus one.
+
+=item B<-U>#, B<--up>=#
+
+Show in N-up format.  This option set B<--pane=#> with B<--widen> and
+B<--linestyle=wrap> options.  This is convenient when you want
+multi-column output without page mode.
 
 =item B<-D>, B<--document>
 
