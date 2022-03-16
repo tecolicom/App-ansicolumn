@@ -64,6 +64,7 @@ use Getopt::EX::Hashed; {
     has ambiguous           => ' =s      ' , default => 'narrow' ;
     has discard_el          => ' !       ' , default => 1 ;
     has padchar             => ' =s      ' , default => ' ' ;
+    has view                => '         ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
 
     has '+boundary'  => any => [ qw(none word space) ] ;
@@ -139,13 +140,18 @@ sub run {
 
     warn Dumper $obj if $obj->debug;
 
-    chomp(my @lines = <>);
-    @lines = insert_space @lines if $obj->paragraph;
+    if ($obj->view) {
+	$obj->multifile_view(@ARGV);
+    }
+    else {
+	chomp(my @lines = <>);
+	@lines = insert_space @lines if $obj->paragraph;
 
-    if ($obj->table) {
-	$obj->table_out(@lines);
-    } else {
-	$obj->column_out(@lines);
+	if ($obj->table) {
+	    $obj->table_out(@lines);
+	} else {
+	    $obj->column_out(@lines);
+	}
     }
 
     return 0
@@ -319,6 +325,38 @@ sub table_out {
 	ansi_printf $format, @$line;
     } continue {
 	print "\n";
+    }
+}
+
+use List::Util qw(any);
+
+sub multifile_view {
+    my $obj = shift;
+    my @files = @_ or return;
+
+    use integer;
+    my $width = $obj->width - $obj->border_width(qw(left right));
+    $obj->{panes} = int @files;
+    $obj->{span} = ($width + $obj->border_width('center')) / $obj->{panes};
+    my $fold_core = Text::ANSI::Fold->configure();
+    (my $cell_width = $obj->{span} - $obj->margin_width) < 1
+	and die "Not enough space.\n";
+    my $sub = $obj->foldsub($obj->{span},
+			    expand => 1, tabstop => $obj->{tabstop}) or die;
+    my @data = map {
+	open my $fh, "<", $_ or die "$_: $!";
+	[ map $sub->($_), map tr/\n//dr, <$fh> ];
+    } @files;
+    $obj->{border_height} = grep length, map $obj->border($_), qw(top bottom);
+    my $empty = ' ' x $obj->{span};
+    while (any { @$_ > 0 } @data) {
+	my @panes = map { shift @$_ // $empty } @data;
+	my $pos = 1;
+	my $page = 0;
+	print      $obj->border('left',   $pos, $page);
+	print join $obj->border('center', $pos, $page), @panes;
+	print      $obj->border('right',  $pos, $page);
+	print      "\n";
     }
 }
 

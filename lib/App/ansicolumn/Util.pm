@@ -91,13 +91,13 @@ sub foldobj {
 sub foldsub {
     my $obj = shift;
     my $width = shift;
-    my $fold = $obj->foldobj($width);
+    my $fold = $obj->foldobj($width, @_);
     if ((my $ls = $obj->linestyle) eq 'truncate') {
 	sub { ($fold->fold($_[0]))[0] };
     } elsif ($ls eq 'wrap') {
-	sub {  $fold->text($_[0])->chops };
+	sub { $fold->text($_[0])->chops };
     } else {
-	undef;
+	sub { $_[0] };
     }
 }
 
