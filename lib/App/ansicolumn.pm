@@ -71,6 +71,12 @@ use Getopt::EX::Hashed; {
     has '+fillup'    => any => [ qw(pane page none), '' ] ;
     has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
+    # --2up .. --9up
+    my $nup = sub { $_[0] =~ /^(\d+)/ and $_->{up} = $1 } ;
+    for my $n (2..9) {
+	has "${n}up" => '', action => $nup;
+    }
+
     # for run-time use
     has span                => ;
     has panes               => ;
@@ -182,6 +188,8 @@ sub setup_options {
 	$obj->{pane} = $obj->up;
 	$obj->{widen} = 1;
 	$obj->{linestyle} ||= 'wrap';
+	$obj->{border} //= 1;
+	$obj->{fillup} //= 'pane';
     }
 
     ## -D
