@@ -270,6 +270,8 @@ sub column_out {
     $obj->{height} ||=
 	div(0+@data, $obj->panes) + $obj->border_height;
 
+    die "Not enough height.\n" if $obj->effective_height <= 0;
+
     ## --white-space, --isolation, --fillup, top/bottom border
     $obj->layout(\@data);
 
