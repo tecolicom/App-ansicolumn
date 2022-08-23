@@ -44,7 +44,7 @@
          "requires" : {
             "Clone" : "0",
             "Getopt::EX" : "v1.25.0",
-            "Getopt::EX::Hashed" : "1.04",
+            "Getopt::EX::Hashed" : "1.05",
             "List::Util" : "1.45",
             "Math::RPN" : "0",
             "Term::ReadKey" : "0",

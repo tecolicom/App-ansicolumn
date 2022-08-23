@@ -21,9 +21,9 @@ use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
 use App::ansicolumn::Border;
 
-use Getopt::EX::Hashed; {
+use Getopt::EX::Hashed 1.05; {
 
-    Getopt::EX::Hashed->configure( DEFAULT => [ is => 'lv' ] );
+    Getopt::EX::Hashed->configure( DEFAULT => [ is => 'rw' ] );
 
     has debug               => '         ' ;
     has help                => '    h    ' ;
