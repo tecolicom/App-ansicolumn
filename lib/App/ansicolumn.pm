@@ -72,7 +72,7 @@ use Getopt::EX::Hashed 1.05; {
     has '+ambiguous' => any => [ qw(wide narrow) ] ;
 
     # --2up .. --9up
-    my $nup = sub { $_[0] =~ /^(\d+)/ and $_->{up} = $1 } ;
+    my $nup = sub { $_[0] =~ /^(\d+)/ and $_->up = $1 } ;
     for my $n (2..9) {
 	has "${n}up" => '', action => $nup;
     }
