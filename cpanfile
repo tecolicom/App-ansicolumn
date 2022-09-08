@@ -1,6 +1,6 @@
 requires 'perl', 'v5.16';
 
-requires 'List::Util', '1.45';
+requires 'List::Util', '1.56';
 requires 'Term::ReadKey';
 requires 'Getopt::EX', 'v1.25.0';
 requires 'Getopt::EX::Hashed', '1.05';

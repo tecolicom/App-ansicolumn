@@ -45,7 +45,7 @@
             "Clone" : "0",
             "Getopt::EX" : "v1.25.0",
             "Getopt::EX::Hashed" : "1.05",
-            "List::Util" : "1.45",
+            "List::Util" : "1.56",
             "Math::RPN" : "0",
             "Term::ReadKey" : "0",
             "Text::ANSI::Fold" : "2.14",
