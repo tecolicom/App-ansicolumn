@@ -57,6 +57,7 @@
       },
       "test" : {
          "requires" : {
+            "Data::Section::Simple" : "0",
             "Test::More" : "0.98"
          }
       }
