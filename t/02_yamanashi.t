@@ -2,26 +2,49 @@ use v5.14;
 use warnings;
 use Test::More 0.98;
 use utf8;
+use open IO => ':utf8', ':std';
+use Data::Dumper;
 
 use lib './t';
 use ac;
+
 use Text::ParseWords qw(shellwords);
 use Data::Section::Simple qw(get_data_section);
+use Getopt::Long;
+GetOptions(\my %opt,
+           'data-section',
+           'example') or die;
 
-for (
-    't/YAMANASHI.txt -c80 -P10',
-    't/YAMANASHI.txt -c80 -P10 -W',
-    't/YAMANASHI.txt -c80 -P10 -C3',
-    't/YAMANASHI.txt -c80 -P10 -C3 -D',
-    't/YAMANASHI.txt -c80 -P10 -C3 -D --runin=4 --runout=4',
-    't/YAMANASHI.txt t/YAMANASHI.txt -c80'
+use File::Spec;
+$ENV{HOME} = File::Spec->rel2abs('t/home');
 
+for ('
+     t/YAMANASHI.txt -c80 -P10
+     t/YAMANASHI.txt -c80 -P10 -W
+     t/YAMANASHI.txt -c80 -P10 -C3
+     t/YAMANASHI.txt -c80 -P10 -C3 -D
+     t/YAMANASHI.txt -c80 -P10 -C3 -D --runin=4 --runout=4
+     t/YAMANASHI.txt t/YAMANASHI.txt -c80
+     ' =~ /^\s*(\S.*\S)/mg
 ) {
     my $opt = $_;
     my $label = $opt =~ s/ /:/gr;
     my @opt = shellwords $opt;
-    is(ac->new(@opt)->exec(), get_data_section($label), $opt);
+    my $result = ac->new(@opt)->exec();
+    if ($opt{example}) {
+	printf "\$ ansicolumn %s\n", $opt;
+	print $result;
+    }
+    elsif ($opt{'data-section'}) {
+	printf "\@\@ %s\n", $label;
+	print $result;
+    }
+    else {
+	is($result, get_data_section($label), $opt);
+    }
 }
+
+exit if %opt;
 
 done_testing
 
