@@ -58,7 +58,7 @@ use Getopt::EX::Hashed 1.05; {
     has runout              => ' =i      ' , min => 0, default => 2 ;
     has pagebreak           => ' !       ' , default => 1 ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
-    has border_style        => ' =s   bs ' , default => 'vbar' ;
+    has border_style        => ' =s   bs ' , default => 'box' ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;
     has fillup              => ' :s      ' ; has F => '' , action => sub { $_->fillup = '' } ;
