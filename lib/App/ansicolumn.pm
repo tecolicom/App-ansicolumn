@@ -44,6 +44,7 @@ use Getopt::EX::Hashed 1.05; {
     has widen               => ' !  W    ' ;
     has paragraph           => ' !  p    ' ;
     has height              => ' =s      ' , default => 0 ;
+    has parallel            => ' !       ' ;
     has column_unit         => ' =i   cu ' , min => 1, default => 8 ;
     has tabstop             => ' =i      ' , min => 1, default => 8 ;
     has tabhead             => ' =s      ' ;
@@ -143,17 +144,22 @@ sub run {
     local @ARGV = decode_argv(@_);
     $obj->getopt || pod2usage(2);
 
+    $obj->parallel //= 1 if @ARGV > 1;
     $obj->setup_options;
 
     warn Dumper $obj if $obj->debug;
 
-    chomp(my @lines = <>);
-    @lines = insert_space @lines if $obj->paragraph;
+    my @files = $obj->read_files(@ARGV ? @ARGV : '-');
 
     if ($obj->table) {
+	my @lines = map { @{$_->{data}} } @files;
 	$obj->table_out(@lines);
-    } else {
-	$obj->nup_out(@lines);
+    }
+    elsif ($obj->parallel) {
+	$obj->parallel_out(@files);
+    }
+    else {
+	$obj->nup_out(@files);
     }
 
     return 0
@@ -161,6 +167,13 @@ sub run {
 
 sub setup_options {
     my $obj = shift;
+
+    ## --parallel (@ARGV > 1)
+    if ($obj->parallel) {
+	$obj->linestyle ||= 'wrap';
+	$obj->widen = 1;
+	$obj->border //= '';
+    }
 
     ## --border takes optional border-style value
     if (defined(my $border = $obj->border)) {
@@ -222,21 +235,69 @@ sub setup_options {
     $obj;
 }
 
-sub nup_out {
-    @_ or return;
+sub parallel_out {
     my $obj = shift;
+    my @files = @_;
+
+    my $max_line_length = max map { $_->{length} } @files;
+    $obj->pane ||= @files;
+    $obj->set_horizontal($max_line_length);
+    $obj->set_contents($_->{data}) for @files;
+
+    while (@files) {
+	my @rows = splice @files, 0, $obj->pane;
+	my $max_length = max map { int @{$_->{data}} } @rows;
+	$obj->column_out(map {
+	    my $data = $_->{data};
+	    my $length = @$data;
+	    push @$data, (($obj->fillup_str) x ($max_length - $length));
+	    $data;
+	} @rows);
+    }
+    return $obj;
+}
+
+sub nup_out {
+    $DB::single = 1;
+    my $obj = shift;
+    my @files = @_;
+    my $max_length = max map { $_->{length} } @files;
+    $obj->set_horizontal($max_length);
+    for my $file (@files) {
+	my $data = $file->{data};
+	$obj->set_contents($data)
+	    ->set_vertical($data)
+	    ->set_layout($data)
+	    ->page_out(@$data);
+    }
+    return $obj;
+}
+
+sub read_files {
+    my $obj = shift;
+    map {
+	open my $fh, $_ or die "$_: $!";
+	chomp (my @line = <$fh>);
+	@line = insert_space @line if $obj->paragraph;
+	my $length = $obj->expand_tab(\@line);
+	{
+	    name   => $_,
+	    length => $length,
+	    data   => \@line,
+	};
+    } @_;
+}
+
+sub expand_tab {
+    my $obj = shift;
+    my $dp = shift;
     my $max_length = 0;
-    my @data = map {
+    @$dp = map {
 	my($expanded, $dmy, $length) = ansi_fold($_, -1, expand => 1);
 	$max_length = $length if $length > $max_length;
 	$expanded;
-    } @_;
-    $obj->set_horizontal($max_length)
-        ->set_contents(\@data)
-        ->set_vertical(\@data)
-        ->set_layout(\@data)
-        ->page_out(@data);
-    return $obj;
+    } @$dp;
+    $max_length;
 }
 
 sub set_horizontal {
