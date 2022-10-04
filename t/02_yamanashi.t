@@ -9,48 +9,61 @@ use lib './t';
 use ac;
 
 use Text::ParseWords qw(shellwords);
-use Data::Section::Simple qw(get_data_section);
-use Getopt::Long;
+use Getopt::Long 'Configure';
+Configure qw(bundling no_getopt_compat no_ignore_case);
 GetOptions(\my %opt,
-           'data-section',
-           'example') or die;
+           'data-section',	# produce data section
+           'example',		# show command execution example
+           'show',		# show test
+           'number|n=i',	# select test number
+) or die;
 
 use File::Spec;
 $ENV{HOME} = File::Spec->rel2abs('t/home');
 
-for ('
-     t/YAMANASHI.txt -c80 -P10
-     t/YAMANASHI.txt -c80 -P10 -W
-     t/YAMANASHI.txt -c80 -P10 -C3
-     t/YAMANASHI.txt -c80 -P10 -C3 -D
-     t/YAMANASHI.txt -c80 -P10 -C3 -D --runin=4 --runout=4
-     t/YAMANASHI.txt t/YAMANASHI.txt -c80
-     ' =~ /^\s*(\S.*\S)/mg
-) {
-    my $opt = $_;
-    my $label = $opt =~ s/ /:/gr;
-    my @opt = shellwords $opt;
-    my $result = ac->new(@opt)->exec();
+use Data::Section::Simple qw(get_data_section);
+my $expected = get_data_section;
+
+use File::Slurper 'read_lines';
+my $sh = $0 =~ s/\.t/.sh/r;
+my @command = read_lines $sh or die;
+
+if ($opt{show}) {
+    for (0 .. $#command) {
+	printf "%4d: %s\n", $_, $command[$_];
+    }
+    exit;
+}
+
+if (my $n = $opt{number}) {
+    die "$n: invalid number\n" if $n > $#command;
+    @command = $command[$n];
+}
+
+for (@command) {
+    my @command = shellwords $_;
+    shift @command if $command[0] eq 'ansicolumn';
+    my $result = ac->new(@command)->exec();
     if ($opt{example}) {
-	printf "\$ ansicolumn %s\n", $opt;
+	printf "\$ %s\n", $_;
 	print $result;
     }
     elsif ($opt{'data-section'}) {
-	printf "\@\@ %s\n", $label;
+	printf "\@\@ %s\n", $_;
 	print $result;
     }
     else {
-	is($result, get_data_section($label), $opt);
+	is($result, $expected->{$_}, $_);
     }
 }
 
 exit if %opt;
 
-done_testing
+done_testing;
 
 __DATA__
 
-@@ t/YAMANASHI.txt:-c80:-P10
+@@ ansicolumn t/YAMANASHI.txt -c80 -P10
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ 　小さな谷川の底を写した二枚の青い幻燈です。                                                         │
 │                                                                                                      │
@@ -81,7 +94,7 @@ __DATA__
 │                                                                                                      │
 │                                                                                                      │
 └──────────────────────────────────────────────────────────────────────────────────────────────────────┘
-@@ t/YAMANASHI.txt:-c80:-P10:-W
+@@ ansicolumn t/YAMANASHI.txt -c80 -P10 -W
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ 　小さな谷川の底を写した二枚の青い幻燈です。                                 │
 │                                                                              │
@@ -112,7 +125,7 @@ __DATA__
 │                                                                              │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
-@@ t/YAMANASHI.txt:-c80:-P10:-C3
+@@ ansicolumn t/YAMANASHI.txt -c80 -P10 -C3
 ┌────────────────────────┐┌────────────────────────┐┌────────────────────────┐
 │ 　小さな谷川の底を写し ││ ました。               ││ わらったよ。』         │
 │ た二枚の青い幻燈です。 ││ 『クラムボンはわらった ││                        │
@@ -133,7 +146,7 @@ __DATA__
 │ り変りました。         ││                        │
 │ 　白い柔かな円石もころ ││                        │
 └────────────────────────┘└────────────────────────┘
-@@ t/YAMANASHI.txt:-c80:-P10:-C3:-D
+@@ ansicolumn t/YAMANASHI.txt -c80 -P10 -C3 -D
 ┌────────────────────────┐┌────────────────────────┐┌────────────────────────┐
 │ 　小さな谷川の底を写   ││ 　二疋の蟹の子供らが   ││ わらったよ。』         │
 │ した二枚の青い幻燈で   ││ 青じろい水の底で話し   ││ 『クラムボンはかぷか   │
@@ -154,7 +167,7 @@ __DATA__
 │ ほど大きくなり、底の   ││                        │
 │ 景色も夏から秋の間に   ││                        │
 └────────────────────────┘└────────────────────────┘
-@@ t/YAMANASHI.txt:-c80:-P10:-C3:-D:--runin=4:--runout=4
+@@ ansicolumn t/YAMANASHI.txt -c80 -P10 -C3 -D --runin=4 --runout=4
 ┌────────────────────────┐┌────────────────────────┐┌────────────────────────┐
 │ 　小さな谷川の底を     ││ 　二疋の蟹の子供ら     ││ てわらったよ。』       │
 │ 写した二枚の青い幻     ││ が青じろい水の底で     ││ 『クラムボンはかぷ     │
@@ -175,7 +188,7 @@ __DATA__
 │                        ││ ころがって来、小さ     ││                        │
 │                        ││ な錐の形の水晶の粒     ││                        │
 └────────────────────────┘└────────────────────────┘└────────────────────────┘
-@@ t/YAMANASHI.txt:t/YAMANASHI.txt:-c80
+@@ ansicolumn t/YAMANASHI.txt t/YAMANASHI.txt -c80
 ┌──────────────────────────────────────┐┌──────────────────────────────────────┐
 │ 　小さな谷川の底を写した二枚の青い幻 ││ 　小さな谷川の底を写した二枚の青い幻 │
 │ 燈です。                             ││ 燈です。                             │

@@ -16,7 +16,7 @@ for (
     is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
 }
 
-done_testing
+done_testing;
 
 __DATA__
 
