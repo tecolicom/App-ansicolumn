@@ -35,7 +35,7 @@ if ($opt{show}) {
     exit;
 }
 
-if (my $n = $opt{number}) {
+if (defined(my $n = $opt{number})) {
     die "$n: invalid number\n" if $n > $#command;
     @command = $command[$n];
 }

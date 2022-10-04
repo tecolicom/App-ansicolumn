@@ -37,6 +37,7 @@ use Getopt::EX::Hashed 1.05; {
     has separator           => ' =s s    ' , default => ' ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
+    has parallel            => ' !  V    ' ;
     has up                  => ' :i U    ' ;
     has page                => ' :i P    ' , min => 0;
     has pane                => ' =s C    ' , default => 0 ;
@@ -44,7 +45,6 @@ use Getopt::EX::Hashed 1.05; {
     has widen               => ' !  W    ' ;
     has paragraph           => ' !  p    ' ;
     has height              => ' =s      ' , default => 0 ;
-    has parallel            => ' !       ' ;
     has column_unit         => ' =i   cu ' , min => 1, default => 8 ;
     has tabstop             => ' =i      ' , min => 1, default => 8 ;
     has tabhead             => ' =s      ' ;
@@ -258,17 +258,18 @@ sub parallel_out {
 }
 
 sub nup_out {
-    $DB::single = 1;
     my $obj = shift;
     my @files = @_;
     my $max_length = max map { $_->{length} } @files;
     $obj->set_horizontal($max_length);
+    my $reset = do { my @o = %$obj; sub { %$obj = @o } };
     for my $file (@files) {
 	my $data = $file->{data};
 	$obj->set_contents($data)
 	    ->set_vertical($data)
 	    ->set_layout($data)
 	    ->page_out(@$data);
+	$reset->();
     }
     return $obj;
 }
