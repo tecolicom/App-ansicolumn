@@ -144,7 +144,6 @@ sub run {
     local @ARGV = decode_argv(@_);
     $obj->getopt || pod2usage(2);
 
-    $obj->parallel //= 1 if @ARGV > 1;
     $obj->setup_options;
 
     warn Dumper $obj if $obj->debug;
@@ -168,8 +167,8 @@ sub run {
 sub setup_options {
     my $obj = shift;
 
-    ## --parallel (@ARGV > 1)
-    if ($obj->parallel) {
+    ## --parallel or @ARGV > 1
+    if ($obj->parallel //= @ARGV > 1) {
 	$obj->linestyle ||= 'wrap';
 	$obj->widen = 1;
 	$obj->border //= '';
