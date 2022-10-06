@@ -48,7 +48,7 @@ ansicolumn \[options\] \[file ...\]
 
 # VERSION
 
-Version 1.23
+Version 1.24
 
 # DESCRIPTION
 
