@@ -18,7 +18,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 ansicolumn [options] [file ...]
 
-    -c#                  output width
+    -w#, -c#             output width
     -s#                  separator string
     -t                   table style output
     -l#                  maximum number of table columns
@@ -87,10 +87,12 @@ default, from the standard input.
 
 =over 7
 
-=item B<-c>#, B<--width>=#, B<--output-width>=#
+=item B<-w>#, B<-c>#, B<--width>=#, B<--output-width>=#
 
 Output is formatted for a display columns wide.  See L</CALCULATION>
 section.
+
+Accept B<-c> for compatibility, but B<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
 

@@ -29,7 +29,7 @@ use Getopt::EX::Hashed 1.05; {
     has debug               => '         ' ;
     has help                => '    h    ' ;
     has version             => '    v    ' ;
-    has width               => ' =s c    ' ;
+    has width               => ' =s w c  ' ;
     has fillrows            => '    x    ' ;
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;

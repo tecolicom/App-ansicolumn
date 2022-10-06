@@ -7,7 +7,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 ansicolumn \[options\] \[file ...\]
 
-    -c#                  output width
+    -w#, -c#             output width
     -s#                  separator string
     -t                   table style output
     -l#                  maximum number of table columns
@@ -74,10 +74,12 @@ The column utility formats its input into multiple columns.  Rows are
 filled before columns.  Input is taken from _file_ operands, or, by
 default, from the standard input.
 
-- **-c**#, **--width**=#, **--output-width**=#
+- **-w**#, **-c**#, **--width**=#, **--output-width**=#
 
     Output is formatted for a display columns wide.  See ["CALCULATION"](#calculation)
     section.
+
+    Accept **-c** for compatibility, but **-w** is more popular.
 
 - **-s**#, **--separator**=#
 
