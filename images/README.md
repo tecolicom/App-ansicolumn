@@ -41,7 +41,6 @@ $ ansicolumn -PS82
 
 ```
 $ curl https://tools.ietf.org/rfc/rfc3986.txt | ansicolumn -PC5 | less
-
 ```
 
 ![rfc](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-rfc.png)
@@ -54,7 +53,7 @@ prohibition handling (禁則処理) of Japanese text.  Default run-in (追い
 **--runin** option.  I prefer 4 but it consumes more space.
 
 ```
-w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.html | ansicolumn -DPC4 --insert-space --runin=4 | less
+w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.html | ansicolumn -pDPC4 --runin=4 | less
 ```
 
 ![document](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-japanese-document.png)
@@ -62,7 +61,7 @@ w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.htm
 ### Japanese Document with color
 
 ```
-w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.html | greple '\p{Han}+|\p{InKatakana}+' --uc --all | ansicolumn -DPC3 --insert-space --no-top-space --runin=4 | less
+w3m -dump -cols 1000 https://www.aozora.gr.jp/cards/001779/files/56678_62114.html | greple '\p{Han}+|\p{InKatakana}+' --uc --all | ansicolumn -pDPC3 --runin=4 | less
 ```
 
 ![japanese-color-document](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-japanese-color-document.png)
@@ -95,7 +94,7 @@ git show | cdif | ansicolumn -PC2 | less
 Five borders: left, center, right, top, bottom.
 
 ```
-hilite-lesspipe.sh lib/App/ansicolumn/Border.pm | ansicolumn -PC4 --bs=light-box | less
+hilite-lesspipe.sh lib/App/ansicolumn/Border.pm | ansicolumn -PC4 --bs=frame | less
 ```
 
 ![ac-border-light-box](https://raw.githubusercontent.com/kaz-utashiro/App-ansicolumn/master/images/ac-border-light-box.png)
