@@ -252,7 +252,8 @@ default, from the standard input.
 - **--border-style**=_style_, **--bs**=...
 
     Set the border style.  Current default style is `box`, which enclose
-    each pane with box drawing graphic characters.
+    each pane with box drawing graphic characters.  Special style
+    `random` choose random style.
 
     Sample styles:
     none,
@@ -265,12 +266,12 @@ default, from the standard input.
     c-box,
     box, heavy-box, fat-box, very-fat-box,
     dash-box, heavy-dash-box,
-    round-box, heavy-round-box,
+    round-box,
     frame, heavy-frame, fat-frame, very-fat-frame,
     dash-frame, heavy-dash-frame,
     page-frame, heavy-page-frame,
-    shadow,
-    shadow-box, heavy-shadow-box,
+    shadow, shin-shadow,
+    shadow-box, shin-shadow-box, heavy-shadow-box,
     comb, heavy-comb,
     rake, heavy-rake,
     mesh, heavy-mesh,
