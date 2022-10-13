@@ -30,6 +30,7 @@ ansicolumn \[options\] \[file ...\]
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
+    --margin=#           column margin width (default 1)
     --linestyle=#        folding style (none|truncate|wrap|wordwrap)
     --boundary=#         line-end boundary
     --linebreak=#        line-break mode (none|all|runin|runout)
@@ -150,7 +151,7 @@ default, from the standard input.
 
         optex -Mtextconv ansicolumn -DPC3 foo.docx | less
 
-- **-V**, \[**--no-**\]**parallel**
+- **-V**, **--**\[**no-**\]**parallel**
 
     Parallel view mode.  Implicitly enabled when multiple files are
     specified.  Use **--no-parallel** to disable.
@@ -175,8 +176,8 @@ default, from the standard input.
 
 - **-S**#, **--pane-width**=#, **--pw**=#
 
-    Specify pane width.  This includes border spaces.  See ["CALCULATION"](#calculation)
-    section.
+    Specify the span of each pane.  This includes border spaces.  See
+    ["CALCULATION"](#calculation) section.
 
 - **-W**, **--widen**
 
@@ -212,6 +213,12 @@ default, from the standard input.
 
     Each column is placed at the unit of 8 by default.  This option
     changes the number of the unit.
+
+- **--margin**=#
+
+    Each column has at least single character margin on the right side so
+    that they are not placed back-to-back.  This option specifies the
+    margin width.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
