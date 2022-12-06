@@ -290,7 +290,13 @@ sub read_files {
 	open my $fh, $_ or die "$_: $!";
 	chomp (my @line = <$fh>);
 	@line = insert_space @line if $obj->paragraph;
-	my $length = $obj->expand_tab(\@line);
+	my $length = do {
+	    if ($obj->table) {
+		max map length, @line;
+	    } else {
+		$obj->expand_tab(\@line);
+	    }
+	};
 	{
 	    name   => $_,
 	    length => $length,
