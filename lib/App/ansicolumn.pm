@@ -62,6 +62,7 @@ use Getopt::EX::Hashed 1.05; {
     has linebreak           => ' =s   lb ' , default => '' ;
     has runin               => ' =i      ' , min => 0, default => 2 ;
     has runout              => ' =i      ' , min => 0, default => 2 ;
+    has run                 => ' =i      ' ;
     has pagebreak           => ' !       ' , default => 1 ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
@@ -122,6 +123,11 @@ use Getopt::EX::Hashed 1.05; {
 	}
     };
 
+    ### --run
+    has '+run' => sub {
+	$_->runin = $_->runout = $_[1];
+    };
+
     ### --tabstop, --tabstyle
     has [ qw(+tabstop +tabstyle) ] => sub {
 	my($name, $val) = map "$_", @_;
@@ -145,7 +151,7 @@ use Getopt::EX::Hashed 1.05; {
 
 } no Getopt::EX::Hashed;
 
-sub run {
+sub perform {
     my $obj = shift;
     local @ARGV = decode_argv(@_);
     $obj->getopt || pod2usage(2);
