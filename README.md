@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/kaz-utashiro/App-ansicolumn/workflows/test/badge.svg)](https://github.com/kaz-utashiro/App-ansicolumn/actions) [![MetaCPAN Release](https://badge.fury.io/pl/App-ansicolumn.svg)](https://metacpan.org/release/App-ansicolumn)
+[![Actions Status](https://github.com/tecolicom/App-ansicolumn/workflows/test/badge.svg)](https://github.com/tecolicom/App-ansicolumn/actions) [![MetaCPAN Release](https://badge.fury.io/pl/App-ansicolumn.svg)](https://metacpan.org/release/App-ansicolumn)
 # NAME
 
 ansicolumn - ANSI terminal sequence aware column command
@@ -405,11 +405,11 @@ option. See \`perldoc Getopt::EX\` for detail.
 
 To get the latest code, use this:
 
-    $ cpanm https://github.com/kaz-utashiro/App-ansicolumn.git
+    $ cpanm https://github.com/tecolicom/App-ansicolumn.git
 
 # EXAMPLES
 
-[https://github.com/kaz-utashiro/App-ansicolumn/tree/master/images](https://github.com/kaz-utashiro/App-ansicolumn/tree/master/images)
+[https://github.com/tecolicom/App-ansicolumn/tree/master/images](https://github.com/tecolicom/App-ansicolumn/tree/master/images)
 
 # SEE ALSO
 
@@ -417,7 +417,7 @@ To get the latest code, use this:
 [https://man7.org/linux/man-pages/man1/column.1.html](https://man7.org/linux/man-pages/man1/column.1.html)
 
 [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn),
-[https://github.com/kaz-utashiro/App-ansicolumn](https://github.com/kaz-utashiro/App-ansicolumn)
+[https://github.com/tecolicom/App-ansicolumn](https://github.com/tecolicom/App-ansicolumn)
 
 [Text::ANSI::Printf](https://metacpan.org/pod/Text%3A%3AANSI%3A%3APrintf),
 [https://github.com/kaz-utashiro/Text-ANSI-Printf](https://github.com/kaz-utashiro/Text-ANSI-Printf)

@@ -437,11 +437,11 @@ option. See `perldoc Getopt::EX` for detail.
 
 To get the latest code, use this:
 
-    $ cpanm https://github.com/kaz-utashiro/App-ansicolumn.git
+    $ cpanm https://github.com/tecolicom/App-ansicolumn.git
 
 =head1 EXAMPLES
 
-L<https://github.com/kaz-utashiro/App-ansicolumn/tree/master/images>
+L<https://github.com/tecolicom/App-ansicolumn/tree/master/images>
 
 =head1 SEE ALSO
 
@@ -449,7 +449,7 @@ L<column(1)>,
 L<https://man7.org/linux/man-pages/man1/column.1.html>
 
 L<App::ansicolumn>,
-L<https://github.com/kaz-utashiro/App-ansicolumn>
+L<https://github.com/tecolicom/App-ansicolumn>
 
 L<Text::ANSI::Printf>,
 L<https://github.com/kaz-utashiro/Text-ANSI-Printf>
