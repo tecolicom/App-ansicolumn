@@ -47,6 +47,7 @@ ansicolumn \[options\] \[file ...\]
     --tabspace=#         tab-space width
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
+    --pages              split file by formfeed
 
 # VERSION
 
@@ -168,6 +169,10 @@ default, from the standard input.
     to specify number of files displayed simultaneously.
 
     You can use this option mixed with **-D** option to see document files.
+
+    If you want to show multiple parts in single data stream in parallel,
+    use **--pages** option.  It split the data by formfeed character and
+    treat each part as a individual file.
 
 - **-C**#, **--pane**=#
 
@@ -342,6 +347,11 @@ default, from the standard input.
 
     Specifies how to treat Unicode ambiguous width characters.  Take a
     value of 'narrow' or 'wide.  Default is 'narrow'.
+
+- **--pages**
+
+    Split file content by formfeed character, and treat each part as a
+    individual file.  Use with **--parallel** option.
 
 # CALCULATION
 

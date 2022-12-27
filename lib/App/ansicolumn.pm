@@ -10,7 +10,7 @@ use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
 ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
-Configure "bundling";
+Configure qw(bundling);
 
 use Data::Dumper;
 use List::Util qw(max sum);
@@ -43,6 +43,7 @@ use Getopt::EX::Hashed 1.05; {
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
     has parallel            => ' !  V    ' ;
+    has pages               => ' !       ' ;
     has up                  => ' :i U    ' ;
     has page                => ' :i P    ' , min => 0;
     has pane                => ' =s C    ' , default => 0 ;
@@ -292,35 +293,40 @@ sub nup_out {
 
 sub read_files {
     my $obj = shift;
-    map {
-	open my $fh, $_ or die "$_: $!";
-	chomp (my @line = <$fh>);
-	@line = insert_space @line if $obj->paragraph;
-	my $length = do {
-	    if ($obj->table) {
-		max map length, @line;
-	    } else {
-		$obj->expand_tab(\@line);
-	    }
-	};
-	{
-	    name   => $_,
-	    length => $length,
-	    data   => \@line,
-	};
-    } @_;
+    my @files;
+    for my $file (@_) {
+	open my $fh, $file or die "$file: $!";
+	my $content = do { local $/; <$fh> };
+	my @data = $obj->pages ? split(/\f/, $content) : $content;
+	for my $data (@data) {
+	    my @line = split /\R/, $data;
+	    @line = insert_space @line if $obj->paragraph;
+	    my @length;
+	    my $length = do {
+		if ($obj->table) {
+		    max map length, @line;
+		} else {
+		    $obj->expand_tab(\@line, \@length);
+		    max @length;
+		}
+	    };
+	    push @files, {
+		name   => $file,
+		length => $length,
+		data   => \@line,
+	    };
+	}
+    }
+    @files;
 }
 
 sub expand_tab {
     my $obj = shift;
-    my $dp = shift;
-    my $max_length = 0;
-    @$dp = map {
-	my($expanded, $dmy, $length) = ansi_fold($_, -1, expand => 1);
-	$max_length = $length if $length > $max_length;
-	$expanded;
-    } @$dp;
-    $max_length;
+    my($dp, $lp) = @_;
+    for (@$dp) {
+	($_, my($dmy, $length)) = ansi_fold($_, -1, expand => 1);
+	push @$lp, $length;
+    }
 }
 
 sub set_horizontal {
