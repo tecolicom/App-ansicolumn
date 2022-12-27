@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.27 2022-12-27T10:47:38Z
+
+    - introduce --pages option
+
 1.26 2022-12-14T10:58:20Z
 
     - introduce --run option to set runin/runout at once

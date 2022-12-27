@@ -51,7 +51,7 @@ ansicolumn \[options\] \[file ...\]
 
 # VERSION
 
-Version 1.26
+Version 1.27
 
 # DESCRIPTION
 
@@ -434,7 +434,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-Copyright 2020-2022 Kazumasa Utashiro.
+©︎ 2020-2022 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
