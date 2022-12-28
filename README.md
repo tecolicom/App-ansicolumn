@@ -422,11 +422,11 @@ To get the latest code, use this:
 [Text::ANSI::Printf](https://metacpan.org/pod/Text%3A%3AANSI%3A%3APrintf),
 [https://github.com/kaz-utashiro/Text-ANSI-Printf](https://github.com/kaz-utashiro/Text-ANSI-Printf)
 
-## Articles
+## Articles (in Japanese)
 
-- https://qiita.com/kaz-utashiro/items/345cd9abcd8e1f0d81a2
-- https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e
-- https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422
+- [https://qiita.com/kaz-utashiro/items/345cd9abcd8e1f0d81a2](https://qiita.com/kaz-utashiro/items/345cd9abcd8e1f0d81a2)
+- [https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e](https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e)
+- [https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422](https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422)
 
 # AUTHOR
 
