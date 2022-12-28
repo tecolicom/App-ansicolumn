@@ -282,6 +282,7 @@ sub nup_out {
     my $reset = do { my @o = %$obj; sub { %$obj = @o } };
     for my $file (@files) {
 	my $data = $file->{data};
+	next if @$data == 0;
 	$obj->set_contents($data)
 	    ->set_vertical($data)
 	    ->set_layout($data)
@@ -312,7 +313,7 @@ sub read_files {
 	    };
 	    push @files, {
 		name   => $file,
-		length => $length,
+		length => $length // 0,
 		data   => \@line,
 	    };
 	}
