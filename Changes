@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.2801 2022-12-28T03:13:24Z
+
+    - fix a bug of handling \f char
+
 1.27 2022-12-27T10:47:38Z
 
     - introduce --pages option
