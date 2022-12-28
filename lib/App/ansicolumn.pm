@@ -300,7 +300,7 @@ sub read_files {
 	my $content = do { local $/; <$fh> };
 	my @data = $obj->pages ? split(/\f/, $content) : $content;
 	for my $data (@data) {
-	    my @line = split /\R/, $data;
+	    my @line = split /\n/, $data;
 	    @line = insert_space @line if $obj->paragraph;
 	    my @length;
 	    my $length = do {
