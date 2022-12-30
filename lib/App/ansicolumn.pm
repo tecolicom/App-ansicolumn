@@ -39,6 +39,7 @@ use Getopt::EX::Hashed 1.05; {
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;
     has table_right         => ' =s R    ' , default => '' ;
+    has table_center        => ' =s      ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
@@ -302,12 +303,11 @@ sub read_files {
 	for my $data (@data) {
 	    my @line = split /\n/, $data;
 	    @line = insert_space @line if $obj->paragraph;
-	    my @length;
 	    my $length = do {
 		if ($obj->table) {
 		    max map length, @line;
 		} else {
-		    $obj->expand_tab(\@line, \@length);
+		    $obj->expand_tab(\@line, \my @length);
 		    max @length;
 		}
 	    };
@@ -325,7 +325,7 @@ sub expand_tab {
     my $obj = shift;
     my($dp, $lp) = @_;
     for (@$dp) {
-	($_, my($dmy, $length)) = ansi_fold($_, -1, expand => 1);
+	($_, my($dmy, $length)) = ansi_fold $_, -1, expand => 1;
 	push @$lp, $length;
     }
 }
@@ -441,11 +441,17 @@ sub table_out {
     my @lines  = map { [ split $split, $_, $obj->table_columns_limit ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } xpose @length;
-    my @align  = newlist(count => 0+@max, default => '-',
+    my @align  = newlist(count => int @max, default => '-',
 			 [ map --$_, split /,/, $obj->table_right ] => '');
-    my @format = map { '%' . $align[$_] . $max[$_] . 's' } 0 .. $#max;
+    my @center = map --$_, split /,/, $obj->table_center;
+    my @format = map "%$align[$_]$max[$_]s", 0 .. $#max;
     for my $line (@lines) {
 	next unless @$line;
+	for (grep { $_ <= $#{$line} } @center) {
+	    if ((my $pad = int(($max[$_] - ansi_width $line->[$_]) / 2)) > 0) {
+		$line->[$_] = (' ' x $pad) . $line->[$_];
+	    }
+	}
 	my @fmt = @format[0 .. $#{$line}];
 	$fmt[$#{$line}] = '%s' if $align[$#{$line}] eq '-';
 	my $format = join $obj->output_separator, @fmt;
