@@ -39,7 +39,6 @@ use Getopt::EX::Hashed 1.05; {
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;
     has table_right         => ' =s R    ' , default => '' ;
-    has table_center        => ' =s      ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
@@ -443,15 +442,9 @@ sub table_out {
     my @max    = map { max @$_ } xpose @length;
     my @align  = newlist(count => int @max, default => '-',
 			 [ map --$_, split /,/, $obj->table_right ] => '');
-    my @center = map --$_, split /,/, $obj->table_center;
     my @format = map "%$align[$_]$max[$_]s", 0 .. $#max;
     for my $line (@lines) {
 	next unless @$line;
-	for (grep { $_ <= $#{$line} } @center) {
-	    if ((my $pad = int(($max[$_] - ansi_width $line->[$_]) / 2)) > 0) {
-		$line->[$_] = (' ' x $pad) . $line->[$_];
-	    }
-	}
 	my @fmt = @format[0 .. $#{$line}];
 	$fmt[$#{$line}] = '%s' if $align[$#{$line}] eq '-';
 	my $format = join $obj->output_separator, @fmt;
