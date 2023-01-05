@@ -51,7 +51,7 @@ ansicolumn \[options\] \[file ...\]
 
 # VERSION
 
-Version 1.2801
+Version 1.29
 
 # DESCRIPTION
 

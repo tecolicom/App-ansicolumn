@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.29 2023-01-05T04:20:54Z
+
+    - Add fat-dash-{box,frame}, checker-{box,frame}, zebra-frame border styles.
+
 1.2801 2022-12-28T03:13:24Z
 
     - fix a bug of handling \f char
