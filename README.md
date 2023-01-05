@@ -96,6 +96,8 @@ default, from the standard input.
     with the characters supplied using the -s option.  Useful for
     pretty-printing displays.
 
+    Unlike original [column(1)](http://man.he.net/man1/column) command, empty field is not ignored.
+
 - **-l**#, **--table-columns-limit**=#
 
     Specify maximal number of the input columns.  The last column will
@@ -278,11 +280,13 @@ default, from the standard input.
     ascii-box,
     c-box,
     box, heavy-box, fat-box, very-fat-box,
-    dash-box, heavy-dash-box,
+    dash-box, heavy-dash-box, fat-dash-box,
     round-box,
     frame, heavy-frame, fat-frame, very-fat-frame,
-    dash-frame, heavy-dash-frame,
+    dash-frame, heavy-dash-frame, fat-dash-frame,
     page-frame, heavy-page-frame,
+    zebra-frame,
+    checker-box, checker-frame,
     shadow, shin-shadow,
     shadow-box, shin-shadow-box, heavy-shadow-box,
     comb, heavy-comb,
@@ -434,7 +438,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-©︎ 2020-2022 Kazumasa Utashiro.
+© 2020-2023 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
