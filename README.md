@@ -417,6 +417,8 @@ To get the latest code, use this:
 
 # SEE ALSO
 
+[https://github.com/tecolicom/ANSI-Tools](https://github.com/tecolicom/ANSI-Tools)
+
 [column(1)](http://man.he.net/man1/column),
 [https://man7.org/linux/man-pages/man1/column.1.html](https://man7.org/linux/man-pages/man1/column.1.html)
 
