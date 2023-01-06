@@ -49,7 +49,7 @@
             "List::Util" : "1.56",
             "Math::RPN" : "0",
             "Term::ReadKey" : "0",
-            "Text::ANSI::Fold" : "2.15",
+            "Text::ANSI::Fold" : "2.19",
             "Text::ANSI::Fold::Util" : "1.01",
             "Text::ANSI::Printf" : "2.01",
             "perl" : "v5.16.0"
