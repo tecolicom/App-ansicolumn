@@ -20,6 +20,7 @@ ansicolumn \[options\] \[file ...\]
     --2up .. --9up       same as -U2 .. -U9
     -D, --document       document mode
     -V, --parallel       parallel view mode
+    -H, --filename       print filename header in parallel view mode
     -C#, --pane=#        number of panes
     -S#, --pane-width=#  pane width
     -W, --widen          widen to terminal width
@@ -175,6 +176,16 @@ default, from the standard input.
     If you want to show multiple parts in single data stream in parallel,
     use **--pages** option.  It split the data by formfeed character and
     treat each part as a individual file.
+
+- **-H**, **--filename**
+
+    Print filename header before contents.  Currently, this option is
+    effective only in **--parallel** mode.  Filename is truncated in each
+    pane width.
+
+    This option is convenient to look over many small files at once.
+
+        ansicolumn -VHC1 *.txt | less
 
 - **-C**#, **--pane**=#
 
@@ -348,8 +359,8 @@ default, from the standard input.
 
     Set the style how tab is expanded.  Select `symbol` or `shade` for
     example.  If two style names are combined, like
-    `squat-arrow,middle-dot`, use `symbols`'s tabhead and `space`'s
-    tabspace.
+    `squat-arrow,middle-dot`, use `squat-arrow` for tabhead and
+    `middle-dot` for tabspace.
 
     Show available style list if called without parameter.  Styles are
     defined in [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.

@@ -75,6 +75,7 @@ use Getopt::EX::Hashed 1.05; {
     has discard_el          => ' !       ' , default => 1 ;
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
+    has filename            => ' !  H    ' ;
 
     has '+boundary'  => any => [ qw(none word space) ] ;
     has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
@@ -277,6 +278,13 @@ sub parallel_out {
     while (@files) {
 	my @rows = splice @files, 0, $obj->pane;
 	my $max_length = max map { int @{$_->{data}} } @rows;
+	if ($obj->filename) {
+	    my $w = $obj->span + $obj->border_width('center');
+	    for (@rows) {
+		printf "%-*.*s", $w, $w, $_->{name};
+	    }
+	    print "\n";
+	}
 	$obj->column_out(map {
 	    my $data = $_->{data};
 	    my $length = @$data;
