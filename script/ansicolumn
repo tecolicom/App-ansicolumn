@@ -360,10 +360,19 @@ Set head and following space characters.  Both are space by default.
 If the option value is longer than single characger, it is evaluated
 as unicode name.
 
-=item B<--tabstyle>=#
+=item B<--tabstyle>, B<--ts>
 
-Set the style how tab is expanded.  Select from C<dot>, C<symbol> or
-C<shade>.  Styles are defined in L<Text::ANSI::Fold> library.
+=item B<--tabstyle>=I<style>, B<--ts>=...
+
+=item B<--tabstyle>=I<head-style>,I<space-style> B<--ts>=...
+
+Set the style how tab is expanded.  Select C<symbol> or C<shade> for
+example.  If two style names are combined, like
+C<squat-arrow,middle-dot>, use C<symbols>'s tabhead and C<space>'s
+tabspace.
+
+Show available style list if called without parameter.  Styles are
+defined in L<Text::ANSI::Fold> library.
 
 =item B<--ambiguous>=C<wide>|C<narrow>
 

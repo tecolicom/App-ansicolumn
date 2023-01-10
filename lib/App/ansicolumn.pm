@@ -56,7 +56,7 @@ use Getopt::EX::Hashed 1.05; {
     has tabstop             => ' =i      ' , min => 1, default => 8 ;
     has tabhead             => ' =s      ' ;
     has tabspace            => ' =s      ' ;
-    has tabstyle            => ' =s      ' ;
+    has tabstyle            => ' :s   ts ' ;
     has ignore_space        => ' !    is ' , default => 1 ;
     has linestyle           => ' =s   ls ' , default => '' ;
     has boundary            => ' =s      ' , default => '' ;
@@ -132,6 +132,10 @@ use Getopt::EX::Hashed 1.05; {
     ### --tabstop, --tabstyle
     has [ qw(+tabstop +tabstyle) ] => sub {
 	my($name, $val) = map "$_", @_;
+	if ($val eq '') {
+	    list_tabstyle();
+	    exit;
+	}
 	Text::ANSI::Fold->configure($name => $val);
     };
 
@@ -151,6 +155,15 @@ use Getopt::EX::Hashed 1.05; {
     has BORDER              => ;
 
 } no Getopt::EX::Hashed;
+
+sub list_tabstyle {
+    my %style = %Text::ANSI::Fold::TABSTYLE;
+    my $max = max map length, keys %style;
+    for my $name (sort keys %style) {
+	my($head, $space) = @{$style{$name}};
+	printf "%*s %s%s\n", $max, $name, $head, $space x 7;
+    }
+}
 
 sub perform {
     my $obj = shift;

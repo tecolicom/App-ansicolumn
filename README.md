@@ -342,10 +342,17 @@ default, from the standard input.
     If the option value is longer than single characger, it is evaluated
     as unicode name.
 
-- **--tabstyle**=#
+- **--tabstyle**, **--ts**
+- **--tabstyle**=_style_, **--ts**=...
+- **--tabstyle**=_head-style_,_space-style_ **--ts**=...
 
-    Set the style how tab is expanded.  Select from `dot`, `symbol` or
-    `shade`.  Styles are defined in [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.
+    Set the style how tab is expanded.  Select `symbol` or `shade` for
+    example.  If two style names are combined, like
+    `squat-arrow,middle-dot`, use `symbols`'s tabhead and `space`'s
+    tabspace.
+
+    Show available style list if called without parameter.  Styles are
+    defined in [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.
 
 - **--ambiguous**=`wide`|`narrow`
 
