@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.31 2023-01-10T11:49:26Z
+
+    - introduce -H/--filename option works in parallel mode
+
 1.30 2023-01-10T09:13:35Z
 
     - use --tabstyle option without parameter to show style list
