@@ -14,7 +14,6 @@ Configure qw(bundling);
 
 use Data::Dumper;
 use List::Util qw(max sum);
-use Hash::Util qw(lock_keys lock_keys_plus unlock_keys);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
