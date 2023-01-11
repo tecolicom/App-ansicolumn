@@ -42,6 +42,7 @@ use Getopt::EX::Hashed 1.05; {
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
     has parallel            => ' !  V    ' ;
+    has filename            => ' !  H    ' ;
     has pages               => ' !       ' ;
     has up                  => ' :i U    ' ;
     has page                => ' :i P    ' , min => 0;
@@ -74,7 +75,6 @@ use Getopt::EX::Hashed 1.05; {
     has discard_el          => ' !       ' , default => 1 ;
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
-    has filename            => ' !  H    ' ;
 
     has '+boundary'  => any => [ qw(none word space) ] ;
     has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
