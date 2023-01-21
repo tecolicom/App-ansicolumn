@@ -63,7 +63,7 @@ ansicolumn [options] [file ...]
 
 =head1 VERSION
 
-Version 1.31
+Version 1.32
 
 =head1 DESCRIPTION
 
@@ -486,7 +486,7 @@ L<App::ansicolumn>,
 L<https://github.com/tecolicom/App-ansicolumn>
 
 L<Text::ANSI::Printf>,
-L<https://github.com/kaz-utashiro/Text-ANSI-Printf>
+L<https://github.com/tecolicom/Text-ANSI-Printf>
 
 =head2 Articles (in Japanese)
 

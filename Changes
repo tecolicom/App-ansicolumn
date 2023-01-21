@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.32 2023-01-21T08:53:52Z
+
+    - introduce --filename-format option
+    - improve file open error handling
+    - add hline, heavy-hline, bottom-line, heavy-bottom-line border styles
+
 1.31 2023-01-10T11:49:26Z
 
     - introduce -H/--filename option works in parallel mode

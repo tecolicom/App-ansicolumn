@@ -52,7 +52,7 @@ ansicolumn \[options\] \[file ...\]
 
 # VERSION
 
-Version 1.31
+Version 1.32
 
 # DESCRIPTION
 
@@ -451,7 +451,7 @@ To get the latest code, use this:
 [https://github.com/tecolicom/App-ansicolumn](https://github.com/tecolicom/App-ansicolumn)
 
 [Text::ANSI::Printf](https://metacpan.org/pod/Text%3A%3AANSI%3A%3APrintf),
-[https://github.com/kaz-utashiro/Text-ANSI-Printf](https://github.com/kaz-utashiro/Text-ANSI-Printf)
+[https://github.com/tecolicom/Text-ANSI-Printf](https://github.com/tecolicom/Text-ANSI-Printf)
 
 ## Articles (in Japanese)
 
