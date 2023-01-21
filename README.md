@@ -291,6 +291,8 @@ default, from the standard input.
     space,
     vbar, heavy-vbar, fat-vbar,
     line, heavy-line,
+    hline, heavy-hline,
+    bottom-line, heavy-bottom-line,
     stick, heavy-stick,
     ascii-frame,
     ascii-box,

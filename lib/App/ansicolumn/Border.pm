@@ -69,6 +69,15 @@ my %template = (
 		    "█ "  , # "\x{2588} "
 		    "▀ " ], # "\x{2580} "
     },
+    hline => {
+	top    => "─",
+	center => " ",
+	bottom => "─",
+    },
+    bottom_line => {
+	center => " ",
+	bottom => "─",
+    },
     stick => {
 	center => [ "╻ "  , # "\x{2577} "
 		    "│ "  , # "\x{2502} "
@@ -401,7 +410,7 @@ my %template = (
 
 use Clone qw(clone);
 
-for my $style (qw(line vbar box dash_box shadow_box frame dash_frame page_frame comb rake mesh
+for my $style (qw(line vbar hline bottom_line box dash_box shadow_box frame dash_frame page_frame comb rake mesh
 		  dumbbell ribbon)) {
     $template{$style} // next;
     my $new = $template{"heavy_$style"} = clone $template{$style};
