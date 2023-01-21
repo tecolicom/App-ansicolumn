@@ -43,6 +43,7 @@ use Getopt::EX::Hashed 1.05; {
     has document            => '    D    ' ;
     has parallel            => ' !  V    ' ;
     has filename            => ' !  H    ' ;
+    has filename_format     => ' =s      ' , default => ': %s';
     has pages               => ' !       ' ;
     has up                  => ' :i U    ' ;
     has page                => ' :i P    ' , min => 0;
@@ -174,7 +175,7 @@ sub perform {
 
     warn Dumper $obj if $obj->debug;
 
-    my @files = $obj->read_files(@ARGV ? @ARGV : '-');
+    my @files = $obj->read_files(@ARGV ? @ARGV : '-') or return 1;
 
     if ($obj->table) {
 	my @lines = map { @{$_->{data}} } @files;
@@ -279,10 +280,10 @@ sub parallel_out {
 	my $max_length = max map { int @{$_->{data}} } @rows;
 	if ($obj->filename) {
 	    my $w = $obj->span + $obj->border_width('center');
-	    for (@rows) {
-		printf "%-*.*s", $w, $w, $_->{name};
-	    }
-	    print "\n";
+	    my $format = "%-${w}.${w}s" x (@rows - 1) . "%s\n";
+	    printf $format, map {
+		sprintf $obj->filename_format, $_->{name};
+	    } @rows;
 	}
 	$obj->column_out(map {
 	    my $data = $_->{data};

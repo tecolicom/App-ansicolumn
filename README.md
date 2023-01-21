@@ -178,6 +178,7 @@ default, from the standard input.
     treat each part as a individual file.
 
 - **-H**, **--filename**
+- **--filename-format**=_format_ (DEFAULT: `: %s`)
 
     Print filename header before contents.  Currently, this option is
     effective only in **--parallel** mode.  Filename is truncated in each
@@ -186,6 +187,10 @@ default, from the standard input.
     This option is convenient to look over many small files at once.
 
         ansicolumn -VHC1 *.txt | less
+
+    Filename is printed in a format given by **--filename-format** option.
+    Default is `: %s` so that making easy to move to next file by `^:`
+    pattern search.
 
 - **-C**#, **--pane**=#
 
@@ -207,7 +212,7 @@ default, from the standard input.
 
     Insert empty line between every successive non-empty lines.
 
-- **-B**, **--border**\[=_style_\]
+- **-B**, **--border**\[=_style_\] (DEFAULT: `box`)
 
     Print border.  Enabled by **--page** option automatically.  If the
     optional _style_ is given, it is used as a border style and precedes
@@ -228,7 +233,7 @@ default, from the standard input.
 
     Set page height and page mode on.  See ["CALCULATION"](#calculation) section.
 
-- **--column-unit**=#, **--cu**=#
+- **--column-unit**=#, **--cu**=# (DEFAULT: 8)
 
     Each column is placed at the unit of 8 by default.  This option
     changes the number of the unit.
@@ -342,7 +347,7 @@ default, from the standard input.
     placed at the bottom of a pane.  Default true.  If false, move it to
     the top of next pane.  Negated by **--document** option.
 
-- **--tabstop**=#
+- **--tabstop**=# (DEFAULT: 8)
 
     Set tab width.
 
@@ -365,7 +370,7 @@ default, from the standard input.
     Show available style list if called without parameter.  Styles are
     defined in [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.
 
-- **--ambiguous**=`wide`|`narrow`
+- **--ambiguous**=`wide`|`narrow` (DEFAULT: `narrow`)
 
     Specifies how to treat Unicode ambiguous width characters.  Take a
     value of 'narrow' or 'wide.  Default is 'narrow'.
