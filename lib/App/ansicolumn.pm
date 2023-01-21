@@ -359,14 +359,14 @@ sub set_horizontal {
 
     my $span;
     my $panes;
+    my $claim = sum($max_data_length,
+		    $obj->runin_margin,
+		    $obj->border_width('center') || $obj->margin);
     if ($obj->widen and not $obj->pane_width) {
-	my $min = $max_data_length + ($obj->border_width('center') || 1);
-	$panes = $obj->pane || $width / $min || 1;
+	$panes = $obj->pane || $width / $claim || 1;
 	$span = ($width + $obj->border_width('center')) / $panes;
     } else {
-	$span = $obj->pane_width ||
-	    roundup($max_data_length + ($obj->border_width('center') || $obj->margin),
-		    $unit);
+	$span = $obj->pane_width || roundup($claim, $unit);
 	$panes = $obj->pane || $width / $span || 1;
     }
     $span -= $obj->border_width('center');
@@ -380,7 +380,7 @@ sub set_horizontal {
 sub set_contents {
     my $obj = shift;
     my $dp = shift;
-    (my $cell_width = $obj->span - $obj->margin_width) < 1
+    (my $cell_width = $obj->span - $obj->runin_margin) < 1
 	and die "Not enough space.\n";
     # Fold long lines
     if ($obj->linestyle and $obj->linestyle ne 'none') {

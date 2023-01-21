@@ -33,10 +33,13 @@ sub lb_flag {
     $lb_flag{shift->linebreak};
 }
 
-sub margin_width {
+sub runin_margin {
     my $obj = shift;
-    return 0 if not $lb_flag{$obj->linebreak} & LINEBREAK_RUNIN;
-    $obj->runin;
+    if ($lb_flag{$obj->linebreak} & LINEBREAK_RUNIN) {
+	$obj->runin;
+    } else {
+	0;
+    }
 }
 
 sub term_size {
