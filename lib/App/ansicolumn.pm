@@ -317,7 +317,10 @@ sub read_files {
     my @files;
     for my $file (@_) {
 	open my $fh, $file or die "$file: $!";
-	my $content = do { local $/; <$fh> };
+	my $content = do { local $/; <$fh> } // do {
+	    warn "$file: $!\n" if $!;
+	    next;
+	};
 	my @data = $obj->pages ? split(/\f/, $content) : $content;
 	for my $data (@data) {
 	    my @line = split /\n/, $data;
