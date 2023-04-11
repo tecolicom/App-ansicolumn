@@ -50,6 +50,14 @@ ansicolumn \[options\] \[file ...\]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
 
+Default alias options:
+
+    --color-board FG BG  board style pages with FG and BG colors
+    --white-board        black on white board
+    --black-board        white on black board
+    --green-board        white on green board
+    --slate-board        white on dark slategray board
+
 # VERSION
 
 Version 1.32
@@ -300,6 +308,7 @@ default, from the standard input.
     box, heavy-box, fat-box, very-fat-box,
     dash-box, heavy-dash-box, fat-dash-box,
     round-box,
+    inner-box, outer-box,
     frame, heavy-frame, fat-frame, very-fat-frame,
     dash-frame, heavy-dash-frame, fat-dash-frame,
     page-frame, heavy-page-frame,
@@ -381,6 +390,29 @@ default, from the standard input.
 
     Split file content by formfeed character, and treat each part as a
     individual file.  Use with **--parallel** option.
+
+# DEFAULT ALISES
+
+The following options are defined in `App::ansicolumn::default.pm`.
+
+- **--color-board** _fg-color_ _bg-color_
+
+    This option is defined as follows:
+
+        option --color-board \
+               --bs=inner-box \
+               --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
+
+    The resulting text is displayed in an _fg-color_ font on an
+    _bg-color_ panel.
+
+- **--white-board**
+- **--black-board**
+- **--green-board**
+- **--slate-board**
+
+    Use the **--color-board** option to display text on the white, black,
+    green or darkslate panels.
 
 # CALCULATION
 
@@ -465,7 +497,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-© 2020-2023 Kazumasa Utashiro.
+Copyright © 2020-2023 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

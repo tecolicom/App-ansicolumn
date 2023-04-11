@@ -61,6 +61,14 @@ ansicolumn [options] [file ...]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
 
+Default alias options:
+
+    --color-board FG BG  board style pages with FG and BG colors
+    --white-board        black on white board
+    --black-board        white on black board
+    --green-board        white on green board
+    --slate-board        white on dark slategray board
+
 =head1 VERSION
 
 Version 1.32
@@ -318,6 +326,7 @@ c-box,
 box, heavy-box, fat-box, very-fat-box,
 dash-box, heavy-dash-box, fat-dash-box,
 round-box,
+inner-box, outer-box,
 frame, heavy-frame, fat-frame, very-fat-frame,
 dash-frame, heavy-dash-frame, fat-dash-frame,
 page-frame, heavy-page-frame,
@@ -417,6 +426,36 @@ Set padding chracter.
 
 =back
 
+=head1 DEFAULT ALISES
+
+The following options are defined in F<App::ansicolumn::default.pm>.
+
+=over 7
+
+=item B<--color-board> I<fg-color> I<bg-color>
+
+This option is defined as follows:
+
+   option --color-board \
+          --bs=inner-box \
+          --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
+
+The resulting text is displayed in an I<fg-color> font on an
+I<bg-color> panel.
+
+=item B<--white-board>
+
+=item B<--black-board>
+
+=item B<--green-board>
+
+=item B<--slate-board>
+
+Use the B<--color-board> option to display text on the white, black,
+green or darkslate panels.
+
+=back
+
 =head1 CALCULATION
 
 As for B<--height>, B<--width>, B<--pane> and B<--pane-width> options,
@@ -512,7 +551,7 @@ Kazumasa Utashiro
 
 =head1 LICENSE
 
-© 2020-2023 Kazumasa Utashiro.
+Copyright © 2020-2023 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
