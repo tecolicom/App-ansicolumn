@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.33 2023-04-11T11:31:45Z
+
+    - introduce new border styles and default options
+      * inner-box, outer-box
+      * --color-board, --white-board, --black-board, --green-board, slate-board
+
 1.32 2023-01-21T08:53:52Z
 
     - introduce --filename-format option
