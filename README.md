@@ -181,9 +181,9 @@ default, from the standard input.
 
     You can use this option mixed with **-D** option to see document files.
 
-    If you want to show multiple parts in single data stream in parallel,
-    use **--pages** option.  It split the data by formfeed character and
-    treat each part as a individual file.
+    If you want to display multiple parts in a single stream in parallel,
+    use the **--pages** option. It will split the data by form feed
+    characters and treat each part as a separate file.
 
 - **-H**, **--filename**
 - **--filename-format**=_format_ (DEFAULT: `: %s`)
