@@ -456,7 +456,7 @@ sub table_out {
     return unless @_;
     my $split = do {
 	if ($obj->separator eq ' ') {
-	    $obj->ignore_space ? ' ' : qr/ /;
+	    $obj->ignore_space ? ' ' : qr/\s+/;
 	} else {
 	    qr/[\Q$obj->{separator}\E]/;
 	}
