@@ -432,6 +432,13 @@ my %template = (
 		    "║║ "  , # "\x{2551}\x{2551}"
 		    "╚╝ " ], # "\x{255A}\x{255D}"
     },
+    corner => {
+	top    => " ",
+	left   => [ "◲", " ", "◳" ],
+	center => [ "◱ ◲", "   ", "◰ ◳" ],
+	right  => [ "◱", " ", "◰" ],
+	bottom => " ",
+    },
     );
 
 use Clone qw(clone);

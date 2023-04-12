@@ -281,8 +281,8 @@ sub parallel_out {
 	if ($obj->filename) {
 	    my $w = $obj->span + $obj->border_width('center');
 	    my $format = "%-${w}.${w}s" x (@rows - 1) . "%s\n";
-	    printf $format, map {
-		sprintf $obj->filename_format, $_->{name};
+	    ansi_printf $format, map {
+		ansi_sprintf $obj->filename_format, $_->{name};
 	    } @rows;
 	}
 	$obj->column_out(map {
