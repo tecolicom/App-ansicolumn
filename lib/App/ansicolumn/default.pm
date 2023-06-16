@@ -13,9 +13,9 @@ App::ansicolumn::Border->add_style(
 
 __DATA__
 
-option --color-board --bs=inner-box --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
+option --board-color --bs=inner-box --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
 
-option --white-board --color-board 000 L24
-option --black-board --color-board 555 L05
-option --green-board --color-board 555 (30,77,43)
-option --slate-board --color-board 555 <dark_slategray>
+option --white-board --board-color 000 L24
+option --black-board --board-color 555 L05
+option --green-board --board-color 555 (30,77,43)
+option --slate-board --board-color 555 <dark_slategray>

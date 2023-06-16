@@ -395,11 +395,11 @@ default, from the standard input.
 
 The following options are defined in `App::ansicolumn::default.pm`.
 
-- **--color-board** _fg-color_ _bg-color_
+- **--board-color** _fg-color_ _bg-color_
 
     This option is defined as follows:
 
-        option --color-board \
+        option --board-color \
                --bs=inner-box \
                --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
 

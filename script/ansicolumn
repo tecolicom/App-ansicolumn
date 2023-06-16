@@ -432,11 +432,11 @@ The following options are defined in F<App::ansicolumn::default.pm>.
 
 =over 7
 
-=item B<--color-board> I<fg-color> I<bg-color>
+=item B<--board-color> I<fg-color> I<bg-color>
 
 This option is defined as follows:
 
-   option --color-board \
+   option --board-color \
           --bs=inner-box \
           --cm=BORDER=$<2>,TEXT=$<shift>/$<shift>
 
