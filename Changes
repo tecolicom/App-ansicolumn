@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.34 2023-06-18T11:06:29Z
+
+    - improve --board-color option using new Term::ANSIColor::Concise
+
 1.33 2023-04-11T11:31:45Z
 
     - introduce new border styles and default options
