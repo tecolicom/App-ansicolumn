@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "Clone" : "0",
-            "Getopt::EX" : "v2.1.3",
+            "Getopt::EX" : "v2.1.4",
             "Getopt::EX::Hashed" : "1.05",
             "Getopt::EX::RPN" : "0.01",
             "List::Util" : "1.56",
