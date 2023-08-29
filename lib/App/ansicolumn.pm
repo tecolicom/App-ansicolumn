@@ -39,6 +39,7 @@ use Getopt::EX::Hashed 1.05; {
     has table_columns_limit => ' =i l    ' , default => 0 ;
     has table_right         => ' =s R    ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
+    has regex_sep           => '    r    ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
     has document            => '    D    ' ;
     has parallel            => ' !  V    ' ;
@@ -457,6 +458,8 @@ sub table_out {
     my $split = do {
 	if ($obj->separator eq ' ') {
 	    $obj->ignore_space ? ' ' : qr/\s+/;
+	} elsif ($obj->regex_sep) {
+	    qr($obj->{separator});
 	} else {
 	    qr/[\Q$obj->{separator}\E]/;
 	}

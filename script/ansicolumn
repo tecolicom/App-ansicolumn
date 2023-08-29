@@ -36,6 +36,7 @@ ansicolumn [options] [file ...]
     -S#, --pane-width=#  pane width
     -W, --widen          widen to terminal width
     -p, --paragraph      paragraph mode
+    -r, --regex-sep      treat separator string as regex
 
     -B, --border[=#]     print border with optional style
     -F, --fillup[=#]     fill-up unit (pane|page|none)
@@ -108,8 +109,9 @@ Accept B<-c> for compatibility, but B<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
 
-Specify a set of characters to be used to delimit columns for the
--t option.
+Specify a set of characters to be used to delimit columns for the -t
+option.  When used with B<--regex-sep> or B<-r> option, it is used as
+regex rather than character set.
 
 =item B<-t>, B<--table>
 
@@ -305,6 +307,13 @@ like this:
 
 Move to next pane when form feed character found.
 Default true.
+
+=item B<-r>, B<--regex-sep>
+
+Treat separator option as a regex pattern.  Next example specifies a
+space character just before C<(> as a separator.
+
+    gem list | ansicolumn -trs ' (?=\()'
 
 =item B<--border-style>=I<style>, B<--bs>=...
 

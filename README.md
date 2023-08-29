@@ -25,6 +25,7 @@ ansicolumn \[options\] \[file ...\]
     -S#, --pane-width=#  pane width
     -W, --widen          widen to terminal width
     -p, --paragraph      paragraph mode
+    -r, --regex-sep      treat separator string as regex
 
     -B, --border[=#]     print border with optional style
     -F, --fillup[=#]     fill-up unit (pane|page|none)
@@ -95,8 +96,9 @@ default, from the standard input.
 
 - **-s**#, **--separator**=#
 
-    Specify a set of characters to be used to delimit columns for the
-    \-t option.
+    Specify a set of characters to be used to delimit columns for the -t
+    option.  When used with **--regex-sep** or **-r** option, it is used as
+    regex rather than character set.
 
 - **-t**, **--table**
 
@@ -287,6 +289,13 @@ default, from the standard input.
 
     Move to next pane when form feed character found.
     Default true.
+
+- **-r**, **--regex-sep**
+
+    Treat separator option as a regex pattern.  Next example specifies a
+    space character just before `(` as a separator.
+
+        gem list | ansicolumn -trs ' (?=\()'
 
 - **--border-style**=_style_, **--bs**=...
 
