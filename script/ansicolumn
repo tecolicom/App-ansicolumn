@@ -257,6 +257,13 @@ it.
 
 Option B<-F> is a shortcut for B<--fillup=pane>.
 
+=item B<--fillup-str>=I<string>
+
+Set string used for filling up space.  Default is empty.
+
+Use B<--fillup-str='~'> to fill up the area after EOF by C<~>
+character like L<vi(1)> or L<more(1)>.
+
 =item B<--height>=#
 
 Set page height and page mode on.  See L</CALCULATION> section.

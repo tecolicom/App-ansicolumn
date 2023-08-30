@@ -239,6 +239,13 @@ default, from the standard input.
 
     Option **-F** is a shortcut for **--fillup=pane**.
 
+- **--fillup-str**=_string_
+
+    Set string used for filling up space.  Default is empty.
+
+    Use **--fillup-str='~'** to fill up the area after EOF by `~`
+    character like [vi(1)](http://man.he.net/man1/vi) or [more(1)](http://man.he.net/man1/more).
+
 - **--height**=#
 
     Set page height and page mode on.  See ["CALCULATION"](#calculation) section.
