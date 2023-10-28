@@ -156,7 +156,7 @@ sub do_pagebreak {
     my $height = $obj->effective_height || die;
     my @up;
     use List::Util qw(first);
-    while (defined(my $i = first { $dp->[$_] =~ /\f/ } 0 .. $#{$dp})) {
+    while (defined(my $i = first { $dp->[$_] =~ /\f/ } keys @$dp)) {
 	push @up, splice @$dp, 0, $i;
 	$dp->[0] =~ s/^([^\f]*)\f// or die;
 	push @up, $1, if $1 ne '';

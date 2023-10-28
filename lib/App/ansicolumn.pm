@@ -469,10 +469,10 @@ sub table_out {
     my @max    = map { max @$_ } xpose @length;
     my @align  = newlist(count => int @max, default => '-',
 			 [ map --$_, split /,/, $obj->table_right ] => '');
-    my @format = map "%$align[$_]$max[$_]s", 0 .. $#max;
+    my @format = map "%$align[$_]$max[$_]s", keys @max;
     for my $line (@lines) {
 	next unless @$line;
-	my @fmt = @format[0 .. $#{$line}];
+	my @fmt = @format[keys @$line];
 	$fmt[$#{$line}] = '%s' if $align[$#{$line}] eq '-';
 	my $format = join $obj->output_separator, @fmt;
 	ansi_printf $format, @$line;
