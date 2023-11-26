@@ -18,16 +18,17 @@ ansicolumn \[options\] \[file ...\]
     -P[#], --page=#      page mode, with optional page length
     -U[#], --up=#        show in N-up format (-WC# --linestyle=wrap)
     --2up .. --9up       same as -U2 .. -U9
-    -D, --document       document mode
-    -V, --parallel       parallel view mode
-    -H, --filename       print filename header in parallel view mode
+    -D,  --document      document mode
+    -V,  --parallel      parallel view mode
+    -H,  --filename      print filename header in parallel view mode
+    -X#, --cell=#        set text width for files in parallel view mode
     -C#, --pane=#        number of panes
     -S#, --pane-width=#  pane width
-    -W, --widen          widen to terminal width
-    -p, --paragraph      paragraph mode
-    -r, --regex-sep      treat separator string as regex
+    -W,  --widen         widen to terminal width
+    -p,  --paragraph     paragraph mode
+    -r,  --regex-sep     treat separator string as regex
 
-    -B, --border[=#]     print border with optional style
+    -B,  --border[=#]    print border with optional style
     -F, --fillup[=#]     fill-up unit (pane|page|none)
 
     --height=#           page height
@@ -201,6 +202,52 @@ default, from the standard input.
     Filename is printed in a format given by **--filename-format** option.
     Default is `: %s` so that making easy to move to next file by `^:`
     pattern search.
+
+- **-X**=#, **--cell**=#
+
+    Sets the display width of each file.  This option is only valid with
+    parallel view mode.  For example, if you are displaying three files
+    and want the first file to be displayed in 80 columns and the
+    remaining files in 40 columns, specify like this:
+
+        --cell 80,40,40
+
+    This is the same as
+
+        --cell 80,40
+
+    since the last value specified is repeated.
+
+    You can also specify values relative to the default width.  For
+    example, to display the first column 20 columns more and the remaining
+    columns 10 columns less, use
+
+        --cell +20,-10
+
+    To return to the default display width for the fourth and subsequent
+    files, use
+
+        --cell +20,-10,-10,+0
+
+    If `=` is specified as the value, it is set to the width of the
+    longest line in the file.
+
+        --cell =
+
+    Then all specified files will be displayed with the width of the
+    longest line they contain. `=` may be followed by a maximum value.
+
+        --cell =80
+
+    will set the cell width to length of the longest line if it is less
+    than 80, or 80 if it is greater than 80.  `<` may be used instead
+    of `=`.
+
+        --cell '<80'
+
+    The correspondence between file and display width remains the same 
+    even when the number of columns to be displayed simultaneously is 
+    specified with the **-C** option.
 
 - **-C**#, **--pane**=#
 

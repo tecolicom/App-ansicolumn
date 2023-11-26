@@ -13,7 +13,7 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure qw(bundling);
 
 use Data::Dumper;
-use List::Util qw(max sum);
+use List::Util qw(max sum min);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
@@ -49,6 +49,7 @@ use Getopt::EX::Hashed 1.05; {
     has up                  => ' :i U    ' ;
     has page                => ' :i P    ' , min => 0;
     has pane                => ' =s C    ' , default => 0 ;
+    has cell                => ' =s X    ' ;
     has pane_width          => ' =s S pw ' ;
     has widen               => ' !  W    ' ;
     has paragraph           => ' !  p    ' ;
@@ -274,24 +275,56 @@ sub parallel_out {
     my $max_line_length = max map { $_->{length} } @files;
     $obj->pane ||= @files;
     $obj->set_horizontal($max_line_length);
-    $obj->set_contents($_->{data}) for @files;
 
+    # calculate span and set for each files
+    if ($obj->cell) {
+	my @spans = do {
+	    map {
+		if (/^[-+]/) {
+		    $obj->{span} + $_;
+		} else {
+		    $_;
+		}
+	    }
+	    split /,+/, $obj->cell;
+	};
+	for my $i (keys @files) {
+	    my $span = $spans[$i] // $spans[-1];
+	    if ($span =~ /^[-+]/) {
+		$span += $obj->{span};
+	    }
+	    elsif ($span =~ s/^(<=|[=<])//) {
+		my $length = $files[$i]->{length};
+		$span = $span ? min($length, $span) : $length;
+	    }
+	    $files[$i]->{span} = $span;
+	}
+    }
+    $obj->set_contents($_) for @files;
     while (@files) {
 	my @rows = splice @files, 0, $obj->pane;
 	my $max_length = max map { int @{$_->{data}} } @rows;
+	my @span = map { $_->{span} // $obj->span } @rows;
 	if ($obj->filename) {
 	    my $w = $obj->span + $obj->border_width('center');
-	    my $format = "%-${w}.${w}s" x (@rows - 1) . "%s\n";
+	    my $format = join '', (
+		(map {
+		    my $w = $_ + $obj->border_width('center');
+		    "%-${w}.${w}s";
+		} @span[0..$#span-1]),
+		"%s\n");
 	    ansi_printf $format, map {
 		ansi_sprintf $obj->filename_format, $_->{name};
 	    } @rows;
 	}
-	$obj->column_out(map {
-	    my $data = $_->{data};
-	    my $length = @$data;
-	    push @$data, (($obj->fillup_str) x ($max_length - $length));
-	    $data;
-	} @rows);
+	$obj->column_out(
+	    { span => \@span },
+	    map {
+		my $data = $_->{data};
+		my $length = @$data;
+		push @$data, (($obj->fillup_str) x ($max_length - $length));
+		$data;
+	    } @rows);
     }
     return $obj;
 }
@@ -305,7 +338,7 @@ sub nup_out {
     for my $file (@files) {
 	my $data = $file->{data};
 	next if @$data == 0;
-	$obj->set_contents($data)
+	$obj->set_contents($file)
 	    ->set_vertical($data)
 	    ->set_layout($data)
 	    ->page_out(@$data);
@@ -384,12 +417,14 @@ sub set_horizontal {
 
 sub set_contents {
     my $obj = shift;
-    my $dp = shift;
+    my $fp = shift;
+    my $dp = $fp->{data};
     (my $cell_width = $obj->span - $obj->runin_margin) < 1
 	and die "Not enough space.\n";
     # Fold long lines
     if ($obj->linestyle and $obj->linestyle ne 'none') {
-	my $fold = $obj->foldsub($cell_width) or die;
+	my $w = $fp->{span} // $cell_width;
+	my $fold = $obj->foldsub($w) or die;
 	@$dp = map { $fold->($_) } @$dp;
     }
     return $obj;
@@ -430,18 +465,27 @@ sub color_border {
 
 sub column_out {
     my $obj = shift;
-    my($bdr_top, $bdr_btm) = do {
-	map { $obj->color('BORDER', $_) }
-	map { $obj->get_border($_) x $obj->span }
-	qw(top bottom);
-    };
-    map { unshift @$_, $bdr_top } @_ if $bdr_top;
-    map { push    @$_, $bdr_btm } @_ if $bdr_btm;
-    my $max = max(map { int @$_ } @_) - 1;
+    my $opt = ref $_[0] eq 'HASH' ? shift : {};
+
+    # span list is given in parallel view mode
+    my @span = $opt->{span} ? @{$opt->{span}} : (($obj->{span}) x @_);
+    @span == @_ or die;
+
+    # insert top/bottom border
+    my %bd = map { $_ => $obj->get_border($_) } qw(top bottom);
+    if ($bd{top} or $bd{bottom}) {
+	while (my($i, $e) = each @_) {
+	    unshift @$e, $obj->color('BORDER', $bd{top} x $span[$i]) if $bd{top};
+	    push @$e, $obj->color('BORDER', $bd{bottom} x $span[$i]) if $bd{bottom};
+	}
+    }
+
+    my $max = max map $#{$_}, @_;
     for my $i (0 .. $max) {
 	my $pos = $i == 0 ? 0 : $i == $max ? 2 : 1;
+	my @span = @span;
 	my @panes = map {
-	    @$_ ? ansi_sprintf("%-$obj->{span}s", shift @$_) : ();
+	    @$_ ? ansi_sprintf("%-*s", shift @span, shift @$_) : ();
 	} @_;
 	print      $obj->color_border('left',   $pos, $obj->current_page);
 	print join $obj->color_border('center', $pos, $obj->current_page),
