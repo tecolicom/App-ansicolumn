@@ -277,23 +277,15 @@ sub parallel_out {
     $obj->set_horizontal($max_line_length);
 
     # calculate span and set for each files
-    if ($obj->cell) {
-	my @spans = do {
-	    map {
-		if (/^[-+]/) {
-		    $obj->{span} + $_;
-		} else {
-		    $_;
-		}
-	    }
-	    split /,+/, $obj->cell;
-	};
+    if (my $cell = $obj->cell) {
+	my @spans = split /,+/, $cell;
 	for my $i (keys @files) {
 	    my $span = $spans[$i] // $spans[-1];
 	    if ($span =~ /^[-+]/) {
 		$span += $obj->{span};
+		$span < 0 and die "Invalid number: $cell\n";
 	    }
-	    elsif ($span =~ s/^(<=|[=<])//) {
+	    elsif ($span =~ s/^(<=|[<=])//) {
 		my $length = $files[$i]->{length};
 		$span = $span ? min($length, $span) : $length;
 	    }
