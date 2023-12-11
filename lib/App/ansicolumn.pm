@@ -24,7 +24,7 @@ use Getopt::EX::RPN qw(rpn_calc);
 my %DEFAULT_COLORMAP = (
     BORDER => '',
     TEXT   => '',
-    );
+);
 
 use Getopt::EX::Hashed 1.05; {
 
@@ -276,7 +276,7 @@ sub parallel_out {
     $obj->pane ||= @files;
     $obj->set_horizontal($max_line_length);
 
-    # calculate span and set for each files
+    # calculate span and set for each file
     if (my $cell = $obj->cell) {
 	my @spans = split /,+/, $cell;
 	for my $i (keys @files) {
@@ -288,6 +288,9 @@ sub parallel_out {
 	    elsif ($span =~ s/^(<=|[<=])//) {
 		my $length = $files[$i]->{length};
 		$span = $span ? min($length, $span) : $length;
+	    }
+	    else {
+		die "Invalid number: $cell\n";
 	    }
 	    $files[$i]->{span} = $span;
 	}
