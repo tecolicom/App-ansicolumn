@@ -71,6 +71,10 @@ terminal sequences.  It supports traditional options and some of Linux
 extended, and many other original options.  Empty lines are **not**
 ignored, though.
 
+<div>
+    <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-grep.png">
+</div>
+
 In contrast to the original [column(1)](http://man.he.net/man1/column) command which handles mainly
 short item list, and Linux variant which has been expanded to have
 ritch table style output, **ansicolumn(1)** has been expanded to show
@@ -78,9 +82,17 @@ text file in multi-column view.  Combined with pagenation and
 document-friendly folding mechanism, it can be used as a document
 viewing preprocessor for pager program.
 
+<div>
+    <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-man.png">
+</div>
+
 When multiple files are given as arguments, it gets in the parallel
 view mode, and show all files in parallel.  It's convenient to see
 multiple files side-by-side.
+
+<div>
+    <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-cell.png">
+</div>
 
 ## COMPATIBLE OPTIONS
 
