@@ -78,13 +78,22 @@ Version 1.36
 =head1 DESCRIPTION
 
 B<ansicolumn> is a L<column(1)> command clone which can handle ANSI
-terminal sequences.  It supports traditional options and some of Linux
-extended, and many other original options.  Empty lines are B<not>
-ignored, though.
+terminal sequences, backspaces, and Asian wide characters.  It
+supports traditional options and some of Linux extended, and many
+other original options.
 
 =begin html
 
 <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-grep.png">
+
+=end html
+
+In addition to normal operation, table style output (B<-t>) is
+supported as well.
+
+=begin html
+
+<p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-table.png">
 
 =end html
 
@@ -100,6 +109,10 @@ viewing preprocessor for pager program.
 <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-man.png">
 
 =end html
+
+In order to accurately display the contents of the file, blank lines
+that were ignored by the original L<column(1)> command are not
+ignored.
 
 When multiple files are given as arguments, it gets in the parallel
 view mode, and show all files in parallel.  It's convenient to see

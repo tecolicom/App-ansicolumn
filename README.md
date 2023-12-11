@@ -67,12 +67,19 @@ Version 1.36
 # DESCRIPTION
 
 **ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone which can handle ANSI
-terminal sequences.  It supports traditional options and some of Linux
-extended, and many other original options.  Empty lines are **not**
-ignored, though.
+terminal sequences, backspaces, and Asian wide characters.  It
+supports traditional options and some of Linux extended, and many
+other original options.
 
 <div>
     <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-grep.png">
+</div>
+
+In addition to normal operation, table style output (**-t**) is
+supported as well.
+
+<div>
+    <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-table.png">
 </div>
 
 In contrast to the original [column(1)](http://man.he.net/man1/column) command which handles mainly
@@ -85,6 +92,10 @@ viewing preprocessor for pager program.
 <div>
     <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-man.png">
 </div>
+
+In order to accurately display the contents of the file, blank lines
+that were ignored by the original [column(1)](http://man.he.net/man1/column) command are not
+ignored.
 
 When multiple files are given as arguments, it gets in the parallel
 view mode, and show all files in parallel.  It's convenient to see
