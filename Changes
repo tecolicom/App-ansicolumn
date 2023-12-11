@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.37 2023-12-11T13:45:13Z
+
+    - add validation check for --cell parameter
+    - include images in document
+
 1.36 2023-11-26T06:37:39Z
 
     - introduce --cell option to specify display width of each file in parallel mode
