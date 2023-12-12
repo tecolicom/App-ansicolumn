@@ -491,6 +491,11 @@ sub column_out {
     return $obj;
 }
 
+sub _numbers {
+    require Getopt::EX::Numbers;
+    Getopt::EX::Numbers->new(min => 1, @_);
+}
+
 sub table_out {
     my $obj = shift;
     return unless @_;
@@ -507,7 +512,9 @@ sub table_out {
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max    = map { max @$_ } xpose @length;
     my @align  = newlist(count => int @max, default => '-',
-			 [ map --$_, split /,/, $obj->table_right ] => '');
+			 [ map --$_, map {
+			     _numbers(max => int @max)->parse($_)->sequence
+			 } split /,/, $obj->table_right ] => '');
     my @format = map "%$align[$_]$max[$_]s", keys @max;
     for my $line (@lines) {
 	next unless @$line;

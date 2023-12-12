@@ -75,7 +75,7 @@ other original options.
     <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-grep.png">
 </div>
 
-In addition to normal operation, table style output (**-t**) is
+In addition to normal operation, table style output (`-t`) is
 supported as well.
 
 <div>
@@ -116,12 +116,12 @@ default, from the standard input.
     Output is formatted for a display columns wide.  See ["CALCULATION"](#calculation)
     section.
 
-    Accept **-c** for compatibility, but **-w** is more popular.
+    Accept `-c` for compatibility, but `-w` is more popular.
 
 - **-s**#, **--separator**=#
 
     Specify a set of characters to be used to delimit columns for the -t
-    option.  When used with **--regex-sep** or **-r** option, it is used as
+    option.  When used with `--regex-sep` or `-r` option, it is used as
     regex rather than character set.
 
 - **-t**, **--table**
@@ -145,13 +145,17 @@ default, from the standard input.
 
 - **-o**#, **--output-separator**=#
 
-    When used **--table** or **-t** option, each column are joined by two
+    When used `--table` or `-t` option, each column are joined by two
     space characters (' ') by default.  This option will change it.
 
 - **-R**#, **--table-right**=#
 
-    Right align text in these columns.
-    Support only numbers.
+    Right align text in these columns.  Multiple columns are separated by
+    commas.  Support only numbers.
+
+    Parameters are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module, so you can
+    specify a range of numbers, as in `-R2:5` which is equivalent to
+    `-R2,3,4,5`. Option `-R:` makes all fields right-aligned.
 
 ## EXTENDED OPTIONS
 
@@ -165,12 +169,12 @@ default, from the standard input.
         --fillup
 
     If optional number is given, it is used as a page height unless option
-    **--height** exists.  Otherwise page height is set to terminal height
+    `--height` exists.  Otherwise page height is set to terminal height
     minus one.
 
 - **-U**#, **--up**=#, **--2up** .. **--9up**
 
-    Show in N-up format.  Almost same as **-P** but does not set page
+    Show in N-up format.  Almost same as `-P` but does not set page
     height.  This is convenient when you want multi-column output without
     page control.
 
@@ -193,7 +197,7 @@ default, from the standard input.
 - **-V**, **--**\[**no-**\]**parallel**
 
     Parallel view mode.  Implicitly enabled when multiple files are
-    specified.  Use **--no-parallel** to disable.
+    specified.  Use `--no-parallel` to disable.
 
     Set these options, and cancel all pagenation behavior.
 
@@ -202,27 +206,27 @@ default, from the standard input.
         --border
 
     By default, all files are displayed in parallel.  In other words,
-    number of pane is set as a number of files.  You can use **-C** option
+    number of pane is set as a number of files.  You can use `-C` option
     to specify number of files displayed simultaneously.
 
-    You can use this option mixed with **-D** option to see document files.
+    You can use this option mixed with `-D` option to see document files.
 
     If you want to display multiple parts in a single stream in parallel,
-    use the **--pages** option. It will split the data by form feed
+    use the `--pages` option. It will split the data by form feed
     characters and treat each part as a separate file.
 
 - **-H**, **--filename**
 - **--filename-format**=_format_ (DEFAULT: `: %s`)
 
     Print filename header before contents.  Currently, this option is
-    effective only in **--parallel** mode.  Filename is truncated in each
+    effective only in `--parallel` mode.  Filename is truncated in each
     pane width.
 
     This option is convenient to look over many small files at once.
 
         ansicolumn -VHC1 *.txt | less
 
-    Filename is printed in a format given by **--filename-format** option.
+    Filename is printed in a format given by `--filename-format` option.
     Default is `: %s` so that making easy to move to next file by `^:`
     pattern search.
 
@@ -270,12 +274,12 @@ default, from the standard input.
 
     The correspondence between file and display width remains the same 
     even when the number of columns to be displayed simultaneously is 
-    specified with the **-C** option.
+    specified with the `-C` option.
 
 - **-C**#, **--pane**=#
 
     Output is formatted in the specified number of panes.  Setting number
-    of panes implies **--widen** option enabled.  See ["CALCULATION"](#calculation)
+    of panes implies `--widen` option enabled.  See ["CALCULATION"](#calculation)
     section.
 
 - **-S**#, **--pane-width**=#, **--pw**=#
@@ -286,7 +290,7 @@ default, from the standard input.
 - **-W**, **--widen**
 
     Use full width of the terminal.  Each pane is expanded to fill
-    terminal width, unless **--pane-width** is specified.
+    terminal width, unless `--pane-width` is specified.
 
 - **-p**, **--paragraph**
 
@@ -294,26 +298,26 @@ default, from the standard input.
 
 - **-B**, **--border**\[=_style_\] (DEFAULT: `box`)
 
-    Print border.  Enabled by **--page** option automatically.  If the
+    Print border.  Enabled by `--page` option automatically.  If the
     optional _style_ is given, it is used as a border style and precedes
-    to **--border-style** option.  Use **--border=none** to disable it.
+    to `--border-style` option.  Use `--border=none` to disable it.
 
-    Border style is specified by **--border-style** option.
+    Border style is specified by `--border-style` option.
 
 - **-F**, **--fillup**\[=`pane`|`page`|`none`\]
 
     Fill up final pane or page by empty lines.  Parameter is optional and
-    considered as 'pane' by default.  Set by **--page** option
-    automatically.  Use **--fillup=none** if you want to explicitly disable
+    considered as 'pane' by default.  Set by `--page` option
+    automatically.  Use `--fillup=none` if you want to explicitly disable
     it.
 
-    Option **-F** is a shortcut for **--fillup=pane**.
+    Option `-F` is a shortcut for `--fillup=pane`.
 
 - **--fillup-str**=_string_
 
     Set string used for filling up space.  Default is empty.
 
-    Use **--fillup-str='~'** to fill up the area after EOF by `~`
+    Use `--fillup-str='~'` to fill up the area after EOF by `~`
     character like [vi(1)](http://man.he.net/man1/vi) or [more(1)](http://man.he.net/man1/more).
 
 - **--height**=#
@@ -336,14 +340,14 @@ default, from the standard input.
     Set the style of treatment for longer lines.
     Default is `none`.
 
-    Option **--linestyle=wordrap** sets **--linestyle=wrap** and
-    **--boundary=word** at once.
+    Option `--linestyle=wordrap` sets `--linestyle=wrap` and
+    `--boundary=word` at once.
 
 - **--boundary**=`none`|`word`|`space`
 
     Set text wrap boundary.  If set as `word` or `space`, text is not
     wrapped in the middle of alphanumeric word or non-space sequence.
-    Option **--document** set this as `word`.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) for
+    Option `--document` set this as `word`.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) for
     detail.
 
 - **--linebreak**=`none`|`all`|`runin`|`runout`, **--lb**=...
@@ -352,7 +356,7 @@ default, from the standard input.
 
 - **--runin**=#, **--runout**=#, **--run**=#
 
-    Set the number of runin/runout column.  **--run** set both.
+    Set the number of runin/runout column.  `--run` set both.
     Default is both 2.
 
     As for Japanese text, only one character can be moved with default
@@ -430,19 +434,19 @@ default, from the standard input.
 
 - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 
-    When used **-t** option, leading spaces are ignored by default.  Use
-    **--no-ignore-space** option to disable it.
+    When used `-t` option, leading spaces are ignored by default.  Use
+    `--no-ignore-space` option to disable it.
 
 - **--**\[**no-**\]**white-space**
 
     Allow white spaces at the top of each pane, or clean them up.  Default
-    true.  Negated by **--document** option.
+    true.  Negated by `--document` option.
 
 - **--**\[**no-**\]**isolation**
 
     Allow the first line of a paragraph (continuous non-space lines) is
     placed at the bottom of a pane.  Default true.  If false, move it to
-    the top of next pane.  Negated by **--document** option.
+    the top of next pane.  Negated by `--document` option.
 
 - **--tabstop**=# (DEFAULT: 8)
 
@@ -475,7 +479,7 @@ default, from the standard input.
 - **--pages**
 
     Split file content by formfeed character, and treat each part as a
-    individual file.  Use with **--parallel** option.
+    individual file.  Use with `--parallel` option.
 
 # DEFAULT ALISES
 
@@ -497,16 +501,16 @@ The following options are defined in `App::ansicolumn::default.pm`.
 - **--green-board**
 - **--slate-board**
 
-    Use the **--color-board** option to display text on the white, black,
+    Use the `--color-board` option to display text on the white, black,
     green or darkslate panels.
 
 # CALCULATION
 
-As for **--height**, **--width**, **--pane** and **--pane-width** options,
+As for `--height`, `--width`, `--pane` and `--pane-width` options,
 besides giving numeric digits, you can calculate the number using
 terminal size.  If the expression contains non-digit character, it is
 evaluated as an RPN (Reverse Polish Notation) with the terminal size
-pushed on the stack.  Initial value for **--height** options is
+pushed on the stack.  Initial value for `--height` options is
 terminal height, and terminal width for others.
 
     OPTION              VALUE
@@ -536,12 +540,12 @@ This command is implemented with [Getopt::EX](https://metacpan.org/pod/Getopt%3A
 
     ~/.ansicolumnrc
 
-file is read at start up time.  If you want use **--no-white-space**
+file is read at start up time.  If you want use `--no-white-space`
 always, put this line in your `~/.ansicolumnrc`.
 
     option default --no-white-space
 
-Also command can be extended by original modules with **-M**
+Also command can be extended by original modules with `-M`
 option. See \`perldoc Getopt::EX\` for detail.
 
 # INSTALL
@@ -576,6 +580,7 @@ To get the latest code, use this:
 - [https://qiita.com/kaz-utashiro/items/345cd9abcd8e1f0d81a2](https://qiita.com/kaz-utashiro/items/345cd9abcd8e1f0d81a2)
 - [https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e](https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e)
 - [https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422](https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422)
+- [https://qiita.com/kaz-utashiro/items/a347628da09638e633ed](https://qiita.com/kaz-utashiro/items/a347628da09638e633ed)
 
 # RELATED WORKS
 

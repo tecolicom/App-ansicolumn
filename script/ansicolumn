@@ -88,7 +88,7 @@ other original options.
 
 =end html
 
-In addition to normal operation, table style output (B<-t>) is
+In addition to normal operation, table style output (C<-t>) is
 supported as well.
 
 =begin html
@@ -137,12 +137,12 @@ default, from the standard input.
 Output is formatted for a display columns wide.  See L</CALCULATION>
 section.
 
-Accept B<-c> for compatibility, but B<-w> is more popular.
+Accept C<-c> for compatibility, but C<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
 
 Specify a set of characters to be used to delimit columns for the -t
-option.  When used with B<--regex-sep> or B<-r> option, it is used as
+option.  When used with C<--regex-sep> or C<-r> option, it is used as
 regex rather than character set.
 
 =item B<-t>, B<--table>
@@ -166,13 +166,17 @@ Fill columns before filling rows.
 
 =item B<-o>#, B<--output-separator>=#
 
-When used B<--table> or B<-t> option, each column are joined by two
+When used C<--table> or C<-t> option, each column are joined by two
 space characters (' ') by default.  This option will change it.
 
 =item B<-R>#, B<--table-right>=#
 
-Right align text in these columns.
-Support only numbers.
+Right align text in these columns.  Multiple columns are separated by
+commas.  Support only numbers.
+
+Parameters are parsed by the L<Getopt::EX::Numbers> module, so you can
+specify a range of numbers, as in C<-R2:5> which is equivalent to
+C<-R2,3,4,5>. Option C<-R:> makes all fields right-aligned.
 
 =back
 
@@ -190,12 +194,12 @@ Page mode.  Set these options.
     --fillup
 
 If optional number is given, it is used as a page height unless option
-B<--height> exists.  Otherwise page height is set to terminal height
+C<--height> exists.  Otherwise page height is set to terminal height
 minus one.
 
 =item B<-U>#, B<--up>=#, B<--2up> .. B<--9up>
 
-Show in N-up format.  Almost same as B<-P> but does not set page
+Show in N-up format.  Almost same as C<-P> but does not set page
 height.  This is convenient when you want multi-column output without
 page control.
 
@@ -218,7 +222,7 @@ L<App::optex::textconv>.
 =item B<-V>, B<-->[B<no->]B<parallel>
 
 Parallel view mode.  Implicitly enabled when multiple files are
-specified.  Use B<--no-parallel> to disable.
+specified.  Use C<--no-parallel> to disable.
 
 Set these options, and cancel all pagenation behavior.
 
@@ -227,13 +231,13 @@ Set these options, and cancel all pagenation behavior.
     --border
 
 By default, all files are displayed in parallel.  In other words,
-number of pane is set as a number of files.  You can use B<-C> option
+number of pane is set as a number of files.  You can use C<-C> option
 to specify number of files displayed simultaneously.
 
-You can use this option mixed with B<-D> option to see document files.
+You can use this option mixed with C<-D> option to see document files.
 
 If you want to display multiple parts in a single stream in parallel,
-use the B<--pages> option. It will split the data by form feed
+use the C<--pages> option. It will split the data by form feed
 characters and treat each part as a separate file.
 
 =item B<-H>, B<--filename>
@@ -241,14 +245,14 @@ characters and treat each part as a separate file.
 =item B<--filename-format>=I<format> (DEFAULT: C<: %s>)
 
 Print filename header before contents.  Currently, this option is
-effective only in B<--parallel> mode.  Filename is truncated in each
+effective only in C<--parallel> mode.  Filename is truncated in each
 pane width.
 
 This option is convenient to look over many small files at once.
 
    ansicolumn -VHC1 *.txt | less
 
-Filename is printed in a format given by B<--filename-format> option.
+Filename is printed in a format given by C<--filename-format> option.
 Default is C<: %s> so that making easy to move to next file by C<^:>
 pattern search.
 
@@ -296,12 +300,12 @@ of C<=>.
 
 The correspondence between file and display width remains the same 
 even when the number of columns to be displayed simultaneously is 
-specified with the B<-C> option.
+specified with the C<-C> option.
 
 =item B<-C>#, B<--pane>=#
 
 Output is formatted in the specified number of panes.  Setting number
-of panes implies B<--widen> option enabled.  See L</CALCULATION>
+of panes implies C<--widen> option enabled.  See L</CALCULATION>
 section.
 
 =item B<-S>#, B<--pane-width>=#, B<--pw>=#
@@ -312,7 +316,7 @@ L</CALCULATION> section.
 =item B<-W>, B<--widen>
 
 Use full width of the terminal.  Each pane is expanded to fill
-terminal width, unless B<--pane-width> is specified.
+terminal width, unless C<--pane-width> is specified.
 
 =item B<-p>, B<--paragraph>
 
@@ -320,26 +324,26 @@ Insert empty line between every successive non-empty lines.
 
 =item B<-B>, B<--border>[=I<style>] (DEFAULT: C<box>)
 
-Print border.  Enabled by B<--page> option automatically.  If the
+Print border.  Enabled by C<--page> option automatically.  If the
 optional I<style> is given, it is used as a border style and precedes
-to B<--border-style> option.  Use B<--border=none> to disable it.
+to C<--border-style> option.  Use C<--border=none> to disable it.
 
-Border style is specified by B<--border-style> option.
+Border style is specified by C<--border-style> option.
 
 =item B<-F>, B<--fillup>[=C<pane>|C<page>|C<none>]
 
 Fill up final pane or page by empty lines.  Parameter is optional and
-considered as 'pane' by default.  Set by B<--page> option
-automatically.  Use B<--fillup=none> if you want to explicitly disable
+considered as 'pane' by default.  Set by C<--page> option
+automatically.  Use C<--fillup=none> if you want to explicitly disable
 it.
 
-Option B<-F> is a shortcut for B<--fillup=pane>.
+Option C<-F> is a shortcut for C<--fillup=pane>.
 
 =item B<--fillup-str>=I<string>
 
 Set string used for filling up space.  Default is empty.
 
-Use B<--fillup-str='~'> to fill up the area after EOF by C<~>
+Use C<--fillup-str='~'> to fill up the area after EOF by C<~>
 character like L<vi(1)> or L<more(1)>.
 
 =item B<--height>=#
@@ -362,14 +366,14 @@ margin width.
 Set the style of treatment for longer lines.
 Default is C<none>.
 
-Option B<--linestyle=wordrap> sets B<--linestyle=wrap> and
-B<--boundary=word> at once.
+Option C<--linestyle=wordrap> sets C<--linestyle=wrap> and
+C<--boundary=word> at once.
 
 =item B<--boundary>=C<none>|C<word>|C<space>
 
 Set text wrap boundary.  If set as C<word> or C<space>, text is not
 wrapped in the middle of alphanumeric word or non-space sequence.
-Option B<--document> set this as C<word>.  See L<Text::ANSI::Fold> for
+Option C<--document> set this as C<word>.  See L<Text::ANSI::Fold> for
 detail.
 
 =item B<--linebreak>=C<none>|C<all>|C<runin>|C<runout>, B<--lb>=...
@@ -378,7 +382,7 @@ Set the linebreak mode.
 
 =item B<--runin>=#, B<--runout>=#, B<--run>=#
 
-Set the number of runin/runout column.  B<--run> set both.
+Set the number of runin/runout column.  C<--run> set both.
 Default is both 2.
 
 As for Japanese text, only one character can be moved with default
@@ -456,19 +460,19 @@ lines in your C<$HOME/.ansicolumnrc> file, for example.
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
-When used B<-t> option, leading spaces are ignored by default.  Use
-B<--no-ignore-space> option to disable it.
+When used C<-t> option, leading spaces are ignored by default.  Use
+C<--no-ignore-space> option to disable it.
 
 =item B<-->[B<no->]B<white-space>
 
 Allow white spaces at the top of each pane, or clean them up.  Default
-true.  Negated by B<--document> option.
+true.  Negated by C<--document> option.
 
 =item B<-->[B<no->]B<isolation>
 
 Allow the first line of a paragraph (continuous non-space lines) is
 placed at the bottom of a pane.  Default true.  If false, move it to
-the top of next pane.  Negated by B<--document> option.
+the top of next pane.  Negated by C<--document> option.
 
 =item B<--tabstop>=# (DEFAULT: 8)
 
@@ -504,7 +508,7 @@ value of 'narrow' or 'wide.  Default is 'narrow'.
 =item B<--pages>
 
 Split file content by formfeed character, and treat each part as a
-individual file.  Use with B<--parallel> option.
+individual file.  Use with C<--parallel> option.
 
 =begin comment
 
@@ -545,18 +549,18 @@ I<bg-color> panel.
 
 =item B<--slate-board>
 
-Use the B<--color-board> option to display text on the white, black,
+Use the C<--color-board> option to display text on the white, black,
 green or darkslate panels.
 
 =back
 
 =head1 CALCULATION
 
-As for B<--height>, B<--width>, B<--pane> and B<--pane-width> options,
+As for C<--height>, C<--width>, C<--pane> and C<--pane-width> options,
 besides giving numeric digits, you can calculate the number using
 terminal size.  If the expression contains non-digit character, it is
 evaluated as an RPN (Reverse Polish Notation) with the terminal size
-pushed on the stack.  Initial value for B<--height> options is
+pushed on the stack.  Initial value for C<--height> options is
 terminal height, and terminal width for others.
 
     OPTION              VALUE
@@ -586,12 +590,12 @@ This command is implemented with L<Getopt::EX> module.  So
 
     ~/.ansicolumnrc
 
-file is read at start up time.  If you want use B<--no-white-space>
+file is read at start up time.  If you want use C<--no-white-space>
 always, put this line in your F<~/.ansicolumnrc>.
 
     option default --no-white-space
 
-Also command can be extended by original modules with B<-M>
+Also command can be extended by original modules with C<-M>
 option. See `perldoc Getopt::EX` for detail.
 
 =head1 INSTALL
@@ -636,6 +640,10 @@ L<https://qiita.com/kaz-utashiro/items/1cdd71d44eb11f3fb36e>
 =item *
 
 L<https://qiita.com/kaz-utashiro/items/32e1c2d4c42a80c42422>
+
+=item *
+
+L<https://qiita.com/kaz-utashiro/items/a347628da09638e633ed>
 
 =back
 
