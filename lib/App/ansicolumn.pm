@@ -1,6 +1,6 @@
 package App::ansicolumn;
 
-our $VERSION = "1.37";
+our $VERSION = "1.3701";
 
 use v5.14;
 use warnings;
@@ -289,7 +289,7 @@ sub parallel_out {
 		my $length = $files[$i]->{length};
 		$span = $span ? min($length, $span) : $length;
 	    }
-	    else {
+	    elsif ($span !~ /^\d+$/) {
 		die "Invalid number: $cell\n";
 	    }
 	    $files[$i]->{span} = $span;
