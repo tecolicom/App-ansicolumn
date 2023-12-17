@@ -256,7 +256,7 @@ Filename is printed in a format given by C<--filename-format> option.
 Default is C<: %s> so that making easy to move to next file by C<^:>
 pattern search.
 
-=item B<-X>=#, B<--cell>=#
+=item B<-X>#, B<--cell>=#
 
 Sets the display width of each file.  This option is only valid with
 parallel view mode.  For example, if you are displaying three files
@@ -556,11 +556,11 @@ green or darkslate panels.
 
 =head1 CALCULATION
 
-As for C<--height>, C<--width>, C<--pane> and C<--pane-width> options,
-besides giving numeric digits, you can calculate the number using
-terminal size.  If the expression contains non-digit character, it is
-evaluated as an RPN (Reverse Polish Notation) with the terminal size
-pushed on the stack.  Initial value for C<--height> options is
+As for C<--height>, C<--width>, C<--pane>, C<--up> and C<--pane-width>
+options, besides giving numeric digits, you can calculate the number
+using terminal size.  If the expression contains non-digit character,
+it is evaluated as an RPN (Reverse Polish Notation) with the terminal
+size pushed on the stack.  Initial value for C<--height> options is
 terminal height, and terminal width for others.
 
     OPTION              VALUE

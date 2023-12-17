@@ -46,7 +46,7 @@ use Getopt::EX::Hashed 1.05; {
     has filename            => ' !  H    ' ;
     has filename_format     => ' =s      ' , default => ': %s';
     has pages               => ' !       ' ;
-    has up                  => ' :i U    ' ;
+    has up                  => ' :s U    ' ;
     has page                => ' :i P    ' , min => 0;
     has pane                => ' =s C    ' , default => 0 ;
     has cell                => ' =s X    ' ;
@@ -109,8 +109,8 @@ use Getopt::EX::Hashed 1.05; {
 	exit;
     };
 
-    ### RPN calc for --height, --width, --pane, --pane-width
-    has [ qw(+height +width +pane +pane_width) ] => sub {
+    ### RPN calc for --height, --width, --pane, --up, --pane-width
+    has [ qw(+height +width +pane +up +pane_width) ] => sub {
 	my $obj = $_;
 	my($name, $val) = @_;
 	$obj->$name = $val !~ /\D/ ? $val : do {

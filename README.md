@@ -230,7 +230,7 @@ default, from the standard input.
     Default is `: %s` so that making easy to move to next file by `^:`
     pattern search.
 
-- **-X**=#, **--cell**=#
+- **-X**#, **--cell**=#
 
     Sets the display width of each file.  This option is only valid with
     parallel view mode.  For example, if you are displaying three files
@@ -506,11 +506,11 @@ The following options are defined in `App::ansicolumn::default.pm`.
 
 # CALCULATION
 
-As for `--height`, `--width`, `--pane` and `--pane-width` options,
-besides giving numeric digits, you can calculate the number using
-terminal size.  If the expression contains non-digit character, it is
-evaluated as an RPN (Reverse Polish Notation) with the terminal size
-pushed on the stack.  Initial value for `--height` options is
+As for `--height`, `--width`, `--pane`, `--up` and `--pane-width`
+options, besides giving numeric digits, you can calculate the number
+using terminal size.  If the expression contains non-digit character,
+it is evaluated as an RPN (Reverse Polish Notation) with the terminal
+size pushed on the stack.  Initial value for `--height` options is
 terminal height, and terminal width for others.
 
     OPTION              VALUE
