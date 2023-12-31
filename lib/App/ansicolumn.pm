@@ -519,7 +519,7 @@ sub table_out {
     for my $line (@lines) {
 	next unless @$line;
 	my @fmt = @format[keys @$line];
-	$fmt[$#{$line}] = '%s' if $align[$#{$line}] eq '-';
+	$fmt[$#fmt] = '%s' if $align[$#fmt] eq '-';
 	my $format = join $obj->output_separator, @fmt;
 	ansi_printf $format, @$line;
     } continue {
