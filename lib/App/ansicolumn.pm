@@ -37,6 +37,7 @@ use Getopt::EX::Hashed 1.05; {
     has fillrows            => '    x    ' ;
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;
+    has table_align         => ' !    ca ' ;
     has table_right         => ' =s R    ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
@@ -515,6 +516,12 @@ sub table_out {
 			 [ map --$_, map {
 			     _numbers(max => int @max)->parse($_)->sequence
 			 } split /,/, $obj->table_right ] => '');
+    if ($obj->table_align) {
+	@max = map {
+	    roundup($_, $obj->column_unit, $obj->margin) - $obj->margin
+	} @max;
+	$obj->output_separator = ' ' x $obj->margin;
+    }
     my @format = map "%$align[$_]$max[$_]s", keys @max;
     for my $line (@lines) {
 	next unless @$line;

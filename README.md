@@ -34,6 +34,7 @@ ansicolumn \[options\] \[file ...\]
     --height=#           page height
     --column-unit=#      column unit (default 8)
     --margin=#           column margin width (default 1)
+    --table-align        align table output to column unit
     --linestyle=#        folding style (none|truncate|wrap|wordwrap)
     --boundary=#         line-end boundary
     --linebreak=#        line-break mode (none|all|runin|runout)
@@ -138,6 +139,11 @@ default, from the standard input.
     Specify maximal number of the input columns.  The last column will
     contain all remaining line data if the limit is smaller than the
     number of the columns in the input data.
+
+- **--table-align**
+
+    Align each field in the table output to column-unit.  If this option
+    is specified, **--output-separator** option is ignored.
 
 - **-x**, **--fillrows**
 
