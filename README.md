@@ -55,7 +55,7 @@ ansicolumn \[options\] \[file ...\]
 
 Default alias options:
 
-    --color-board FG BG  board style pages with FG and BG colors
+    --board-color FG BG  board style pages with FG and BG colors
     --white-board        black on white board
     --black-board        white on black board
     --green-board        white on green board
@@ -265,18 +265,18 @@ default, from the standard input.
     If `=` is specified as the value, it is set to the width of the
     longest line in the file.
 
-        --cell =
+        -X=
 
     Then all specified files will be displayed with the width of the
     longest line they contain. `=` may be followed by a maximum value.
 
-        --cell =80
+        -X=80
 
     will set the cell width to length of the longest line if it is less
     than 80, or 80 if it is greater than 80.  `<` may be used instead
     of `=`.
 
-        --cell '<80'
+        -X'<80'
 
     The correspondence between file and display width remains the same 
     even when the number of columns to be displayed simultaneously is 
@@ -507,7 +507,7 @@ The following options are defined in `App::ansicolumn::default.pm`.
 - **--green-board**
 - **--slate-board**
 
-    Use the `--color-board` option to display text on the white, black,
+    Use the `--board-color` option to display text on the white, black,
     green or darkslate panels.
 
 # CALCULATION
@@ -598,7 +598,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-Copyright © 2020-2023 Kazumasa Utashiro.
+Copyright © 2020-2024 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
