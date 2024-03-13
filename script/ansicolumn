@@ -51,7 +51,7 @@ ansicolumn [options] [file ...]
     --linebreak=#        line-break mode (none|all|runin|runout)
     --runin=#            run-in width
     --runout=#           run-out width
-    --run=#              set both run-in and run-out width
+    --runlen=#           set both run-in and run-out width
     --[no-]pagebreak     allow page break
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
@@ -386,9 +386,9 @@ detail.
 
 Set the linebreak mode.
 
-=item B<--runin>=#, B<--runout>=#, B<--run>=#
+=item B<--runin>=#, B<--runout>=#, B<--runlen>=#
 
-Set the number of runin/runout column.  C<--run> set both.
+Set the number of runin/runout column.  C<--runlen> set both.
 Default is both 2.
 
 As for Japanese text, only one character can be moved with default

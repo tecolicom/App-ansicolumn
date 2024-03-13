@@ -67,7 +67,7 @@ use Getopt::EX::Hashed 1.05; {
     has linebreak           => ' =s   lb ' , default => '' ;
     has runin               => ' =i      ' , min => 0, default => 2 ;
     has runout              => ' =i      ' , min => 0, default => 2 ;
-    has run                 => ' =i      ' ;
+    has runlen              => ' =i      ' ;
     has pagebreak           => ' !       ' , default => 1 ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
@@ -128,7 +128,12 @@ use Getopt::EX::Hashed 1.05; {
 	}
     };
 
-    ### --run
+    ### --runlen
+    has '+runlen' => sub {
+	$_->runin = $_->runout = $_[1];
+    };
+    # for backward compatibility, would be deplicated
+    has run => '=i';
     has '+run' => sub {
 	$_->runin = $_->runout = $_[1];
     };
