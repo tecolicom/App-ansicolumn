@@ -37,7 +37,8 @@ use Getopt::EX::Hashed 1.05; {
     has fillrows            => '    x    ' ;
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;
-    has table_align         => ' !    ca ' ;
+    has table_align         => ' !  A    ' ;
+    has table_tabs          => ' !  T    ' ;
     has table_right         => ' =s R    ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
@@ -155,6 +156,18 @@ use Getopt::EX::Hashed 1.05; {
 	$c = charnames::string_vianame($c) || die "$c: invalid name\n"
 	    if length($c) > 1;
 	Text::ANSI::Fold->configure($name => $c);
+    };
+
+    ### -A, -T
+    has '+table_align' => sub {
+	if ($_->table_align = $_[1]) {
+	    $_->table = $_[1];
+	}
+    };
+    has '+table_tabs' => sub {
+	if ($_->table_tabs = $_[1]) {
+	    $_->table = $_->table_align = $_[1];
+	}
     };
 
     has TERM_SIZE           => ;
@@ -516,26 +529,41 @@ sub table_out {
     };
     my @lines  = map { [ split $split, $_, $obj->table_columns_limit ] } @_;
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
-    my @max    = map { max @$_ } xpose @length;
+    my @max = map { max @$_ } xpose @length;
+    if ($obj->table_align) {
+	my @tabs = map { roundup $_, $obj->column_unit, $obj->margin } @max;
+	#
+	# --table-tabs
+	#
+	if ($obj->table_tabs) {
+	    my $cu = $obj->column_unit;
+	    while (my($lx, $l) = each @lines) {
+		while (my($fx, $f) = each @$l) {
+		    print $f;
+		    if ($fx == $#{$l}) {
+			print "\n";
+		    } else {
+			use integer;
+			print "\t" x (($tabs[$fx] - $length[$lx][$fx] + $cu - 1) / $cu);
+		    }
+		}
+	    }
+	    return $obj;
+	}
+	@max = map { $_ - $obj->margin } @tabs;
+	$obj->output_separator = ' ' x $obj->margin;
+    }
     my @align  = newlist(count => int @max, default => '-',
 			 [ map --$_, map {
 			     _numbers(max => int @max)->parse($_)->sequence
 			 } split /,/, $obj->table_right ] => '');
-    if ($obj->table_align) {
-	@max = map {
-	    roundup($_, $obj->column_unit, $obj->margin) - $obj->margin
-	} @max;
-	$obj->output_separator = ' ' x $obj->margin;
-    }
     my @format = map "%$align[$_]$max[$_]s", keys @max;
     for my $line (@lines) {
 	next unless @$line;
 	my @fmt = @format[keys @$line];
 	$fmt[$#fmt] = '%s' if $align[$#fmt] eq '-';
-	my $format = join $obj->output_separator, @fmt;
+	my $format = join($obj->output_separator, @fmt) . "\n";
 	ansi_printf $format, @$line;
-    } continue {
-	print "\n";
     }
     return $obj;
 }

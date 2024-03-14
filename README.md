@@ -9,11 +9,9 @@ ansicolumn \[options\] \[file ...\]
 
     -w#, -c#             output width
     -s#                  separator string
-    -t                   table style output
     -l#                  maximum number of table columns
     -x                   exchange rows and columns
     -o#                  output separator
-    -R#                  right adjust table columns
 
     -P[#], --page=#      page mode, with optional page length
     -U[#], --up=#        show in N-up format (-WC# --linestyle=wrap)
@@ -34,7 +32,6 @@ ansicolumn \[options\] \[file ...\]
     --height=#           page height
     --column-unit=#      column unit (default 8)
     --margin=#           column margin width (default 1)
-    --table-align        align table output to column unit
     --linestyle=#        folding style (none|truncate|wrap|wordwrap)
     --boundary=#         line-end boundary
     --linebreak=#        line-break mode (none|all|runin|runout)
@@ -52,6 +49,13 @@ ansicolumn \[options\] \[file ...\]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
+
+Table style options:
+
+    -t, --table          table style output
+    -A, --table-align    align table output to column unit
+    -T, --table-tabs     align items by tabs
+    -R#, --table-right=# right adjust table columns
 
 Default alias options:
 
@@ -336,10 +340,16 @@ default, from the standard input.
     that they are not placed back-to-back.  This option specifies the
     margin width.
 
-- **--table-align**
+- **-A**, **--table-align**
 
     Align each field in the table output to column-unit.  If this option
     is specified, **--output-separator** option is ignored.
+
+- **-T**, **--table-tabs**
+
+    If this option is specified with **--table-align**, tabs are used for
+    spaces between items.  The width of tabs uses the value of
+    **--column-unit**.  Option **--table-right** is ignored.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
