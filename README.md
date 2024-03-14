@@ -67,7 +67,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.40
+Version 1.41
 
 # DESCRIPTION
 
