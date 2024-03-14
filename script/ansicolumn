@@ -161,11 +161,6 @@ Specify maximal number of the input columns.  The last column will
 contain all remaining line data if the limit is smaller than the
 number of the columns in the input data.
 
-=item B<--table-align>
-
-Align each field in the table output to column-unit.  If this option
-is specified, B<--output-separator> option is ignored.
-
 =item B<-x>, B<--fillrows>
 
 Fill columns before filling rows.
@@ -366,6 +361,11 @@ changes the number of the unit.
 Each column has at least single character margin on the right side so
 that they are not placed back-to-back.  This option specifies the
 margin width.
+
+=item B<--table-align>
+
+Align each field in the table output to column-unit.  If this option
+is specified, B<--output-separator> option is ignored.
 
 =item B<--linestyle>=C<none>|C<truncate>|C<wrap>|C<wordwrap>, B<--ls>=C<...>
 

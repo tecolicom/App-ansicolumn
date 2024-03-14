@@ -140,11 +140,6 @@ default, from the standard input.
     contain all remaining line data if the limit is smaller than the
     number of the columns in the input data.
 
-- **--table-align**
-
-    Align each field in the table output to column-unit.  If this option
-    is specified, **--output-separator** option is ignored.
-
 - **-x**, **--fillrows**
 
     Fill columns before filling rows.
@@ -340,6 +335,11 @@ default, from the standard input.
     Each column has at least single character margin on the right side so
     that they are not placed back-to-back.  This option specifies the
     margin width.
+
+- **--table-align**
+
+    Align each field in the table output to column-unit.  If this option
+    is specified, **--output-separator** option is ignored.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
