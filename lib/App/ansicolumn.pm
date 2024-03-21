@@ -544,7 +544,7 @@ sub table_out {
 			print "\n";
 		    } else {
 			use integer;
-			print "\t" x (($tabs[$fx] - $length[$lx][$fx] + $cu - 1) / $cu);
+			print "\t" x div($tabs[$fx] - $length[$lx][$fx], $cu);
 		    }
 		}
 	    }
