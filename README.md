@@ -344,12 +344,15 @@ default, from the standard input.
 
     Align each field in the table output to column-unit.  If this option
     is specified, **--output-separator** option is ignored.
+    Implicitly enable the **--table** option.
 
 - **-T**, **--table-tabs**
 
     If this option is specified with **--table-align**, tabs are used for
     spaces between items.  The width of tabs uses the value of
-    **--column-unit**.  Option **--table-right** is ignored.
+    **--column-unit**.  Implicitly enable the **--table** and
+    **--table-align** option.  Option **--table-right** does not take
+    effect.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
