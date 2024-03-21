@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.4101 2024-03-21T07:50:10Z
+
+    - make man page accurate
+
 1.41 2024-03-14T14:38:42Z
 
     - introduce --table-tabs (-T) option to align table by tabs
