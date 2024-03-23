@@ -475,7 +475,7 @@ default, from the standard input.
 - **--tabspace**=#
 
     Set head and following space characters.  Both are space by default.
-    If the option value is longer than single characger, it is evaluated
+    If the option value is longer than single character, it is evaluated
     as unicode name.
 
 - **--tabstyle**, **--ts**
