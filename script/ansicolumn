@@ -54,9 +54,9 @@ ansicolumn [options] [file ...]
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
     --[no-]isolation     page-end line isolation
-    --tabstop=#          tab-stop character
+    --tabstop=#          set tab width
     --tabhead=#          tab-head character
-    --tabspace=#         tab-space width
+    --tabspace=#         tab-space character
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
