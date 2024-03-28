@@ -543,7 +543,6 @@ sub table_out {
 		    if ($fx == $#{$l}) {
 			print "\n";
 		    } else {
-			use integer;
 			print "\t" x div($tabs[$fx] - $length[$lx][$fx], $cu);
 		    }
 		}
