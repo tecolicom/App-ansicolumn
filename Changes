@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.42 2024-04-24T08:31:16Z
+
+    - introduce -TT option to set tabs as input separator
+
 1.4101 2024-03-21T07:50:10Z
 
     - make man page accurate
