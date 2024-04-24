@@ -38,7 +38,7 @@ use Getopt::EX::Hashed 1.05; {
     has table               => '    t    ' ;
     has table_columns_limit => ' =i l    ' , default => 0 ;
     has table_align         => ' !  A    ' ;
-    has table_tabs          => ' !  T    ' ;
+    has table_tabs          => ' +  T    ' ;
     has table_right         => ' =s R    ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
@@ -158,15 +158,23 @@ use Getopt::EX::Hashed 1.05; {
 	Text::ANSI::Fold->configure($name => $c);
     };
 
-    ### -A, -T
+    ### -A
     has '+table_align' => sub {
 	if ($_->table_align = $_[1]) {
 	    $_->table = $_[1];
 	}
     };
+    ### -T, -TT
     has '+table_tabs' => sub {
-	if ($_->table_tabs = $_[1]) {
+	# incremental behavior
+	$_->table_tabs += $_[1];
+	if ($_->table_tabs == 1) {
+	    # enable -t and -A
 	    $_->table = $_->table_align = $_[1];
+	} elsif ($_->table_tabs == 2) {
+	    # set -rs '\t+'
+	    $_->regex_sep = 1;
+	    $_->separator = '\\t+';
 	}
     };
 

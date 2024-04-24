@@ -55,6 +55,7 @@ Table style options:
     -t, --table          table style output
     -A, --table-align    align table output to column unit
     -T, --table-tabs     align items by tabs
+    -TT                  reformat tab aligned text
     -R#, --table-right=# right adjust table columns
 
 Default alias options:
@@ -346,13 +347,16 @@ default, from the standard input.
     is specified, **--output-separator** option is ignored.
     Implicitly enable the **--table** option.
 
-- **-T**, **--table-tabs**
+- **-T**, **-TT**, **--table-tabs**
 
-    If this option is specified with **--table-align**, tabs are used for
-    spaces between items.  The width of tabs uses the value of
-    **--column-unit**.  Implicitly enable the **--table** and
-    **--table-align** option.  Option **--table-right** does not take
+    This option enables the **--table** and **--table-align** option, and
+    forces to use tab characters between items.  The width of tab uses the
+    value of **--column-unit**.  Option **--table-right** does not take
     effect.
+
+    If the **-T** option is specified twice, set the input separator as
+    repeating tabs (same as **-rs '\\t+'**).  So the option **-TT** can be
+    used to reformat tab aligned text.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
