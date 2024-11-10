@@ -72,6 +72,7 @@ use Getopt::EX::Hashed 1.05; {
     has runlen              => ' =i      ' ;
     has pagebreak           => ' !       ' , default => 1 ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
+    has no_border           => '         ' , action => sub { $_->border = 'none' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;

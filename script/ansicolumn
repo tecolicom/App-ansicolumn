@@ -340,6 +340,10 @@ to C<--border-style> option.  Use C<--border=none> to disable it.
 
 Border style is specified by C<--border-style> option.
 
+=item B<--no-border>
+
+Shortcut for B<--border=none>.
+
 =item B<-F>, B<--fillup>[=C<pane>|C<page>|C<none>]
 
 Fill up final pane or page by empty lines.  Parameter is optional and

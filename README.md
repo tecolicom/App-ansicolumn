@@ -314,6 +314,10 @@ default, from the standard input.
 
     Border style is specified by `--border-style` option.
 
+- **--no-border**
+
+    Shortcut for **--border=none**.
+
 - **-F**, **--fillup**\[=`pane`|`page`|`none`\]
 
     Fill up final pane or page by empty lines.  Parameter is optional and
