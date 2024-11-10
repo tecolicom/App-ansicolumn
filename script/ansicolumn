@@ -262,6 +262,10 @@ Filename is printed in a format given by C<--filename-format> option.
 Default is C<: %s> so that making easy to move to next file by C<^:>
 pattern search.
 
+=item B<-I>, B<-->[B<no->]B<ignore-empty>
+
+Ignore empty files.  Default false.
+
 =item B<-X>#, B<--cell>=#
 
 Sets the display width of each file.  This option is only valid with

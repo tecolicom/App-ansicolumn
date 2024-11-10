@@ -47,6 +47,7 @@ use Getopt::EX::Hashed 1.05; {
     has parallel            => ' !  V    ' ;
     has filename            => ' !  H    ' ;
     has filename_format     => ' =s      ' , default => ': %s';
+    has ignore_empty        => ' !  I    ' , default => 0 ;
     has pages               => ' !       ' ;
     has up                  => ' :s U    ' ;
     has page                => ' :i P    ' , min => 0;
@@ -205,6 +206,10 @@ sub perform {
     warn Dumper $obj if $obj->debug;
 
     my @files = $obj->read_files(@ARGV ? @ARGV : '-') or return 1;
+
+    if ($obj->ignore_empty) {
+	@files = grep { @{$_->{data}} > 0 } @files;
+    }
 
     if ($obj->table) {
 	my @lines = map { @{$_->{data}} } @files;

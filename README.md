@@ -236,6 +236,10 @@ default, from the standard input.
     Default is `: %s` so that making easy to move to next file by `^:`
     pattern search.
 
+- **-I**, **--**\[**no-**\]**ignore-empty**
+
+    Ignore empty files.  Default false.
+
 - **-X**#, **--cell**=#
 
     Sets the display width of each file.  This option is only valid with
