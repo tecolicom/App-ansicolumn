@@ -444,6 +444,7 @@ default, from the standard input.
     ribbon, heavy-ribbon,
     round-ribbon,
     double-ribbon,
+    corner, crop, paren,
     etc.
 
     These are experimental and subject to change, and this document is not

@@ -144,7 +144,7 @@ my %template = (
 	right  => [ "╴"    ,
 		    "╵"    ,
 		    "╵"   ],
-	bottom =>     "╶",
+	bottom =>   "╶",
     },
     round_box => {
 	top    =>     "─",
@@ -338,7 +338,7 @@ my %template = (
     fat_dash_frame => {
 	top    => "▘",
 	left   => [ "▘", "▘", "▚" ],
-	center => [ "▚ ", "▗ ", "▗ " ],
+	center => [ "▚▘", "▗ ", "▗▗" ],
 	right  => [ "▚", "▗", "▗" ],
 	bottom => "▗",
     },
@@ -438,6 +438,20 @@ my %template = (
 	center => [ "◱ ◲", "   ", "◰ ◳" ],
 	right  => [ "◱", " ", "◰" ],
 	bottom => " ",
+    },
+    crop => {
+	top    => " ",
+	left   => [ "⌏", " ", "⌍" ],
+	center => [ "⌎ ⌏", "   ", "⌌ ⌍" ],
+	right  => [ "⌎", " " , "⌌" ],
+	bottom => " ",
+    },
+    paren => {
+	top    => "",
+	left   => [ "⎛ ", "⎜ ", "⎝ " ],
+	center => [ " ⎞ ⎛ ", " ⎟ ⎜ ", " ⎠ ⎝ " ],
+	right  => [ " ⎞", " ⎟" , " ⎠" ],
+	bottom => "",
     },
     );
 
