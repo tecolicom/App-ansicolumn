@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.43 2024-11-11T00:54:59Z
+
+    - introduce -I (--ignore-empty) option
+    - introduce --no-border option
+    - introduce "crop" and "paren" border style
+
 1.42 2024-04-24T08:31:16Z
 
     - introduce -TT option to set tabs as input separator
