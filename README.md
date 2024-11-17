@@ -431,6 +431,7 @@ default, from the standard input.
     round-box,
     inner-box, outer-box,
     frame, heavy-frame, fat-frame, very-fat-frame,
+    ladder, heavy-ladder,
     dash-frame, heavy-dash-frame, fat-dash-frame,
     page-frame, heavy-page-frame,
     zebra-frame,
