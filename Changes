@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.44 2024-11-17T08:28:24Z
+
+    - introduce "ladder" border style
+
 1.43 2024-11-11T00:54:59Z
 
     - introduce -I (--ignore-empty) option
