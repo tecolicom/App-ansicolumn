@@ -68,7 +68,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.44
+Version 1.45
 
 # DESCRIPTION
 
@@ -625,7 +625,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-Copyright © 2020-2024 Kazumasa Utashiro.
+Copyright © 2020-2025 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

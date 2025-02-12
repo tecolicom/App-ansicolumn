@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.45 2025-02-12T13:27:29Z
+
+    - handle data end with CRNL
+
 1.44 2024-11-17T08:28:24Z
 
     - introduce "ladder" border style

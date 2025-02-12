@@ -43,16 +43,16 @@
       "runtime" : {
          "requires" : {
             "Clone" : "0",
-            "Getopt::EX" : "v2.1.4",
-            "Getopt::EX::Hashed" : "1.05",
+            "Getopt::EX" : "v2.2.1",
+            "Getopt::EX::Hashed" : "1.06",
             "Getopt::EX::RPN" : "0.01",
             "List::Util" : "1.56",
             "Math::RPN" : "0",
-            "Term::ANSIColor::Concise" : "2.05",
+            "Term::ANSIColor::Concise" : "2.08",
             "Term::ReadKey" : "0",
-            "Text::ANSI::Fold" : "2.19",
-            "Text::ANSI::Fold::Util" : "1.01",
-            "Text::ANSI::Printf" : "2.01",
+            "Text::ANSI::Fold" : "2.29",
+            "Text::ANSI::Fold::Util" : "1.05",
+            "Text::ANSI::Printf" : "2.07",
             "perl" : "v5.16.0"
          }
       },
@@ -77,7 +77,7 @@
          "web" : "https://github.com/tecolicom/App-ansicolumn"
       }
    },
-   "version" : "1.44",
+   "version" : "1.45",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"
