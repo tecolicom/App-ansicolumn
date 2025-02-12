@@ -386,7 +386,7 @@ sub read_files {
 	};
 	my @data = $obj->pages ? split(/\f/, $content) : $content;
 	for my $data (@data) {
-	    my @line = split /\n/, $data;
+	    my @line = split /(?!\f)\R/, $data;
 	    @line = insert_space @line if $obj->paragraph;
 	    my $length = do {
 		if ($obj->table) {
