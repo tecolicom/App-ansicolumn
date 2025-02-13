@@ -14,6 +14,7 @@ Configure qw(bundling);
 
 use Data::Dumper;
 use List::Util qw(max sum min);
+use Clone qw(clone);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
@@ -362,15 +363,14 @@ sub nup_out {
     my @files = @_;
     my $max_length = max map { $_->{length} } @files;
     $obj->set_horizontal($max_length);
-    my $reset = do { my @o = %$obj; sub { %$obj = @o } };
     for my $file (@files) {
 	my $data = $file->{data};
 	next if @$data == 0;
-	$obj->set_contents($file)
+	clone($obj)
+	    ->set_contents($file)
 	    ->set_vertical($data)
 	    ->set_layout($data)
 	    ->page_out(@$data);
-	$reset->();
     }
     return $obj;
 }
