@@ -30,6 +30,7 @@ ansicolumn [options] [file ...]
     -D,  --document      document mode
     -V,  --parallel      parallel view mode
     -H,  --filename      print filename header in parallel view mode
+    -I,  --ignore-empty  ignore empty files
     -X#, --cell=#        set text width for files in parallel view mode
     -C#, --pane=#        number of panes
     -S#, --pane-width=#  pane width
@@ -38,7 +39,7 @@ ansicolumn [options] [file ...]
     -r,  --regex-sep     treat separator string as regex
 
     -B,  --border[=#]    print border with optional style
-    -F, --fillup[=#]     fill-up unit (pane|page|none)
+    -F,  --fillup[=#]    fill-up unit (pane|page|none)
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
