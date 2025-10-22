@@ -37,7 +37,7 @@ use Getopt::EX::Hashed 1.05; {
     has width               => ' =s w c  ' ;
     has fillrows            => '    x    ' ;
     has table               => '    t    ' ;
-    has table_columns_limit => ' =i l    ' , default => 0 ;
+    has table_columns_limit => ' =i l    ' , default => -1 ;
     has table_align         => ' !  A    ' ;
     has table_tabs          => ' +  T    ' ;
     has table_right         => ' =s R    ' , default => '' ;
@@ -534,7 +534,8 @@ sub table_out {
     return unless @_;
     my $split = do {
 	if ($obj->separator eq ' ') {
-	    $obj->ignore_space ? ' ' : qr/\s+/;
+	    # /\s+/a does not work as expected, maybe perl's bug
+	    $obj->ignore_space ? ' ' : qr/\s{1,9999}/a;
 	} elsif ($obj->regex_sep) {
 	    qr($obj->{separator});
 	} else {

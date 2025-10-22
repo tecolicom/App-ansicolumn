@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/tecolicom/App-ansicolumn/workflows/test/badge.svg)](https://github.com/tecolicom/App-ansicolumn/actions) [![MetaCPAN Release](https://badge.fury.io/pl/App-ansicolumn.svg)](https://metacpan.org/release/App-ansicolumn)
+[![Actions Status](https://github.com/tecolicom/App-ansicolumn/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/tecolicom/App-ansicolumn/actions?workflow=test) [![MetaCPAN Release](https://badge.fury.io/pl/App-ansicolumn.svg)](https://metacpan.org/release/App-ansicolumn)
 # NAME
 
 ansicolumn - ANSI terminal sequence aware column command
@@ -145,6 +145,10 @@ default, from the standard input.
     Specify maximal number of the input columns.  The last column will
     contain all remaining line data if the limit is smaller than the
     number of the columns in the input data.
+
+    If the value is negative (default is -1), trailing empty fields are
+    preserved.  This is useful when processing tables with empty cells
+    at the end of rows.  Set to 0 to ignore trailing empty fields.
 
 - **-x**, **--fillrows**
 
