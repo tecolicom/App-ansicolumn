@@ -10,7 +10,7 @@ static_install = "auto"
 branch = "master"
 
 [FileGatherer]
-exclude_match = ['^images/.*']
+exclude_match = ['^images/.*', '^CLAUDE\.md$']
 
 [unsupported]
 os = [
