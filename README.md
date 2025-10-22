@@ -142,9 +142,9 @@ default, from the standard input.
 
 - **-l**#, **--table-columns-limit**=#
 
-    Specify maximal number of the input columns.  The last column will
+    Specify the maximum number of input columns.  The last column will
     contain all remaining line data if the limit is smaller than the
-    number of the columns in the input data.
+    number of columns in the input data.
 
     If the value is negative (default is -1), trailing empty fields are
     preserved.  This is useful when processing tables with empty cells
@@ -156,13 +156,13 @@ default, from the standard input.
 
 - **-o**#, **--output-separator**=#
 
-    When used `--table` or `-t` option, each column are joined by two
-    space characters (' ') by default.  This option will change it.
+    When the `--table` or `-t` option is used, columns are joined by two
+    space characters (' ') by default.  This option changes the separator.
 
 - **-R**#, **--table-right**=#
 
-    Right align text in these columns.  Multiple columns are separated by
-    commas.  Support only numbers.
+    Right align text in the specified columns.  Multiple columns are separated by
+    commas.  Only numbers are supported.
 
     Parameters are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module, so you can
     specify a range of numbers, as in `-R2:5` which is equivalent to
@@ -185,7 +185,7 @@ default, from the standard input.
 
 - **-U**#, **--up**=#, **--2up** .. **--9up**
 
-    Show in N-up format.  Almost same as `-P` but does not set page
+    Show in N-up format.  Almost the same as `-P` but does not set page
     height.  This is convenient when you want multi-column output without
     page control.
 
@@ -200,7 +200,7 @@ default, from the standard input.
         --no-white-space
         --no-isolation
 
-    Next command display DOCX text in 3-up format using
+    The following command displays DOCX text in 3-up format using
     [App::optex::textconv](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Atextconv).
 
         optex -Mtextconv ansicolumn -DPC3 foo.docx | less
@@ -210,15 +210,15 @@ default, from the standard input.
     Parallel view mode.  Implicitly enabled when multiple files are
     specified.  Use `--no-parallel` to disable.
 
-    Set these options, and cancel all pagenation behavior.
+    Sets these options and cancels all pagination behavior.
 
         --widen
         --linestyle=wrap
         --border
 
     By default, all files are displayed in parallel.  In other words,
-    number of pane is set as a number of files.  You can use `-C` option
-    to specify number of files displayed simultaneously.
+    the number of panes is set to the number of files.  You can use the `-C` option
+    to specify the number of files displayed simultaneously.
 
     You can use this option mixed with `-D` option to see document files.
 
@@ -230,15 +230,15 @@ default, from the standard input.
 - **--filename-format**=_format_ (DEFAULT: `: %s`)
 
     Print filename header before contents.  Currently, this option is
-    effective only in `--parallel` mode.  Filename is truncated in each
-    pane width.
+    effective only in `--parallel` mode.  Filenames are truncated to fit
+    within each pane width.
 
     This option is convenient to look over many small files at once.
 
         ansicolumn -VHC1 *.txt | less
 
-    Filename is printed in a format given by `--filename-format` option.
-    Default is `: %s` so that making easy to move to next file by `^:`
+    Filenames are printed in the format specified by the `--filename-format` option.
+    The default is `: %s`, which makes it easy to move to the next file using `^:`
     pattern search.
 
 - **-I**, **--**\[**no-**\]**ignore-empty**
@@ -247,10 +247,10 @@ default, from the standard input.
 
 - **-X**#, **--cell**=#
 
-    Sets the display width of each file.  This option is only valid with
+    Sets the display width of each file.  This option is only valid in
     parallel view mode.  For example, if you are displaying three files
     and want the first file to be displayed in 80 columns and the
-    remaining files in 40 columns, specify like this:
+    remaining files in 40 columns, specify it like this:
 
         --cell 80,40,40
 
@@ -281,8 +281,8 @@ default, from the standard input.
 
         -X=80
 
-    will set the cell width to length of the longest line if it is less
-    than 80, or 80 if it is greater than 80.  `<` may be used instead
+    will set the cell width to the length of the longest line if it is less
+    than 80, or to 80 if it is greater than 80.  `<` may be used instead
     of `=`.
 
         -X'<80'
@@ -293,8 +293,8 @@ default, from the standard input.
 
 - **-C**#, **--pane**=#
 
-    Output is formatted in the specified number of panes.  Setting number
-    of panes implies `--widen` option enabled.  See ["CALCULATION"](#calculation)
+    Output is formatted in the specified number of panes.  Setting the number
+    of panes implies the `--widen` option is enabled.  See ["CALCULATION"](#calculation)
     section.
 
 - **-S**#, **--pane-width**=#, **--pw**=#
@@ -304,7 +304,7 @@ default, from the standard input.
 
 - **-W**, **--widen**
 
-    Use full width of the terminal.  Each pane is expanded to fill
+    Use the full width of the terminal.  Each pane is expanded to fill the
     terminal width, unless `--pane-width` is specified.
 
 - **-p**, **--paragraph**
@@ -325,51 +325,50 @@ default, from the standard input.
 
 - **-F**, **--fillup**\[=`pane`|`page`|`none`\]
 
-    Fill up final pane or page by empty lines.  Parameter is optional and
-    considered as 'pane' by default.  Set by `--page` option
-    automatically.  Use `--fillup=none` if you want to explicitly disable
-    it.
+    Fill up the final pane or page with empty lines.  The parameter is optional and
+    defaults to 'pane'.  Automatically set by the `--page` option.
+    Use `--fillup=none` to explicitly disable it.
 
     Option `-F` is a shortcut for `--fillup=pane`.
 
 - **--fillup-str**=_string_
 
-    Set string used for filling up space.  Default is empty.
+    Set the string used for filling up space.  Default is empty.
 
-    Use `--fillup-str='~'` to fill up the area after EOF by `~`
-    character like [vi(1)](http://man.he.net/man1/vi) or [more(1)](http://man.he.net/man1/more).
+    Use `--fillup-str='~'` to fill up the area after EOF with the `~`
+    character, like [vi(1)](http://man.he.net/man1/vi) or [more(1)](http://man.he.net/man1/more).
 
 - **--height**=#
 
-    Set page height and page mode on.  See ["CALCULATION"](#calculation) section.
+    Set page height and enable page mode.  See ["CALCULATION"](#calculation) section.
 
 - **--column-unit**=#, **--cu**=# (DEFAULT: 8)
 
-    Each column is placed at the unit of 8 by default.  This option
-    changes the number of the unit.
+    Each column is placed at a unit of 8 by default.  This option
+    changes the unit size.
 
 - **--margin**=#
 
-    Each column has at least single character margin on the right side so
+    Each column has at least a single character margin on the right side so
     that they are not placed back-to-back.  This option specifies the
     margin width.
 
 - **-A**, **--table-align**
 
-    Align each field in the table output to column-unit.  If this option
-    is specified, **--output-separator** option is ignored.
-    Implicitly enable the **--table** option.
+    Align each field in the table output to the column unit.  If this option
+    is specified, the **--output-separator** option is ignored.
+    Implicitly enables the **--table** option.
 
 - **-T**, **-TT**, **--table-tabs**
 
-    This option enables the **--table** and **--table-align** option, and
-    forces to use tab characters between items.  The width of tab uses the
-    value of **--column-unit**.  Option **--table-right** does not take
+    This option enables the **--table** and **--table-align** options, and
+    forces the use of tab characters between items.  The tab width uses the
+    value of **--column-unit**.  The **--table-right** option does not take
     effect.
 
-    If the **-T** option is specified twice, set the input separator as
-    repeating tabs (same as **-rs '\\t+'**).  So the option **-TT** can be
-    used to reformat tab aligned text.
+    If the **-T** option is specified twice, the input separator is set to
+    repeating tabs (same as **-rs '\\t+'**).  Thus, the **-TT** option can be
+    used to reformat tab-aligned text.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
@@ -381,10 +380,10 @@ default, from the standard input.
 
 - **--boundary**=`none`|`word`|`space`
 
-    Set text wrap boundary.  If set as `word` or `space`, text is not
-    wrapped in the middle of alphanumeric word or non-space sequence.
-    Option `--document` set this as `word`.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) for
-    detail.
+    Set text wrap boundary.  If set to `word` or `space`, text is not
+    wrapped in the middle of an alphanumeric word or non-space sequence.
+    The `--document` option sets this to `word`.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) for
+    details.
 
 - **--linebreak**=`none`|`all`|`runin`|`runout`, **--lb**=...
 
@@ -392,24 +391,24 @@ default, from the standard input.
 
 - **--runin**=#, **--runout**=#, **--runlen**=#
 
-    Set the number of runin/runout column.  `--runlen` set both.
-    Default is both 2.
+    Set the number of runin/runout columns.  `--runlen` sets both.
+    The default is 2 for both.
 
-    As for Japanese text, only one character can be moved with default
-    value.  Longer value allows more flexible arrangement, but makes text
-    area shorter.  Author is using the command with own `~/.ansicolumnrc`
+    For Japanese text, only one character can be moved with the default
+    value.  A larger value allows more flexible arrangement but makes the text
+    area shorter.  The author uses the command with a custom `~/.ansicolumnrc`
     like this:
 
         option default --runin=4 --runout=4
 
 - **--**\[**no-**\]**pagebreak**
 
-    Move to next pane when form feed character found.
-    Default true.
+    Move to the next pane when a form feed character is found.
+    Default is true.
 
 - **-r**, **--regex-sep**
 
-    Treat separator option as a regex pattern.  Next example specifies a
+    Treat the separator option as a regex pattern.  The following example specifies a
     space character just before `(` as a separator.
 
         gem list | ansicolumn -trs ' (?=\()'
