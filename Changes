@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.46 2025-10-22T09:48:39Z
+
+    - change table_columns_limit default from 0 to -1
+    - fix whitespace regex to work around possible Perl issue
+
 1.45 2025-02-12T13:27:29Z
 
     - handle data end with CRNL
