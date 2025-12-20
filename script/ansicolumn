@@ -25,6 +25,7 @@ ansicolumn [options] [file ...]
     -o#                  output separator
 
     -P[#], --page=#      page mode, with optional page length
+           --no-page     disable page mode
     -U[#], --up=#        show in N-up format (-WC# --linestyle=wrap)
     --2up .. --9up       same as -U2 .. -U9
     -D,  --document      document mode
@@ -195,7 +196,7 @@ C<-R2,3,4,5>. Option C<-R:> makes all fields right-aligned.
 
 =over 7
 
-=item B<-P>[#], B<--page>[=#]
+=item B<-P>[#], B<--page>[=#], B<--no-page>
 
 Page mode.  Set these options.
 
@@ -207,6 +208,8 @@ Page mode.  Set these options.
 If optional number is given, it is used as a page height unless option
 C<--height> exists.  Otherwise page height is set to terminal height
 minus one.
+
+Use B<--no-page> to disable page mode.
 
 =item B<-U>#, B<--up>=#, B<--2up> .. B<--9up>
 

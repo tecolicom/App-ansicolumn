@@ -52,6 +52,7 @@ use Getopt::EX::Hashed 1.05; {
     has pages               => ' !       ' ;
     has up                  => ' :s U    ' ;
     has page                => ' :i P    ' , min => 0;
+    has no_page             => '         ' , action => sub { $_->page = undef } ;
     has pane                => ' =s C    ' , default => 0 ;
     has cell                => ' =s X    ' ;
     has pane_width          => ' =s S pw ' ;

@@ -14,6 +14,7 @@ ansicolumn \[options\] \[file ...\]
     -o#                  output separator
 
     -P[#], --page=#      page mode, with optional page length
+           --no-page     disable page mode
     -U[#], --up=#        show in N-up format (-WC# --linestyle=wrap)
     --2up .. --9up       same as -U2 .. -U9
     -D,  --document      document mode
@@ -170,7 +171,7 @@ default, from the standard input.
 
 ## EXTENDED OPTIONS
 
-- **-P**\[#\], **--page**\[=#\]
+- **-P**\[#\], **--page**\[=#\], **--no-page**
 
     Page mode.  Set these options.
 
@@ -182,6 +183,8 @@ default, from the standard input.
     If optional number is given, it is used as a page height unless option
     `--height` exists.  Otherwise page height is set to terminal height
     minus one.
+
+    Use **--no-page** to disable page mode.
 
 - **-U**#, **--up**=#, **--2up** .. **--9up**
 
