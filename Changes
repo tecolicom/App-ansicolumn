@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.47 2025-12-20T08:28:57Z
+
+    - add --no-page option to disable page mode
+    - add bracket border styles (bracket, side_bracket, left_bracket, right_bracket)
+
 1.46 2025-10-22T09:48:39Z
 
     - change table_columns_limit default from 0 to -1
