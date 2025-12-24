@@ -51,6 +51,7 @@ ansicolumn \[options\] \[file ...\]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
+    --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
 
@@ -471,6 +472,20 @@ default, from the standard input.
             right  => [ "\N{WHITE HEART SUIT}" , "\N{BLACK HEART SUIT}"  ],
         },
         );
+
+- **--colormap**=_spec_, **--cm**=_spec_
+
+    Specify color mapping.  This option can be used multiple times.
+    The _spec_ is in the form of `LABEL=COLOR`.  Available labels are:
+
+        TEXT      text color
+        BORDER    border color
+
+    For example, to set the border color to red:
+
+        --cm=BORDER=R
+
+    See [Getopt::EX::Colormap](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3AColormap) for color specification details.
 
 - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 

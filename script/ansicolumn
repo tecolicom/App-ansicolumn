@@ -62,6 +62,7 @@ ansicolumn [options] [file ...]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
+    --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
 
@@ -497,6 +498,20 @@ lines in your C<$HOME/.ansicolumnrc> file, for example.
     	right  => [ "\N{WHITE HEART SUIT}" , "\N{BLACK HEART SUIT}"  ],
     },
     );
+
+=item B<--colormap>=I<spec>, B<--cm>=I<spec>
+
+Specify color mapping.  This option can be used multiple times.
+The I<spec> is in the form of C<LABEL=COLOR>.  Available labels are:
+
+    TEXT      text color
+    BORDER    border color
+
+For example, to set the border color to red:
+
+    --cm=BORDER=R
+
+See L<Getopt::EX::Colormap> for color specification details.
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
