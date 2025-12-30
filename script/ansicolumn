@@ -218,7 +218,7 @@ Show in N-up format.  Almost the same as C<-P> but does not set page
 height.  This is convenient when you want multi-column output without
 page control.
 
-=item B<-D>, B<--document>
+=item B<-D>, B<-->[B<no->]B<document>
 
 Document mode.  Set these options.
 

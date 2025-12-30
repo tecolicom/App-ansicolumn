@@ -193,7 +193,7 @@ default, from the standard input.
     height.  This is convenient when you want multi-column output without
     page control.
 
-- **-D**, **--document**
+- **-D**, **--**\[**no-**\]**document**
 
     Document mode.  Set these options.
 

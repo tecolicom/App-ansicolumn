@@ -44,7 +44,7 @@ use Getopt::EX::Hashed 1.05; {
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
-    has document            => '    D    ' ;
+    has document            => ' !  D    ' ;
     has parallel            => ' !  V    ' ;
     has filename            => ' !  H    ' ;
     has filename_format     => ' =s      ' , default => ': %s';
