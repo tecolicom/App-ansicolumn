@@ -10,7 +10,7 @@ use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
 ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
-Configure qw(bundling);
+Configure qw(bundling no_auto_abbrev no_ignore_case);
 
 use Data::Dumper;
 use List::Util qw(max sum min);
