@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.48 2025-12-30T09:13:11Z
+
+    - make --document option negatable (--no-document)
+
 1.47 2025-12-20T08:28:57Z
 
     - add --no-page option to disable page mode
