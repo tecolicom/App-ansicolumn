@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.49 2026-01-11T04:00:50Z
+
+    - pass margin parameter to Text::ANSI::Fold
+    - require Text::ANSI::Fold 2.31
+    - disable auto_abbrev and ignore_case to support --no-D style options
+
 1.48 2025-12-30T09:13:11Z
 
     - make --document option negatable (--no-document)
