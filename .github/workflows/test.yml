@@ -19,5 +19,5 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
       - run: perl -V
-      - run: cpanm --installdeps --notest --quiet .
+      - run: cpanm --metacpan --installdeps --notest --quiet .
       - run: prove -lrv t
