@@ -448,7 +448,7 @@ sub set_contents {
     my $obj = shift;
     my $fp = shift;
     my $dp = $fp->{data};
-    (my $cell_width = $obj->span - $obj->runin_margin) < 1
+    (my $cell_width = $obj->span) < 1
 	and die "Not enough space.\n";
     # Fold long lines
     if ($obj->linestyle and $obj->linestyle ne 'none') {

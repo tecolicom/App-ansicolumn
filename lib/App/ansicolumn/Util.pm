@@ -70,6 +70,7 @@ sub foldobj {
     use Text::ANSI::Fold;
     my $fold = Text::ANSI::Fold->new(
 	width     => $width,
+	margin    => $obj->runin_margin,
 	boundary  => $obj->boundary,
 	linebreak => $obj->lb_flag,
 	runin     => $obj->runin,
