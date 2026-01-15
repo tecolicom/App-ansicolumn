@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.50 2026-01-15T13:45:14Z
+
+    - add ansicolumn() function export for App::Greple::tee support
+    - add Command.pm for App::cdif::Command compatible interface
+
 1.49 2026-01-11T04:00:50Z
 
     - pass margin parameter to Text::ANSI::Fold
