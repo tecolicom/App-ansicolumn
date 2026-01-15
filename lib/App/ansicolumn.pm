@@ -22,6 +22,13 @@ use App::ansicolumn::Util;
 use App::ansicolumn::Border;
 use Getopt::EX::RPN qw(rpn_calc);
 
+use Exporter 'import';
+our @EXPORT_OK = qw(ansicolumn);
+
+sub ansicolumn {
+    __PACKAGE__->new->perform(@_);
+}
+
 my %DEFAULT_COLORMAP = (
     BORDER => '',
     TEXT   => '',
