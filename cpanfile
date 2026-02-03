@@ -6,7 +6,7 @@ requires 'Getopt::EX', '2.2.1';
 requires 'Getopt::EX::Hashed', '1.06';
 requires 'Getopt::EX::RPN', '0.01';
 requires 'Term::ANSIColor::Concise', '2.08';
-requires 'Text::ANSI::Fold', '2.31';
+requires 'Text::ANSI::Fold', '2.3302';
 requires 'Text::ANSI::Fold::Util', '1.05';
 requires 'Text::ANSI::Printf', '2.07';
 requires 'Math::RPN';
