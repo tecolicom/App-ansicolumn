@@ -50,7 +50,7 @@
             "Math::RPN" : "0",
             "Term::ANSIColor::Concise" : "2.08",
             "Term::ReadKey" : "0",
-            "Text::ANSI::Fold" : "2.3302",
+            "Text::ANSI::Fold" : "2.3303",
             "Text::ANSI::Fold::Util" : "1.05",
             "Text::ANSI::Printf" : "2.07",
             "perl" : "v5.16.0"
