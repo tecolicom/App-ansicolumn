@@ -115,8 +115,7 @@ sub do_space_layout {
     for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
 	if ($height >= 4 and $top > 2 and !$obj->isolation) {
 	    if ($dp->[$top - 2] !~ /\S/ and
-		$dp->[$top - 1] =~ /\S/ and
-		$dp->[$top    ] =~ /\S/
+		$dp->[$top - 1] =~ /\S/
 		) {
 		splice @$dp, $top - 1, 0, '';
 		next;

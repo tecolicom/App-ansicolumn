@@ -32,6 +32,39 @@ for (
     is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
 }
 
+my @isolation_opt = qw(-P6 -c40 --border=none);
+
+# single-line paragraph (title only)
+$stdin = join '', map "$_\n", qw(line1 line2 line3 line4), '', qw(TITLE), '', qw(line5 line6);
+
+for (
+    [ 'no-isolation-single' => [@isolation_opt, '--no-isolation'] ],
+    [ 'isolation-single'    => [@isolation_opt, '--isolation'] ],
+) {
+    my($name, $opt) = @$_;
+    is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
+}
+
+# multi-line paragraph
+$stdin = join '', map "$_\n", qw(line1 line2 line3 line4), '', qw(TITLE content line5);
+
+for (
+    [ 'no-isolation-multi' => [@isolation_opt, '--no-isolation'] ],
+    [ 'isolation-multi'    => [@isolation_opt, '--isolation'] ],
+) {
+    my($name, $opt) = @$_;
+    is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
+}
+
+# no blank line before page boundary (isolation should not trigger)
+$stdin = join '', map "$_\n", qw(line1 line2 line3 line4 line5 line6 line7 line8);
+
+{
+    my $expected = get_data_section('no-isolation-noblank');
+    is(ac->new(@isolation_opt, '--no-isolation')->exec($stdin), $expected, 'no-isolation-noblank');
+    is(ac->new(@isolation_opt, '--isolation')->exec($stdin),    $expected, 'isolation-noblank');
+}
+
 done_testing;
 
 __DATA__
@@ -113,3 +146,38 @@ __DATA__
 71	72	73	74	75	76	77	78	79	80
 81	82	83	84	85	86	87	88	89	90
 91	92	93	94	95	96	97	98	99	100
+@@ no-isolation-single
+line1   TITLE
+line2
+line3   line5
+line4   line6
+
+
+@@ isolation-single
+line1
+line2   line5
+line3   line6
+line4
+
+TITLE
+@@ no-isolation-multi
+line1   TITLE
+line2   content
+line3   line5
+line4
+
+
+@@ isolation-multi
+line1   content
+line2   line5
+line3
+line4
+
+TITLE
+@@ no-isolation-noblank
+line1   line7
+line2   line8
+line3
+line4
+line5
+line6
