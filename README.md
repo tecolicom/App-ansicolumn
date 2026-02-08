@@ -44,7 +44,7 @@ ansicolumn \[options\] \[file ...\]
     --border-style=#     border style
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
-    --[no-]isolation     page-end line isolation
+    --[no-]isolation     page-end isolated line
     --tabstop=#          set tab width
     --tabhead=#          tab-head character
     --tabspace=#         tab-space character
@@ -71,7 +71,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.51
+Version 1.52
 
 # DESCRIPTION
 
@@ -499,9 +499,11 @@ default, from the standard input.
 
 - **--**\[**no-**\]**isolation**
 
-    Allow the first line of a paragraph (continuous non-space lines) is
-    placed at the bottom of a pane.  Default true.  If false, move it to
-    the top of next pane.  Negated by `--document` option.
+    Allow a line to be isolated at the bottom of a pane when preceded by
+    a blank line.  Default true.  If false, move it to the top of next
+    pane.  This applies to both single-line paragraphs (such as titles)
+    and the first line of multi-line paragraphs.  Negated by
+    `--document` option.
 
 - **--tabstop**=# (DEFAULT: 8)
 
