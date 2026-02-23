@@ -109,8 +109,8 @@ supported as well.
 
 In contrast to the original L<column(1)> command which handles mainly
 short item list, and Linux variant which has been expanded to have
-ritch table style output, B<ansicolumn(1)> has been expanded to show
-text file in multi-column view.  Combined with pagenation and
+rich table style output, B<ansicolumn(1)> has been expanded to show
+text file in multi-column view.  Combined with pagination and
 document-friendly folding mechanism, it can be used as a document
 viewing preprocessor for pager program.
 
@@ -144,14 +144,14 @@ default, from the standard input.
 
 =item B<-w>#, B<-c>#, B<--width>=#, B<--output-width>=#
 
-Output is formatted for a display columns wide.  See L</CALCULATION>
+Output is formatted for a display I<#> columns wide.  See L</CALCULATION>
 section.
 
 Accept C<-c> for compatibility, but C<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
 
-Specify a set of characters to be used to delimit columns for the -t
+Specify a set of characters to be used to delimit columns for the C<-t>
 option.  When used with C<--regex-sep> or C<-r> option, it is used as
 regex rather than character set.
 
@@ -159,10 +159,10 @@ regex rather than character set.
 
 Determine the number of columns the input contains and create a
 table.  Columns are delimited with whitespace, by default, or
-with the characters supplied using the -s option.  Useful for
+with the characters supplied using the C<-s> option.  Useful for
 pretty-printing displays.
 
-Unlike original L<column(1)> command, empty field is not ignored.
+Unlike the original L<column(1)> command, empty fields are not ignored.
 
 =item B<-l>#, B<--table-columns-limit>=#
 
@@ -195,7 +195,7 @@ C<-R2,3,4,5>. Option C<-R:> makes all fields right-aligned.
 =item B<--table-center>=#
 
 Center text in the specified columns.  Column specification is the same
-as B<--table-right>.  When the remaining space is odd, the extra space
+as C<--table-right>.  When the remaining space is odd, the extra space
 is placed on the right side (i.e., the text is shifted slightly to the
 left).
 
@@ -218,7 +218,7 @@ If optional number is given, it is used as a page height unless option
 C<--height> exists.  Otherwise page height is set to terminal height
 minus one.
 
-Use B<--no-page> to disable page mode.
+Use C<--no-page> to disable page mode.
 
 =item B<-U>#, B<--up>=#, B<--2up> .. B<--9up>
 
@@ -359,7 +359,7 @@ Border style is specified by C<--border-style> option.
 
 =item B<--no-border>
 
-Shortcut for B<--border=none>.
+Shortcut for C<--border=none>.
 
 =item B<-F>, B<--fillup>[=C<pane>|C<page>|C<none>]
 
@@ -394,18 +394,18 @@ margin width.
 =item B<-A>, B<--table-align>
 
 Align each field in the table output to the column unit.  If this option
-is specified, the B<--output-separator> option is ignored.
-Implicitly enables the B<--table> option.
+is specified, the C<--output-separator> option is ignored.
+Implicitly enables the C<--table> option.
 
 =item B<-T>, B<-TT>, B<--table-tabs>
 
-This option enables the B<--table> and B<--table-align> options, and
+This option enables the C<--table> and C<--table-align> options, and
 forces the use of tab characters between items.  The tab width uses the
-value of B<--column-unit>.  The B<--table-right> and B<--table-center>
+value of C<--column-unit>.  The C<--table-right> and C<--table-center>
 options do not take effect.
 
-If the B<-T> option is specified twice, the input separator is set to
-repeating tabs (same as B<-rs '\t+'>).  Thus, the B<-TT> option can be
+If the C<-T> option is specified twice, the input separator is set to
+repeating tabs (same as C<-rs '\t+'>).  Thus, the C<-TT> option can be
 used to reformat tab-aligned text.
 
 =item B<--linestyle>=C<none>|C<truncate>|C<wrap>|C<wordwrap>, B<--ls>=C<...>
@@ -413,7 +413,7 @@ used to reformat tab-aligned text.
 Set the style of treatment for longer lines.
 Default is C<none>.
 
-Option C<--linestyle=wordrap> sets C<--linestyle=wrap> and
+Option C<--linestyle=wordwrap> sets C<--linestyle=wrap> and
 C<--boundary=word> at once.
 
 =item B<--boundary>=C<none>|C<word>|C<space>
@@ -453,9 +453,9 @@ space character just before C<(> as a separator.
 
 =item B<--border-style>=I<style>, B<--bs>=...
 
-Set the border style.  Current default style is C<box>, which enclose
+Set the border style.  Current default style is C<box>, which encloses
 each pane with box drawing graphic characters.  Special style
-C<random> choose random style.
+C<random> chooses a random style.
 
 Sample styles:
 none,
@@ -568,7 +568,7 @@ defined in L<Text::ANSI::Fold> library.
 =item B<--ambiguous>=C<wide>|C<narrow> (DEFAULT: C<narrow>)
 
 Specifies how to treat Unicode ambiguous width characters.  Take a
-value of 'narrow' or 'wide.  Default is 'narrow'.
+value of 'narrow' or 'wide'.  Default is 'narrow'.
 
 =item B<--pages>
 
@@ -589,7 +589,7 @@ Set padding chracter.
 
 =back
 
-=head1 DEFAULT ALISES
+=head1 DEFAULT ALIASES
 
 The following options are defined in F<App::ansicolumn::default.pm>.
 
@@ -647,7 +647,7 @@ If you consider the case the terminal width is less than 85:
 
     ansicolumn --pane 85/,DUP,1,GE,EXCH,1,IF
 
-This RPN means C<< $height/85 >= 1 ? $height/85 : 1 >>.
+This RPN means C<< $width/85 >= 1 ? $width/85 : 1 >>.
 
 =head1 STARTUP
 

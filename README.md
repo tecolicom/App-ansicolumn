@@ -59,7 +59,8 @@ Table style options:
     -A, --table-align    align table output to column unit
     -T, --table-tabs     align items by tabs
     -TT                  reformat tab aligned text
-    -R#, --table-right=# right adjust table columns
+    -R#, --table-right=#   right adjust table columns
+    --table-center=#       center table columns
 
 Default alias options:
 
@@ -93,8 +94,8 @@ supported as well.
 
 In contrast to the original [column(1)](http://man.he.net/man1/column) command which handles mainly
 short item list, and Linux variant which has been expanded to have
-ritch table style output, **ansicolumn(1)** has been expanded to show
-text file in multi-column view.  Combined with pagenation and
+rich table style output, **ansicolumn(1)** has been expanded to show
+text file in multi-column view.  Combined with pagination and
 document-friendly folding mechanism, it can be used as a document
 viewing preprocessor for pager program.
 
@@ -122,14 +123,14 @@ default, from the standard input.
 
 - **-w**#, **-c**#, **--width**=#, **--output-width**=#
 
-    Output is formatted for a display columns wide.  See ["CALCULATION"](#calculation)
+    Output is formatted for a display _#_ columns wide.  See ["CALCULATION"](#calculation)
     section.
 
     Accept `-c` for compatibility, but `-w` is more popular.
 
 - **-s**#, **--separator**=#
 
-    Specify a set of characters to be used to delimit columns for the -t
+    Specify a set of characters to be used to delimit columns for the `-t`
     option.  When used with `--regex-sep` or `-r` option, it is used as
     regex rather than character set.
 
@@ -137,10 +138,10 @@ default, from the standard input.
 
     Determine the number of columns the input contains and create a
     table.  Columns are delimited with whitespace, by default, or
-    with the characters supplied using the -s option.  Useful for
+    with the characters supplied using the `-s` option.  Useful for
     pretty-printing displays.
 
-    Unlike original [column(1)](http://man.he.net/man1/column) command, empty field is not ignored.
+    Unlike the original [column(1)](http://man.he.net/man1/column) command, empty fields are not ignored.
 
 - **-l**#, **--table-columns-limit**=#
 
@@ -170,6 +171,13 @@ default, from the standard input.
     specify a range of numbers, as in `-R2:5` which is equivalent to
     `-R2,3,4,5`. Option `-R:` makes all fields right-aligned.
 
+- **--table-center**=#
+
+    Center text in the specified columns.  Column specification is the same
+    as `--table-right`.  When the remaining space is odd, the extra space
+    is placed on the right side (i.e., the text is shifted slightly to the
+    left).
+
 ## EXTENDED OPTIONS
 
 - **-P**\[#\], **--page**\[=#\], **--no-page**
@@ -185,7 +193,7 @@ default, from the standard input.
     `--height` exists.  Otherwise page height is set to terminal height
     minus one.
 
-    Use **--no-page** to disable page mode.
+    Use `--no-page` to disable page mode.
 
 - **-U**#, **--up**=#, **--2up** .. **--9up**
 
@@ -325,7 +333,7 @@ default, from the standard input.
 
 - **--no-border**
 
-    Shortcut for **--border=none**.
+    Shortcut for `--border=none`.
 
 - **-F**, **--fillup**\[=`pane`|`page`|`none`\]
 
@@ -360,18 +368,18 @@ default, from the standard input.
 - **-A**, **--table-align**
 
     Align each field in the table output to the column unit.  If this option
-    is specified, the **--output-separator** option is ignored.
-    Implicitly enables the **--table** option.
+    is specified, the `--output-separator` option is ignored.
+    Implicitly enables the `--table` option.
 
 - **-T**, **-TT**, **--table-tabs**
 
-    This option enables the **--table** and **--table-align** options, and
+    This option enables the `--table` and `--table-align` options, and
     forces the use of tab characters between items.  The tab width uses the
-    value of **--column-unit**.  The **--table-right** option does not take
-    effect.
+    value of `--column-unit`.  The `--table-right` and `--table-center`
+    options do not take effect.
 
-    If the **-T** option is specified twice, the input separator is set to
-    repeating tabs (same as **-rs '\\t+'**).  Thus, the **-TT** option can be
+    If the `-T` option is specified twice, the input separator is set to
+    repeating tabs (same as `-rs '\t+'`).  Thus, the `-TT` option can be
     used to reformat tab-aligned text.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
@@ -379,7 +387,7 @@ default, from the standard input.
     Set the style of treatment for longer lines.
     Default is `none`.
 
-    Option `--linestyle=wordrap` sets `--linestyle=wrap` and
+    Option `--linestyle=wordwrap` sets `--linestyle=wrap` and
     `--boundary=word` at once.
 
 - **--boundary**=`none`|`word`|`space`
@@ -419,9 +427,9 @@ default, from the standard input.
 
 - **--border-style**=_style_, **--bs**=...
 
-    Set the border style.  Current default style is `box`, which enclose
+    Set the border style.  Current default style is `box`, which encloses
     each pane with box drawing graphic characters.  Special style
-    `random` choose random style.
+    `random` chooses a random style.
 
     Sample styles:
     none,
@@ -531,14 +539,14 @@ default, from the standard input.
 - **--ambiguous**=`wide`|`narrow` (DEFAULT: `narrow`)
 
     Specifies how to treat Unicode ambiguous width characters.  Take a
-    value of 'narrow' or 'wide.  Default is 'narrow'.
+    value of 'narrow' or 'wide'.  Default is 'narrow'.
 
 - **--pages**
 
     Split file content by formfeed character, and treat each part as a
     individual file.  Use with `--parallel` option.
 
-# DEFAULT ALISES
+# DEFAULT ALIASES
 
 The following options are defined in `App::ansicolumn::default.pm`.
 
@@ -589,7 +597,7 @@ If you consider the case the terminal width is less than 85:
 
     ansicolumn --pane 85/,DUP,1,GE,EXCH,1,IF
 
-This RPN means `$height/85 >= 1 ? $height/85 : 1`.
+This RPN means `$width/85 >= 1 ? $width/85 : 1`.
 
 # STARTUP
 
