@@ -89,7 +89,7 @@ Version 1.52
 
 B<ansicolumn> is a L<column(1)> command clone which can handle ANSI
 terminal sequences, backspaces, and Asian wide characters.  It
-supports traditional options and some of Linux extended, and many
+supports traditional options and some of the Linux extended options, and many
 other original options.
 
 =begin html
@@ -108,7 +108,7 @@ supported as well.
 =end html
 
 In contrast to the original L<column(1)> command which handles mainly
-short item list, and Linux variant which has been expanded to have
+short item lists, and the Linux variant which has been expanded to have
 rich table style output, B<ansicolumn(1)> has been expanded to show
 text file in multi-column view.  Combined with pagination and
 document-friendly folding mechanism, it can be used as a document
@@ -124,8 +124,8 @@ In order to accurately display the contents of the file, blank lines
 that were ignored by the original L<column(1)> command are not
 ignored.
 
-When multiple files are given as arguments, it gets in the parallel
-view mode, and show all files in parallel.  It's convenient to see
+When multiple files are given as arguments, it enters parallel
+view mode and shows all files in parallel.  It's convenient to see
 multiple files side-by-side.
 
 =begin html
@@ -523,7 +523,7 @@ See L<Getopt::EX::Colormap> for color specification details.
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
-When used C<-t> option, leading spaces are ignored by default.  Use
+When the C<-t> option is used, leading spaces are ignored by default.  Use
 C<--no-ignore-space> option to disable it.
 
 =item B<-->[B<no->]B<white-space>
@@ -534,7 +534,7 @@ true.  Negated by C<--document> option.
 =item B<-->[B<no->]B<isolation>
 
 Allow a line to be isolated at the bottom of a pane when preceded by
-a blank line.  Default true.  If false, move it to the top of next
+a blank line.  Default true.  If false, move it to the top of the next
 pane.  This applies to both single-line paragraphs (such as titles)
 and the first line of multi-line paragraphs.  Negated by
 C<--document> option.
@@ -548,8 +548,8 @@ Set tab width.
 =item B<--tabspace>=#
 
 Set head and following space characters.  Both are space by default.
-If the option value is longer than single character, it is evaluated
-as unicode name.
+If the option value is longer than a single character, it is evaluated
+as a Unicode name.
 
 =item B<--tabstyle>, B<--ts>
 
@@ -557,7 +557,7 @@ as unicode name.
 
 =item B<--tabstyle>=I<head-style>,I<space-style> B<--ts>=...
 
-Set the style how tab is expanded.  Select C<symbol> or C<shade> for
+Set how tabs are expanded.  Select C<symbol> or C<shade> for
 example.  If two style names are combined, like
 C<squat-arrow,middle-dot>, use C<squat-arrow> for tabhead and
 C<middle-dot> for tabspace.
@@ -572,7 +572,7 @@ value of 'narrow' or 'wide'.  Default is 'narrow'.
 
 =item B<--pages>
 
-Split file content by formfeed character, and treat each part as a
+Split file content by formfeed character, and treat each part as an
 individual file.  Use with C<--parallel> option.
 
 =begin comment
@@ -583,7 +583,7 @@ Discard ANSI Erase Line sequence.  Default true.
 
 =item B<--padchar>=I<char>
 
-Set padding chracter.
+Set padding character.
 
 =end comment
 

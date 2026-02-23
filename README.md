@@ -78,7 +78,7 @@ Version 1.52
 
 **ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone which can handle ANSI
 terminal sequences, backspaces, and Asian wide characters.  It
-supports traditional options and some of Linux extended, and many
+supports traditional options and some of the Linux extended options, and many
 other original options.
 
 <div>
@@ -93,7 +93,7 @@ supported as well.
 </div>
 
 In contrast to the original [column(1)](http://man.he.net/man1/column) command which handles mainly
-short item list, and Linux variant which has been expanded to have
+short item lists, and the Linux variant which has been expanded to have
 rich table style output, **ansicolumn(1)** has been expanded to show
 text file in multi-column view.  Combined with pagination and
 document-friendly folding mechanism, it can be used as a document
@@ -107,8 +107,8 @@ In order to accurately display the contents of the file, blank lines
 that were ignored by the original [column(1)](http://man.he.net/man1/column) command are not
 ignored.
 
-When multiple files are given as arguments, it gets in the parallel
-view mode, and show all files in parallel.  It's convenient to see
+When multiple files are given as arguments, it enters parallel
+view mode and shows all files in parallel.  It's convenient to see
 multiple files side-by-side.
 
 <div>
@@ -497,7 +497,7 @@ default, from the standard input.
 
 - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 
-    When used `-t` option, leading spaces are ignored by default.  Use
+    When the `-t` option is used, leading spaces are ignored by default.  Use
     `--no-ignore-space` option to disable it.
 
 - **--**\[**no-**\]**white-space**
@@ -508,7 +508,7 @@ default, from the standard input.
 - **--**\[**no-**\]**isolation**
 
     Allow a line to be isolated at the bottom of a pane when preceded by
-    a blank line.  Default true.  If false, move it to the top of next
+    a blank line.  Default true.  If false, move it to the top of the next
     pane.  This applies to both single-line paragraphs (such as titles)
     and the first line of multi-line paragraphs.  Negated by
     `--document` option.
@@ -521,14 +521,14 @@ default, from the standard input.
 - **--tabspace**=#
 
     Set head and following space characters.  Both are space by default.
-    If the option value is longer than single character, it is evaluated
-    as unicode name.
+    If the option value is longer than a single character, it is evaluated
+    as a Unicode name.
 
 - **--tabstyle**, **--ts**
 - **--tabstyle**=_style_, **--ts**=...
 - **--tabstyle**=_head-style_,_space-style_ **--ts**=...
 
-    Set the style how tab is expanded.  Select `symbol` or `shade` for
+    Set how tabs are expanded.  Select `symbol` or `shade` for
     example.  If two style names are combined, like
     `squat-arrow,middle-dot`, use `squat-arrow` for tabhead and
     `middle-dot` for tabspace.
@@ -543,7 +543,7 @@ default, from the standard input.
 
 - **--pages**
 
-    Split file content by formfeed character, and treat each part as a
+    Split file content by formfeed character, and treat each part as an
     individual file.  Use with `--parallel` option.
 
 # DEFAULT ALIASES
