@@ -48,6 +48,7 @@ use Getopt::EX::Hashed 1.05; {
     has table_align         => ' !  A    ' ;
     has table_tabs          => ' +  T    ' ;
     has table_right         => ' =s R    ' , default => '' ;
+    has table_center        => ' =s      ' , default => '' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
@@ -578,12 +579,20 @@ sub table_out {
     my @align  = newlist(count => int @max, default => '-',
 			 [ map --$_, map {
 			     _numbers(max => int @max)->parse($_)->sequence
-			 } split /,/, $obj->table_right ] => '');
-    my @format = map "%$align[$_]$max[$_]s", keys @max;
+			 } split /,/, $obj->table_right ] => '',
+			 [ map --$_, map {
+			     _numbers(max => int @max)->parse($_)->sequence
+			 } split /,/, $obj->table_center ] => '=');
+    my @format = map { $align[$_] eq '=' ? "%-$max[$_]s" : "%$align[$_]$max[$_]s" } keys @max;
     for my $line (@lines) {
 	next unless @$line;
+	for my $i (keys @$line) {
+	    if ($align[$i] eq '=' and (my $w = ansi_width($line->[$i])) < $max[$i]) {
+		$line->[$i] = (' ' x int(($max[$i] - $w) / 2)) . $line->[$i];
+	    }
+	}
 	my @fmt = @format[keys @$line];
-	$fmt[$#fmt] = '%s' if $align[$#fmt] eq '-';
+	$fmt[$#fmt] = '%s' if $align[$#fmt] ne '';
 	my $format = join($obj->output_separator, @fmt) . "\n";
 	ansi_printf $format, @$line;
     }

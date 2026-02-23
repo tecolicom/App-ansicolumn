@@ -70,7 +70,8 @@ Table style options:
     -A, --table-align    align table output to column unit
     -T, --table-tabs     align items by tabs
     -TT                  reformat tab aligned text
-    -R#, --table-right=# right adjust table columns
+    -R#, --table-right=#   right adjust table columns
+    --table-center=#       center table columns
 
 Default alias options:
 
@@ -190,6 +191,13 @@ commas.  Only numbers are supported.
 Parameters are parsed by the L<Getopt::EX::Numbers> module, so you can
 specify a range of numbers, as in C<-R2:5> which is equivalent to
 C<-R2,3,4,5>. Option C<-R:> makes all fields right-aligned.
+
+=item B<--table-center>=#
+
+Center text in the specified columns.  Column specification is the same
+as B<--table-right>.  When the remaining space is odd, the extra space
+is placed on the right side (i.e., the text is shifted slightly to the
+left).
 
 =back
 
@@ -393,8 +401,8 @@ Implicitly enables the B<--table> option.
 
 This option enables the B<--table> and B<--table-align> options, and
 forces the use of tab characters between items.  The tab width uses the
-value of B<--column-unit>.  The B<--table-right> option does not take
-effect.
+value of B<--column-unit>.  The B<--table-right> and B<--table-center>
+options do not take effect.
 
 If the B<-T> option is specified twice, the input separator is set to
 repeating tabs (same as B<-rs '\t+'>).  Thus, the B<-TT> option can be
