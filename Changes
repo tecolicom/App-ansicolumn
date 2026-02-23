@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.53 2026-02-23T15:12:40Z
+
+    - Add --table-center option.
+
 1.52 2026-02-08T04:37:38Z
 
     - make --no-isolation prevent any isolated line at page bottom,
