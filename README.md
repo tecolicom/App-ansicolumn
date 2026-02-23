@@ -76,10 +76,10 @@ Version 1.52
 
 # DESCRIPTION
 
-**ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone which can handle ANSI
+**ansicolumn** is a [column(1)](http://man.he.net/man1/column) command clone that can handle ANSI
 terminal sequences, backspaces, and Asian wide characters.  It
-supports traditional options and some of the Linux extended options, and many
-other original options.
+supports traditional options, some of the Linux extended options, and
+many of its own original options.
 
 <div>
     <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-grep.png">
@@ -95,20 +95,19 @@ supported as well.
 In contrast to the original [column(1)](http://man.he.net/man1/column) command which handles mainly
 short item lists, and the Linux variant which has been expanded to have
 rich table style output, **ansicolumn(1)** has been expanded to show
-text file in multi-column view.  Combined with pagination and
+text files in a multi-column view.  Combined with pagination and a
 document-friendly folding mechanism, it can be used as a document
-viewing preprocessor for pager program.
+viewing preprocessor for a pager program.
 
 <div>
     <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-ansicolumn/master/images/ac-man.png">
 </div>
 
-In order to accurately display the contents of the file, blank lines
-that were ignored by the original [column(1)](http://man.he.net/man1/column) command are not
-ignored.
+To accurately display file contents, blank lines that were ignored by
+the original [column(1)](http://man.he.net/man1/column) command are preserved.
 
 When multiple files are given as arguments, it enters parallel
-view mode and shows all files in parallel.  It's convenient to see
+view mode and shows all files in parallel.  This is convenient for viewing
 multiple files side-by-side.
 
 <div>
@@ -126,13 +125,13 @@ default, from the standard input.
     Output is formatted for a display _#_ columns wide.  See ["CALCULATION"](#calculation)
     section.
 
-    Accept `-c` for compatibility, but `-w` is more popular.
+    Accepts `-c` for compatibility, but `-w` is more popular.
 
 - **-s**#, **--separator**=#
 
     Specify a set of characters to be used to delimit columns for the `-t`
-    option.  When used with `--regex-sep` or `-r` option, it is used as
-    regex rather than character set.
+    option.  When used with the `--regex-sep` or `-r` option, it is
+    treated as a regex rather than a character set.
 
 - **-t**, **--table**
 
@@ -182,16 +181,16 @@ default, from the standard input.
 
 - **-P**\[#\], **--page**\[=#\], **--no-page**
 
-    Page mode.  Set these options.
+    Enable page mode.  Sets the following options:
 
         --height=# or 1-
         --linestyle=wrap
         --border
         --fillup
 
-    If optional number is given, it is used as a page height unless option
-    `--height` exists.  Otherwise page height is set to terminal height
-    minus one.
+    If an optional number is given, it is used as the page height unless
+    the `--height` option is also specified.  Otherwise, the page height
+    is set to the terminal height minus one.
 
     Use `--no-page` to disable page mode.
 
@@ -203,7 +202,7 @@ default, from the standard input.
 
 - **-D**, **--**\[**no-**\]**document**
 
-    Document mode.  Set these options.
+    Document mode.  Sets the following options:
 
         --widen
         --linebreak=all
@@ -222,7 +221,7 @@ default, from the standard input.
     Parallel view mode.  Implicitly enabled when multiple files are
     specified.  Use `--no-parallel` to disable.
 
-    Sets these options and cancels all pagination behavior.
+    Sets the following options and cancels all pagination behavior:
 
         --widen
         --linestyle=wrap
@@ -232,7 +231,7 @@ default, from the standard input.
     the number of panes is set to the number of files.  You can use the `-C` option
     to specify the number of files displayed simultaneously.
 
-    You can use this option mixed with `-D` option to see document files.
+    This option can be combined with the `-D` option to view document files.
 
     If you want to display multiple parts in a single stream in parallel,
     use the `--pages` option. It will split the data by form feed
@@ -241,7 +240,7 @@ default, from the standard input.
 - **-H**, **--filename**
 - **--filename-format**=_format_ (DEFAULT: `: %s`)
 
-    Print filename header before contents.  Currently, this option is
+    Print a filename header before contents.  Currently, this option is
     effective only in `--parallel` mode.  Filenames are truncated to fit
     within each pane width.
 
@@ -321,15 +320,16 @@ default, from the standard input.
 
 - **-p**, **--paragraph**
 
-    Insert empty line between every successive non-empty lines.
+    Insert an empty line between every pair of successive non-empty lines.
 
 - **-B**, **--border**\[=_style_\] (DEFAULT: `box`)
 
-    Print border.  Enabled by `--page` option automatically.  If the
-    optional _style_ is given, it is used as a border style and precedes
-    to `--border-style` option.  Use `--border=none` to disable it.
+    Print border.  Automatically enabled by the `--page` option.  If the
+    optional _style_ is given, it is used as the border style and takes
+    precedence over the `--border-style` option.  Use `--border=none` to
+    disable it.
 
-    Border style is specified by `--border-style` option.
+    The border style is specified by the `--border-style` option.
 
 - **--no-border**
 
@@ -427,9 +427,9 @@ default, from the standard input.
 
 - **--border-style**=_style_, **--bs**=...
 
-    Set the border style.  Current default style is `box`, which encloses
-    each pane with box drawing graphic characters.  Special style
-    `random` chooses a random style.
+    Set the border style.  The default style is `box`, which encloses
+    each pane with box-drawing characters.  The special style `random`
+    chooses a random style.
 
     Sample styles:
     none,
@@ -468,8 +468,8 @@ default, from the standard input.
     always up-to-date.  See \`perldoc -m App::ansicolumn::Border\` for
     actual data.
 
-    You can define your own style in module or startup file.  Put next
-    lines in your `$HOME/.ansicolumnrc` file, for example.
+    You can define your own style in a module or startup file.  For
+    example, put the following lines in your `$HOME/.ansicolumnrc` file.
 
         option default --border-style myheart
         __PERL__
@@ -497,20 +497,20 @@ default, from the standard input.
 
 - **--**\[**no-**\]**ignore-space**, **--**\[**no-**\]**is**
 
-    When the `-t` option is used, leading spaces are ignored by default.  Use
-    `--no-ignore-space` option to disable it.
+    When the `-t` option is used, leading spaces are ignored by default.  Use the
+    `--no-ignore-space` option to disable this.
 
 - **--**\[**no-**\]**white-space**
 
     Allow white spaces at the top of each pane, or clean them up.  Default
-    true.  Negated by `--document` option.
+    true.  Negated by the `--document` option.
 
 - **--**\[**no-**\]**isolation**
 
     Allow a line to be isolated at the bottom of a pane when preceded by
     a blank line.  Default true.  If false, move it to the top of the next
     pane.  This applies to both single-line paragraphs (such as titles)
-    and the first line of multi-line paragraphs.  Negated by
+    and the first line of multi-line paragraphs.  Negated by the
     `--document` option.
 
 - **--tabstop**=# (DEFAULT: 8)
@@ -520,7 +520,7 @@ default, from the standard input.
 - **--tabhead**=#
 - **--tabspace**=#
 
-    Set head and following space characters.  Both are space by default.
+    Set the head and following space characters.  Both are space by default.
     If the option value is longer than a single character, it is evaluated
     as a Unicode name.
 
@@ -533,18 +533,18 @@ default, from the standard input.
     `squat-arrow,middle-dot`, use `squat-arrow` for tabhead and
     `middle-dot` for tabspace.
 
-    Show available style list if called without parameter.  Styles are
-    defined in [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.
+    Shows the available style list if called without a parameter.  Styles
+    are defined in the [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) library.
 
 - **--ambiguous**=`wide`|`narrow` (DEFAULT: `narrow`)
 
-    Specifies how to treat Unicode ambiguous width characters.  Take a
-    value of 'narrow' or 'wide'.  Default is 'narrow'.
+    Specifies how to treat Unicode ambiguous width characters.  Takes a
+    value of `narrow` or `wide`.  Default is `narrow`.
 
 - **--pages**
 
-    Split file content by formfeed character, and treat each part as an
-    individual file.  Use with `--parallel` option.
+    Split file content by formfeed characters, and treat each part as an
+    individual file.  Use with the `--parallel` option.
 
 # DEFAULT ALIASES
 
@@ -566,17 +566,18 @@ The following options are defined in `App::ansicolumn::default.pm`.
 - **--green-board**
 - **--slate-board**
 
-    Use the `--board-color` option to display text on the white, black,
-    green or darkslate panels.
+    Use the `--board-color` option to display text on white, black,
+    green, or dark slate panels.
 
 # CALCULATION
 
-As for `--height`, `--width`, `--pane`, `--up` and `--pane-width`
+For the `--height`, `--width`, `--pane`, `--up` and `--pane-width`
 options, besides giving numeric digits, you can calculate the number
-using terminal size.  If the expression contains non-digit character,
-it is evaluated as an RPN (Reverse Polish Notation) with the terminal
-size pushed on the stack.  Initial value for `--height` options is
-terminal height, and terminal width for others.
+using the terminal size.  If the expression contains a non-digit
+character, it is evaluated as an RPN (Reverse Polish Notation)
+expression with the terminal size pushed on the stack.  The initial
+value for `--height` is the terminal height, and the terminal width
+for others.
 
     OPTION              VALUE
     =================   =========================
@@ -586,14 +587,15 @@ terminal height, and terminal width for others.
     --height dup2%-2/   (height - height % 2) / 2
 
 Space and comma characters are ignored in the expression.  So `1-2/`
-and `1 - 2 /` and `1,-,2,/` are all same.  See \`perldoc
-Math::RPN\` for the expression detail.
+and `1 - 2 /` and `1,-,2,/` are all the same.  See `perldoc
+Math::RPN` for details.
 
-Next example select number of panes by dividing terminal width by 85:
+The next example selects the number of panes by dividing the terminal
+width by 85:
 
     ansicolumn --pane 85/
 
-If you consider the case the terminal width is less than 85:
+If you need to handle the case where the terminal width is less than 85:
 
     ansicolumn --pane 85/,DUP,1,GE,EXCH,1,IF
 
@@ -601,17 +603,17 @@ This RPN means `$width/85 >= 1 ? $width/85 : 1`.
 
 # STARTUP
 
-This command is implemented with [Getopt::EX](https://metacpan.org/pod/Getopt%3A%3AEX) module.  So
+This command is implemented with the [Getopt::EX](https://metacpan.org/pod/Getopt%3A%3AEX) module, so the
 
     ~/.ansicolumnrc
 
-file is read at start up time.  If you want use `--no-white-space`
-always, put this line in your `~/.ansicolumnrc`.
+file is read at startup.  If you always want to use
+`--no-white-space`, put this line in your `~/.ansicolumnrc`:
 
     option default --no-white-space
 
-Also command can be extended by original modules with `-M`
-option. See \`perldoc Getopt::EX\` for detail.
+The command can also be extended with custom modules using the `-M`
+option.  See `perldoc Getopt::EX` for details.
 
 # INSTALL
 

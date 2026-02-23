@@ -87,10 +87,10 @@ Version 1.52
 
 =head1 DESCRIPTION
 
-B<ansicolumn> is a L<column(1)> command clone which can handle ANSI
+B<ansicolumn> is a L<column(1)> command clone that can handle ANSI
 terminal sequences, backspaces, and Asian wide characters.  It
-supports traditional options and some of the Linux extended options, and many
-other original options.
+supports traditional options, some of the Linux extended options, and
+many of its own original options.
 
 =begin html
 
@@ -110,9 +110,9 @@ supported as well.
 In contrast to the original L<column(1)> command which handles mainly
 short item lists, and the Linux variant which has been expanded to have
 rich table style output, B<ansicolumn(1)> has been expanded to show
-text file in multi-column view.  Combined with pagination and
+text files in a multi-column view.  Combined with pagination and a
 document-friendly folding mechanism, it can be used as a document
-viewing preprocessor for pager program.
+viewing preprocessor for a pager program.
 
 =begin html
 
@@ -120,12 +120,11 @@ viewing preprocessor for pager program.
 
 =end html
 
-In order to accurately display the contents of the file, blank lines
-that were ignored by the original L<column(1)> command are not
-ignored.
+To accurately display file contents, blank lines that were ignored by
+the original L<column(1)> command are preserved.
 
 When multiple files are given as arguments, it enters parallel
-view mode and shows all files in parallel.  It's convenient to see
+view mode and shows all files in parallel.  This is convenient for viewing
 multiple files side-by-side.
 
 =begin html
@@ -147,13 +146,13 @@ default, from the standard input.
 Output is formatted for a display I<#> columns wide.  See L</CALCULATION>
 section.
 
-Accept C<-c> for compatibility, but C<-w> is more popular.
+Accepts C<-c> for compatibility, but C<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
 
 Specify a set of characters to be used to delimit columns for the C<-t>
-option.  When used with C<--regex-sep> or C<-r> option, it is used as
-regex rather than character set.
+option.  When used with the C<--regex-sep> or C<-r> option, it is
+treated as a regex rather than a character set.
 
 =item B<-t>, B<--table>
 
@@ -207,16 +206,16 @@ left).
 
 =item B<-P>[#], B<--page>[=#], B<--no-page>
 
-Page mode.  Set these options.
+Enable page mode.  Sets the following options:
 
     --height=# or 1-
     --linestyle=wrap
     --border
     --fillup
 
-If optional number is given, it is used as a page height unless option
-C<--height> exists.  Otherwise page height is set to terminal height
-minus one.
+If an optional number is given, it is used as the page height unless
+the C<--height> option is also specified.  Otherwise, the page height
+is set to the terminal height minus one.
 
 Use C<--no-page> to disable page mode.
 
@@ -228,7 +227,7 @@ page control.
 
 =item B<-D>, B<-->[B<no->]B<document>
 
-Document mode.  Set these options.
+Document mode.  Sets the following options:
 
     --widen
     --linebreak=all
@@ -247,7 +246,7 @@ L<App::optex::textconv>.
 Parallel view mode.  Implicitly enabled when multiple files are
 specified.  Use C<--no-parallel> to disable.
 
-Sets these options and cancels all pagination behavior.
+Sets the following options and cancels all pagination behavior:
 
     --widen
     --linestyle=wrap
@@ -257,7 +256,7 @@ By default, all files are displayed in parallel.  In other words,
 the number of panes is set to the number of files.  You can use the C<-C> option
 to specify the number of files displayed simultaneously.
 
-You can use this option mixed with C<-D> option to see document files.
+This option can be combined with the C<-D> option to view document files.
 
 If you want to display multiple parts in a single stream in parallel,
 use the C<--pages> option. It will split the data by form feed
@@ -267,7 +266,7 @@ characters and treat each part as a separate file.
 
 =item B<--filename-format>=I<format> (DEFAULT: C<: %s>)
 
-Print filename header before contents.  Currently, this option is
+Print a filename header before contents.  Currently, this option is
 effective only in C<--parallel> mode.  Filenames are truncated to fit
 within each pane width.
 
@@ -347,15 +346,16 @@ terminal width, unless C<--pane-width> is specified.
 
 =item B<-p>, B<--paragraph>
 
-Insert empty line between every successive non-empty lines.
+Insert an empty line between every pair of successive non-empty lines.
 
 =item B<-B>, B<--border>[=I<style>] (DEFAULT: C<box>)
 
-Print border.  Enabled by C<--page> option automatically.  If the
-optional I<style> is given, it is used as a border style and precedes
-to C<--border-style> option.  Use C<--border=none> to disable it.
+Print border.  Automatically enabled by the C<--page> option.  If the
+optional I<style> is given, it is used as the border style and takes
+precedence over the C<--border-style> option.  Use C<--border=none> to
+disable it.
 
-Border style is specified by C<--border-style> option.
+The border style is specified by the C<--border-style> option.
 
 =item B<--no-border>
 
@@ -453,9 +453,9 @@ space character just before C<(> as a separator.
 
 =item B<--border-style>=I<style>, B<--bs>=...
 
-Set the border style.  Current default style is C<box>, which encloses
-each pane with box drawing graphic characters.  Special style
-C<random> chooses a random style.
+Set the border style.  The default style is C<box>, which encloses
+each pane with box-drawing characters.  The special style C<random>
+chooses a random style.
 
 Sample styles:
 none,
@@ -494,8 +494,8 @@ These are experimental and subject to change, and this document is not
 always up-to-date.  See `perldoc -m App::ansicolumn::Border` for
 actual data.
 
-You can define your own style in module or startup file.  Put next
-lines in your C<$HOME/.ansicolumnrc> file, for example.
+You can define your own style in a module or startup file.  For
+example, put the following lines in your C<$HOME/.ansicolumnrc> file.
 
     option default --border-style myheart
     __PERL__
@@ -523,20 +523,20 @@ See L<Getopt::EX::Colormap> for color specification details.
 
 =item B<-->[B<no->]B<ignore-space>, B<-->[B<no->]B<is>
 
-When the C<-t> option is used, leading spaces are ignored by default.  Use
-C<--no-ignore-space> option to disable it.
+When the C<-t> option is used, leading spaces are ignored by default.  Use the
+C<--no-ignore-space> option to disable this.
 
 =item B<-->[B<no->]B<white-space>
 
 Allow white spaces at the top of each pane, or clean them up.  Default
-true.  Negated by C<--document> option.
+true.  Negated by the C<--document> option.
 
 =item B<-->[B<no->]B<isolation>
 
 Allow a line to be isolated at the bottom of a pane when preceded by
 a blank line.  Default true.  If false, move it to the top of the next
 pane.  This applies to both single-line paragraphs (such as titles)
-and the first line of multi-line paragraphs.  Negated by
+and the first line of multi-line paragraphs.  Negated by the
 C<--document> option.
 
 =item B<--tabstop>=# (DEFAULT: 8)
@@ -547,7 +547,7 @@ Set tab width.
 
 =item B<--tabspace>=#
 
-Set head and following space characters.  Both are space by default.
+Set the head and following space characters.  Both are space by default.
 If the option value is longer than a single character, it is evaluated
 as a Unicode name.
 
@@ -562,18 +562,18 @@ example.  If two style names are combined, like
 C<squat-arrow,middle-dot>, use C<squat-arrow> for tabhead and
 C<middle-dot> for tabspace.
 
-Show available style list if called without parameter.  Styles are
-defined in L<Text::ANSI::Fold> library.
+Shows the available style list if called without a parameter.  Styles
+are defined in the L<Text::ANSI::Fold> library.
 
 =item B<--ambiguous>=C<wide>|C<narrow> (DEFAULT: C<narrow>)
 
-Specifies how to treat Unicode ambiguous width characters.  Take a
-value of 'narrow' or 'wide'.  Default is 'narrow'.
+Specifies how to treat Unicode ambiguous width characters.  Takes a
+value of C<narrow> or C<wide>.  Default is C<narrow>.
 
 =item B<--pages>
 
-Split file content by formfeed character, and treat each part as an
-individual file.  Use with C<--parallel> option.
+Split file content by formfeed characters, and treat each part as an
+individual file.  Use with the C<--parallel> option.
 
 =begin comment
 
@@ -614,19 +614,20 @@ I<bg-color> panel.
 
 =item B<--slate-board>
 
-Use the C<--board-color> option to display text on the white, black,
-green or darkslate panels.
+Use the C<--board-color> option to display text on white, black,
+green, or dark slate panels.
 
 =back
 
 =head1 CALCULATION
 
-As for C<--height>, C<--width>, C<--pane>, C<--up> and C<--pane-width>
+For the C<--height>, C<--width>, C<--pane>, C<--up> and C<--pane-width>
 options, besides giving numeric digits, you can calculate the number
-using terminal size.  If the expression contains non-digit character,
-it is evaluated as an RPN (Reverse Polish Notation) with the terminal
-size pushed on the stack.  Initial value for C<--height> options is
-terminal height, and terminal width for others.
+using the terminal size.  If the expression contains a non-digit
+character, it is evaluated as an RPN (Reverse Polish Notation)
+expression with the terminal size pushed on the stack.  The initial
+value for C<--height> is the terminal height, and the terminal width
+for others.
 
     OPTION              VALUE
     =================   =========================
@@ -636,14 +637,15 @@ terminal height, and terminal width for others.
     --height dup2%-2/   (height - height % 2) / 2
 
 Space and comma characters are ignored in the expression.  So C<1-2/>
-and C<< S<1 - 2 /> >> and C<1,-,2,/> are all same.  See `perldoc
-Math::RPN` for the expression detail.
+and C<< S<1 - 2 /> >> and C<1,-,2,/> are all the same.  See C<perldoc
+Math::RPN> for details.
 
-Next example select number of panes by dividing terminal width by 85:
+The next example selects the number of panes by dividing the terminal
+width by 85:
 
     ansicolumn --pane 85/
 
-If you consider the case the terminal width is less than 85:
+If you need to handle the case where the terminal width is less than 85:
 
     ansicolumn --pane 85/,DUP,1,GE,EXCH,1,IF
 
@@ -651,17 +653,17 @@ This RPN means C<< $width/85 >= 1 ? $width/85 : 1 >>.
 
 =head1 STARTUP
 
-This command is implemented with L<Getopt::EX> module.  So
+This command is implemented with the L<Getopt::EX> module, so the
 
     ~/.ansicolumnrc
 
-file is read at start up time.  If you want use C<--no-white-space>
-always, put this line in your F<~/.ansicolumnrc>.
+file is read at startup.  If you always want to use
+C<--no-white-space>, put this line in your F<~/.ansicolumnrc>:
 
     option default --no-white-space
 
-Also command can be extended by original modules with C<-M>
-option. See `perldoc Getopt::EX` for detail.
+The command can also be extended with custom modules using the C<-M>
+option.  See C<perldoc Getopt::EX> for details.
 
 =head1 INSTALL
 
