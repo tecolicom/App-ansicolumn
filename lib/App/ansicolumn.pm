@@ -52,6 +52,7 @@ use Getopt::EX::Hashed 1.05; {
     has item_format         => ' =s      ' , default => '' ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
+    has padding             => ' !       ' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
@@ -613,7 +614,7 @@ sub table_out {
 	    }
 	}
 	my @fmt = @format[keys @$line];
-	$fmt[$#fmt] = '%s' if $align[$#fmt] ne '';
+	$fmt[$#fmt] = '%s' if $align[$#fmt] ne '' and !$obj->padding;
 	my $format = join($obj->output_separator, @fmt) . "\n";
 	ansi_printf $format, @$line;
     }

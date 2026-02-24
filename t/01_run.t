@@ -52,6 +52,14 @@ for (
     is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
 }
 
+{
+    my $input = "a b cc\ndddd ee ffffff\ng hh iii\n";
+    my $out = ac->new(qw(-t --padding))->setstdin($input)->update->data;
+    my @lens = map { length } split /\n/, $out;
+    is(scalar(grep { $_ == $lens[0] } @lens), scalar @lens,
+       'padding: all lines have equal length');
+}
+
 my @isolation_opt = qw(-P6 -c40 --border=none);
 
 # single-line paragraph (title only)

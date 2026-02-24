@@ -64,6 +64,7 @@ Table style options:
     -K#, --table-remove=#  discard specified columns
          --item-format=#   apply sprintf format to each cell
          --table-squeeze   remove all-empty columns
+         --padding         pad last column to full width
 
 Default alias options:
 
@@ -207,6 +208,13 @@ default, from the standard input.
     processing pipe-delimited data with border characters (e.g.,
     Markdown tables `| col1 | col2 |`, MySQL output), where the
     leading and trailing `|` create empty columns.
+
+- **--padding**
+
+    Pad the last column to its full width.  Normally the last column
+    is not padded to avoid trailing whitespace, but this option forces
+    all columns including the last to be padded to their calculated
+    width.
 
 ## EXTENDED OPTIONS
 
