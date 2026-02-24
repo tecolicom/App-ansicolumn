@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.55 2026-02-24T15:54:35Z
+
+    - Add --padding option to pad last column to full width
+
 1.54 2026-02-24T13:36:22Z
 
     - Add --item-format option to apply sprintf format to table cells
