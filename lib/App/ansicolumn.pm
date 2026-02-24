@@ -50,6 +50,7 @@ use Getopt::EX::Hashed 1.05; {
     has table_right         => ' =s R    ' , default => '' ;
     has table_center        => ' =s      ' , default => '' ;
     has item_format         => ' =s      ' , default => '' ;
+    has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
@@ -554,6 +555,14 @@ sub table_out {
 	}
     };
     my @lines  = map { [ split $split, $_, $obj->table_columns_limit ] } @_;
+    if (my $spec = $obj->table_remove) {
+	my $max_cols = max map { scalar @$_ } @lines;
+	my %discard = map { ($_ - 1) => 1 }
+	    map { _numbers(max => $max_cols)->parse($_)->sequence }
+	    split /,/, $spec;
+	my @keep = grep { !$discard{$_} } 0 .. $max_cols - 1;
+	@$_ = @$_[@keep] for @lines;
+    }
     if ($obj->table_squeeze) {
 	my @keep = grep { my $c = $_; any { length $_->[$c] } @lines }
 	    0 .. max(map { $#$_ } @lines);

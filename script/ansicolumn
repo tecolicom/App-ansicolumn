@@ -66,22 +66,23 @@ ansicolumn [options] [file ...]
 
 Table style options:
 
-    -t, --table          table style output
-    -A, --table-align    align table output to column unit
-    -T, --table-tabs     align items by tabs
-    -TT                  reformat tab aligned text
+    -t,  --table           table style output
+    -A,  --table-align     align table output to column unit
+    -T,  --table-tabs      align items by tabs
+    -TT                    reformat tab aligned text
     -R#, --table-right=#   right adjust table columns
-    --table-center=#       center table columns
-    --item-format=#        apply sprintf format to each cell
-    --table-squeeze        remove all-empty columns
+         --table-center=#  center table columns
+    -K#, --table-remove=#  discard specified columns
+         --item-format=#   apply sprintf format to each cell
+         --table-squeeze   remove all-empty columns
 
 Default alias options:
 
-    --board-color FG BG  board style pages with FG and BG colors
-    --white-board        black on white board
-    --black-board        white on black board
-    --green-board        white on green board
-    --slate-board        white on dark slategray board
+    --board-color FG BG    board style pages with FG and BG colors
+    --white-board          black on white board
+    --black-board          white on black board
+    --green-board          white on green board
+    --slate-board          white on dark slategray board
 
 =head1 VERSION
 
@@ -206,6 +207,20 @@ Apply sprintf-style format to each cell content.  For example,
 C<--item-format=' %s '> adds a space before and after each cell.
 This is applied before column width calculation, so the padding
 is included in the column width.
+
+=item B<--table-remove>=#
+
+Discard specified columns.  Column numbers are 1-based, and
+negative numbers count from the end (C<-0> is the last column,
+C<-1> is the second to last).  Multiple columns are separated by
+commas.  Ranges can be specified as C<1:3>.
+
+For example, C<--table-remove=1,-0> removes the first and last
+columns.  This is useful when processing pipe-delimited data with
+border characters where the leading and trailing delimiters create
+extra columns.
+
+Column numbers are parsed by the L<Getopt::EX::Numbers> module.
 
 =item B<--table-squeeze>
 

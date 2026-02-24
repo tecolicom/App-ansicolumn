@@ -46,6 +46,7 @@ $stdin = "|a|b|cc|\n|dddd|ee|ffffff|\n|g|hh|iii|\n";
 
 for (
     [ 'squeeze' => [qw(-t -s | --table-squeeze)] ],
+    [ 'discard' => [qw(-t -s |), '--table-remove=1,-0'] ],
 ) {
     my($name, $opt) = @$_;
     is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
@@ -141,6 +142,10 @@ dddd  ee  ffffff
  dddd    ee    ffffff
  g       hh    iii
 @@ squeeze
+a     b   cc
+dddd  ee  ffffff
+g     hh  iii
+@@ discard
 a     b   cc
 dddd  ee  ffffff
 g     hh  iii
