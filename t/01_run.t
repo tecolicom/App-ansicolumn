@@ -35,7 +35,17 @@ for (
 $stdin = "a b cc\ndddd ee ffffff\ng hh iii\n";
 
 for (
-    [ center => [qw(-t --table-center=1)] ],
+    [ center         => [qw(-t --table-center=1)] ],
+    [ 'item-format'  => [qw(-t), '--item-format= %s '] ],
+) {
+    my($name, $opt) = @$_;
+    is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
+}
+
+$stdin = "|a|b|cc|\n|dddd|ee|ffffff|\n|g|hh|iii|\n";
+
+for (
+    [ 'squeeze' => [qw(-t -s | --table-squeeze)] ],
 ) {
     my($name, $opt) = @$_;
     is(ac->new(@$opt)->exec($stdin), get_data_section($name), $name);
@@ -126,6 +136,14 @@ __DATA__
  a    b   cc
 dddd  ee  ffffff
  g    hh  iii
+@@ item-format
+ a       b     cc
+ dddd    ee    ffffff
+ g       hh    iii
+@@ squeeze
+a     b   cc
+dddd  ee  ffffff
+g     hh  iii
 @@ single
 1  2  3  4  5  6  7  8  9  10
 11 12 13 14 15 16 17 18 19 20

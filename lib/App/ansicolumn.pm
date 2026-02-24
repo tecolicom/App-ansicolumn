@@ -13,7 +13,7 @@ ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
 Configure qw(bundling no_auto_abbrev no_ignore_case);
 
 use Data::Dumper;
-use List::Util qw(max sum min);
+use List::Util qw(max sum min any);
 use Clone qw(clone);
 use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
@@ -49,6 +49,8 @@ use Getopt::EX::Hashed 1.05; {
     has table_tabs          => ' +  T    ' ;
     has table_right         => ' =s R    ' , default => '' ;
     has table_center        => ' =s      ' , default => '' ;
+    has item_format         => ' =s      ' , default => '' ;
+    has table_squeeze       => ' !       ' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
     has output_separator    => ' =s o    ' , default => '  ' ;
@@ -552,6 +554,16 @@ sub table_out {
 	}
     };
     my @lines  = map { [ split $split, $_, $obj->table_columns_limit ] } @_;
+    if ($obj->table_squeeze) {
+	my @keep = grep { my $c = $_; any { length $_->[$c] } @lines }
+	    0 .. max(map { $#$_ } @lines);
+	@$_ = @$_[@keep] for @lines;
+    }
+    if (my $fmt = $obj->item_format) {
+	for my $line (@lines) {
+	    @$line = map { ansi_sprintf($fmt, $_) } @$line;
+	}
+    }
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max = map { max @$_ } xpose @length;
     if ($obj->table_align) {

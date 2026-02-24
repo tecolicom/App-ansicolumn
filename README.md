@@ -61,6 +61,8 @@ Table style options:
     -TT                  reformat tab aligned text
     -R#, --table-right=#   right adjust table columns
     --table-center=#       center table columns
+    --item-format=#        apply sprintf format to each cell
+    --table-squeeze        remove all-empty columns
 
 Default alias options:
 
@@ -176,6 +178,20 @@ default, from the standard input.
     as `--table-right`.  When the remaining space is odd, the extra space
     is placed on the right side (i.e., the text is shifted slightly to the
     left).
+
+- **--item-format**=#
+
+    Apply sprintf-style format to each cell content.  For example,
+    `--item-format=' %s '` adds a space before and after each cell.
+    This is applied before column width calculation, so the padding
+    is included in the column width.
+
+- **--table-squeeze**
+
+    Remove columns where all items are empty.  This is useful when
+    processing pipe-delimited data with border characters (e.g.,
+    Markdown tables `| col1 | col2 |`, MySQL output), where the
+    leading and trailing `|` create empty columns.
 
 ## EXTENDED OPTIONS
 

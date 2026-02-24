@@ -72,6 +72,8 @@ Table style options:
     -TT                  reformat tab aligned text
     -R#, --table-right=#   right adjust table columns
     --table-center=#       center table columns
+    --item-format=#        apply sprintf format to each cell
+    --table-squeeze        remove all-empty columns
 
 Default alias options:
 
@@ -197,6 +199,20 @@ Center text in the specified columns.  Column specification is the same
 as C<--table-right>.  When the remaining space is odd, the extra space
 is placed on the right side (i.e., the text is shifted slightly to the
 left).
+
+=item B<--item-format>=#
+
+Apply sprintf-style format to each cell content.  For example,
+C<--item-format=' %s '> adds a space before and after each cell.
+This is applied before column width calculation, so the padding
+is included in the column width.
+
+=item B<--table-squeeze>
+
+Remove columns where all items are empty.  This is useful when
+processing pipe-delimited data with border characters (e.g.,
+Markdown tables C<| col1 | col2 |>, MySQL output), where the
+leading and trailing C<|> create empty columns.
 
 =back
 
