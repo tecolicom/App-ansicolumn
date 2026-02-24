@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.54 2026-02-24T13:36:22Z
+
+    - Add --item-format option to apply sprintf format to table cells
+    - Add --table-squeeze option to remove all-empty columns
+    - Add --table-remove (-K) option to discard specified columns
+
 1.53 2026-02-23T15:12:40Z
 
     - Add --table-center option.
