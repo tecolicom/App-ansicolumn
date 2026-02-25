@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.56 2026-02-25T06:20:54Z
+
+    - Integrate formfeed handling into do_space_layout to fix page
+      alignment with -D option
+    - Fix expand_tab to preserve and re-expand text after formfeed
+
 1.55 2026-02-24T15:54:35Z
 
     - Add --padding option to pad last column to full width
