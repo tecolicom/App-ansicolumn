@@ -134,4 +134,4 @@ GitHub Actionsワークフロー（`.github/workflows/test.yml`）:
 
 - バージョンは `lib/App/ansicolumn.pm` の `$VERSION` で定義
 - Minillaがバージョニングとリリースプロセスを管理
-- 現在のバージョン: 1.53
+- 現在のバージョン: 1.56
