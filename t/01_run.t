@@ -93,6 +93,17 @@ $stdin = join '', map "$_\n", qw(line1 line2 line3 line4 line5 line6 line7 line8
     is(ac->new(@isolation_opt, '--isolation')->exec($stdin),    $expected, 'isolation-noblank');
 }
 
+my @formfeed_opt = qw(-P6 -C1 -c40 --border=none -D --fillup=pane --fillup-str=~);
+
+for (
+    [ 'ff-basic'   => "a\nb\nc\n\fd\ne\nf\n" ],
+    [ 'ff-midline' => "a\nb\nabc\fdef\n" ],
+    [ 'ff-tab'     => "a\nb\nabc\fde\tf\n" ],
+) {
+    my($name, $input) = @$_;
+    is(ac->new(@formfeed_opt)->exec($input), get_data_section($name), $name);
+}
+
 done_testing;
 
 __DATA__
@@ -225,3 +236,42 @@ line3
 line4
 line5
 line6
+@@ ff-basic
+a
+b
+c
+~
+~
+~
+d
+e
+f
+~
+~
+~
+@@ ff-midline
+a
+b
+abc
+~
+~
+~
+def
+~
+~
+~
+~
+~
+@@ ff-tab
+a
+b
+abc
+~
+~
+~
+de      f
+~
+~
+~
+~
+~

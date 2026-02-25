@@ -423,7 +423,15 @@ sub expand_tab {
     my $obj = shift;
     my($dp, $lp) = @_;
     for (@$dp) {
-	($_, my($dmy, $length)) = ansi_fold $_, -1, expand => 1;
+	my ($result, $length) = ('', 0);
+	do {
+	    (my $folded, my $rest, my $len) = ansi_fold $_, -1, expand => 1;
+	    $result .= $folded;
+	    $length = $len if $len > $length;
+	    $result .= "\f" if $rest =~ s/^\f//;
+	    $_ = $rest;
+	} while ($_ ne '');
+	$_ = $result;
 	push @$lp, $length;
     }
 }
