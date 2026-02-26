@@ -30,8 +30,9 @@ sub ansicolumn {
 }
 
 my %DEFAULT_COLORMAP = (
-    BORDER => '',
-    TEXT   => '',
+    BORDER       => '',
+    BORDER_LABEL => '',
+    TEXT          => '',
 );
 
 use Getopt::EX::Hashed 1.05; {
@@ -88,6 +89,8 @@ use Getopt::EX::Hashed 1.05; {
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
     has no_border           => '         ' , action => sub { $_->border = 'none' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
+    has label               => ' =s%     ' , default => {} ;
+    has page_label          => ' =s%     ' , default => {} ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;
     has fillup              => ' :s      ' ; has F => '' , action => sub { $_->fillup = '' } ;
@@ -113,6 +116,8 @@ use Getopt::EX::Hashed 1.05; {
     has panes         => ;
     has border_height => ;
     has current_page  => ;
+    has _bl           => ;
+    has _pbl          => ;
 
     Getopt::EX::Hashed->configure( DEFAULT => [] );
 
@@ -512,6 +517,47 @@ sub color_border {
     $obj->color('BORDER', $obj->get_border(@_));
 }
 
+sub _parse_labels {
+    my $hash = shift;
+    return 0 unless %$hash;
+    my %result;
+    while (my($key, $s) = each %$hash) {
+	next unless defined $s and $s ne '';
+	my $offset;
+	if ($s =~ s/@(\d+)$//) {
+	    $offset = $1 + 0;
+	}
+	$s =~ s/%n/%1\$d/g;
+	$s =~ s/%p/%2\$d/g;
+	$result{lc $key} = [ $offset, $s ];
+    }
+    %result ? \%result : 0;
+}
+
+# Overlay labels onto a border line string.
+# $fs/$fe: fill region start/end.
+# $ml/$mr: border margin accessible via @0.
+# $n/$p: pane number / page number for sprintf expansion.
+sub _overlay_labels {
+    my($obj, $str, $fs, $fe, $ml, $mr, $n, $p, $left, $center, $right) = @_;
+    use Text::ANSI::Fold::Util qw(ansi_substr);
+    for my $item (
+	[ $left,   sub { $fs - $ml + ($_[0] // $ml) } ],
+	[ $right,  sub { $fe + $mr - ($_[0] // $mr) - $_[1] } ],
+	[ $center, sub { $fs + int(($fe - $fs - $_[1]) / 2) } ],
+    ) {
+	my($spec, $pos_fn) = @$item;
+	next unless $spec;
+	my $fmt = $spec->[1];
+	next unless defined $fmt && $fmt ne '';
+	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p) : $fmt;
+	my $lw = ansi_width($text);
+	my $label = $obj->color('BORDER_LABEL', $text);
+	$str = ansi_substr($str, $pos_fn->($spec->[0], $lw), $lw, $label);
+    }
+    $str;
+}
+
 sub column_out {
     my $obj = shift;
     my $opt = ref $_[0] eq 'HASH' ? shift : {};
@@ -520,28 +566,82 @@ sub column_out {
     my @span = $opt->{span} ? @{$opt->{span}} : (($obj->{span}) x @_);
     @span == @_ or die;
 
-    # insert top/bottom border
     my %bd = map { $_ => $obj->get_border($_) } qw(top bottom);
-    if ($bd{top} or $bd{bottom}) {
-	while (my($i, $e) = each @_) {
-	    unshift @$e, $obj->color('BORDER', $bd{top} x $span[$i]) if $bd{top};
-	    push @$e, $obj->color('BORDER', $bd{bottom} x $span[$i]) if $bd{bottom};
+    my $page = $obj->current_page // 0;
+
+    my $bl  = $obj->{_bl}  //= _parse_labels($obj->label);
+    my $pbl = $obj->{_pbl} //= _parse_labels($obj->page_label);
+
+    my(@top_labels, @bottom_labels);
+    if ($bl || $pbl) {
+	my $bw_l = ansi_width($obj->get_border('left',   0, $page));
+	my $bw_c = ansi_width($obj->get_border('center', 0, $page));
+	my $bw_r = ansi_width($obj->get_border('right',  0, $page));
+	for my $set ([ \@top_labels,    qw(nw n ne) ],
+		     [ \@bottom_labels, qw(sw s se) ]) {
+	    my($list, @keys) = @$set;
+	    if ($bl) {
+		my @g = map { $bl->{$_} } @keys;
+		if (grep { $_ } @g) {
+		    my $fp = $bw_l;
+		    for my $i (0..$#span) {
+			my($fs, $fe) = ($fp, $fp + $span[$i]);
+			push @$list, sub {
+			    $obj->_overlay_labels($_[0], $fs, $fe, $bw_l, $bw_r,
+				$_[1] + $i + 1, $_[2], @g);
+			};
+			$fp += $span[$i] + $bw_c;
+		    }
+		}
+	    }
+	    if ($pbl) {
+		my @g = map { $pbl->{$_} } @keys;
+		if (grep { $_ } @g) {
+		    push @$list, sub {
+			my $w = ansi_width($_[0]);
+			$obj->_overlay_labels($_[0], 1, $w - 1, 1, 1,
+			    $_[1] + 1, $_[2], @g);
+		    };
+		}
+	    }
 	}
     }
 
+    my($n0, $p) = @top_labels || @bottom_labels
+	? ($page * ($obj->panes // 1), $page + 1) : ();
+
+    my $print_border = sub {
+	my($side, $pos, $labels) = @_;
+	return unless $bd{$side};
+	my $line = join '',
+	    $obj->color_border('left',   $pos, $page),
+	    join($obj->color_border('center', $pos, $page),
+		 map { $obj->color('BORDER', $bd{$side} x $_) } @span),
+	    $obj->color_border('right',  $pos, $page);
+	$line = $_->($line, $n0, $p) for @$labels;
+	print $line, "\n";
+    };
+
+    $print_border->('top', 0, \@top_labels);
+
+    # content rows
     my $max = max map $#{$_}, @_;
     for my $i (0 .. $max) {
-	my $pos = $i == 0 ? 0 : $i == $max ? 2 : 1;
+	my $pos = !$bd{top} && $i == 0 ? 0
+		: !$bd{bottom} && $i == $max ? 2
+		: 1;
 	my @span = @span;
 	my @panes = map {
 	    @$_ ? ansi_sprintf("%-*s", shift @span, shift @$_) : ();
 	} @_;
-	print      $obj->color_border('left',   $pos, $obj->current_page);
-	print join $obj->color_border('center', $pos, $obj->current_page),
+	print      $obj->color_border('left',   $pos, $page);
+	print join $obj->color_border('center', $pos, $page),
 	    map { $obj->color('TEXT', $_) } @panes;
-	print      $obj->color_border('right',  $pos, $obj->current_page);
+	print      $obj->color_border('right',  $pos, $page);
 	print      "\n";
     }
+
+    $print_border->('bottom', 2, \@bottom_labels);
     return $obj;
 }
 
