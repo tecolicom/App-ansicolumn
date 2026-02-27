@@ -42,7 +42,7 @@ cpanm --installdeps .
 
 主要なランタイム依存関係（cpanfileより）:
 - Getopt::EX (v2.2.1+) - モジュールローディング機能を持つ拡張可能なオプションフレームワーク
-- Getopt::EX::Hashed (1.06+) - ハッシュベースのオプション宣言
+- Getopt::EX::Hashed (1.07+) - ハッシュベースのオプション宣言
 - Getopt::EX::RPN (0.01+) - オプション値のRPN計算機
 - Text::ANSI::Fold (2.29+) - ANSI対応テキスト折り返し
 - Text::ANSI::Printf (2.07+) - ANSI対応printf

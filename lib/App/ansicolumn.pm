@@ -35,7 +35,7 @@ my %DEFAULT_COLORMAP = (
     TEXT          => '',
 );
 
-use Getopt::EX::Hashed 1.05; {
+use Getopt::EX::Hashed 1.07; {
 
     Getopt::EX::Hashed->configure( DEFAULT => [ is => 'rw' ] );
 
@@ -365,7 +365,7 @@ sub parallel_out {
 		ansi_sprintf $obj->filename_format, $_->{name};
 	    } @rows;
 	}
-	$column_out->({ span => \@span },
+	$column_out->({ span => \@span, names => [ map $_->{name}, @rows ] },
 	    map {
 		my $data = $_->{data};
 		my $length = @$data;
@@ -388,7 +388,7 @@ sub nup_out {
 	    ->set_contents($file)
 	    ->set_vertical($data)
 	    ->set_layout($data)
-	    ->page_out(@$data);
+	    ->page_out($file->{name}, @$data);
     }
     return $obj;
 }
@@ -499,6 +499,7 @@ sub set_vertical {
 
 sub page_out {
     my $obj = shift;
+    my $name = shift;
     my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @_; $obj->current_page++) {
 	my @columns = grep { @$_ } do {
@@ -508,7 +509,7 @@ sub page_out {
 		map { [ splice @_, 0, $obj->effective_height ] } 1 .. $obj->panes;
 	    }
 	};
-	$column_out->(@columns);
+	$column_out->({ names => [($name) x scalar @columns] }, @columns);
     }
     return $obj;
 }
@@ -530,6 +531,8 @@ sub _parse_labels {
 	}
 	$s =~ s/%n/%1\$d/g;
 	$s =~ s/%p/%2\$d/g;
+	$s =~ s/%f/%3\$s/g;
+	$s =~ s/%F/%4\$s/g;
 	$result{lc $key} = [ $offset, $s ];
     }
     %result ? \%result : 0;
@@ -539,9 +542,12 @@ sub _parse_labels {
 # $fs/$fe: fill region start/end.
 # $ml/$mr: border margin accessible via @0.
 # $n/$p: pane number / page number for sprintf expansion.
+# $file: filename (path as given) - used as %3$s (basename) and %4$s (path as given).
 sub _overlay_labels {
-    my($obj, $str, $fs, $fe, $ml, $mr, $n, $p, $left, $center, $right) = @_;
+    my($obj, $str, $fs, $fe, $ml, $mr, $n, $p, $file, $left, $center, $right) = @_;
+    use File::Basename qw(basename);
     use Text::ANSI::Fold::Util qw(ansi_substr);
+    my $base = defined $file ? basename($file) : '';
     for my $item (
 	[ $left,   sub { $fs - $ml + ($_[0] // $ml) } ],
 	[ $right,  sub { $fe + $mr - ($_[0] // $mr) - $_[1] } ],
@@ -551,7 +557,7 @@ sub _overlay_labels {
 	next unless $spec;
 	my $fmt = $spec->[1];
 	next unless defined $fmt && $fmt ne '';
-	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p) : $fmt;
+	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p, $base, $file // '') : $fmt;
 	my $lw = ansi_width($text);
 	my $label = $obj->color('BORDER_LABEL', $text);
 	$str = ansi_substr($str, $pos_fn->($spec->[0], $lw), $lw, $label);
@@ -586,7 +592,7 @@ sub _column_out {
 			my($fs, $fe) = ($fp, $fp + $span);
 			push @$pane_list, sub {
 			    $obj->_overlay_labels($_[0], $fs, $fe, $bw_l, $bw_r,
-				$_[1] + $i + 1, $_[2], @g);
+				$_[1] + $i + 1, $_[2], $_[3], @g);
 			};
 			$fp += $span + $bw_c;
 		    }
@@ -598,7 +604,7 @@ sub _column_out {
 		    push @$page_list, sub {
 			my $w = ansi_width($_[0]);
 			$obj->_overlay_labels($_[0], 1, $w - 1, 1, 1,
-			    $_[1] + 1, $_[2], @g);
+			    $_[1] + 1, $_[2], $_[3], @g);
 		    };
 		}
 	    }
@@ -618,7 +624,8 @@ sub _column_out {
     }
 
     my $print_border = sub {
-	my($side, $pos, $span, $npanes, $n0, $p, $pane_labels, $page_labels) = @_;
+	my($side, $pos, $span, $npanes, $n0, $p, $names,
+	   $pane_labels, $page_labels) = @_;
 	return unless $bd{$side};
 	my $bd = $border{$pos};
 	my $line = join '',
@@ -627,9 +634,12 @@ sub _column_out {
 		 map { $obj->color('BORDER', $bd{$side} x $_) } @$span),
 	    $bd->{right};
 	if (@$pane_labels) {
-	    $line = $_->($line, $n0, $p) for @{$pane_labels}[0 .. $npanes - 1];
+	    my $i = 0;
+	    for (@{$pane_labels}[0 .. $npanes - 1]) {
+		$line = $_->($line, $n0, $p, $names->[$i++] // '');
+	    }
 	}
-	$line = $_->($line, $n0, $p) for @$page_labels;
+	$line = $_->($line, $n0, $p, $names->[0] // '') for @$page_labels;
 	print $line, "\n";
     };
 
@@ -641,8 +651,9 @@ sub _column_out {
 
 	my($n0, $p) = $has_labels
 	    ? ($page * ($obj->panes // 1), $page + 1) : ();
+	my $names = $opt->{names} // [];
 
-	$print_border->('top', 0, \@span, $npanes, $n0, $p,
+	$print_border->('top', 0, \@span, $npanes, $n0, $p, $names,
 			 \@pane_top, \@page_top);
 
 	# content rows
@@ -663,7 +674,7 @@ sub _column_out {
 	    print      "\n";
 	}
 
-	$print_border->('bottom', 2, \@span, $npanes, $n0, $p,
+	$print_border->('bottom', 2, \@span, $npanes, $n0, $p, $names,
 			 \@pane_bottom, \@page_bottom);
 	$obj;
     };

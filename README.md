@@ -42,6 +42,8 @@ ansicolumn \[options\] \[file ...\]
     --runlen=#           set both run-in and run-out width
     --[no-]pagebreak     allow page break
     --border-style=#     border style
+    --label POS=TEXT         pane border label
+    --page-label POS=TEXT    page border label
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
     --[no-]isolation     page-end isolated line
@@ -520,17 +522,73 @@ default, from the standard input.
         },
         );
 
+- **--label** _position_=_string_
+
+    Place a label string on the border of each pane.  Requires `--border`
+    to be active.  The _position_ specifies where on the border the label
+    appears:
+
+        NW ------ N ------ NE
+        |                   |
+        SW ------ S ------ SE
+
+    Position names are case-insensitive.  This option can be specified
+    multiple times to set labels at different positions.
+
+        --label NW=Title --label SE=%n
+
+    The following placeholders are expanded:
+
+        %n    sequential pane number (1-based, across pages)
+        %p    page number (1-based)
+        %f    filename (basename only)
+        %F    filename (path as given)
+
+    By default, left labels (`NW`, `SW`) start just inside the fill
+    region, and right labels (`NE`, `SE`) end at the right edge of it.
+    Append `@`_N_ to the string to set an explicit offset from the
+    border corner.  `@0` places the label directly on the corner
+    character.
+
+        --label NW='Title@0'    # overwrite corner character
+        --label SE='%n@3'       # 3 columns from corner
+
+    Example with page mode:
+
+        seq 100 | ansicolumn -P --label SE=%n --2up
+
+    Use `--cm BORDER_LABEL=`_color_ to colorize labels:
+
+        seq 100 | ansicolumn -P --label SE=%n --cm BORDER_LABEL=RD --2up
+
+- **--page-label** _position_=_string_
+
+    Place a label string on the border of the entire page.  Unlike
+    `--label` which places labels on individual panes, this option places
+    a single label spanning the full-width border line.  Positions,
+    placeholders, and `@`_N_ offset syntax are the same as `--label`.
+
+    When both `--label` and `--page-label` are specified, pane labels
+    are applied first, then page labels are overlaid on top.
+
+        seq 100 | ansicolumn -P --label NW=Title --page-label SE=%p --2up
+
 - **--colormap**=_spec_, **--cm**=_spec_
 
     Specify color mapping.  This option can be used multiple times.
     The _spec_ is in the form of `LABEL=COLOR`.  Available labels are:
 
-        TEXT      text color
-        BORDER    border color
+        TEXT          text color
+        BORDER        border color
+        BORDER_LABEL  border label color
 
     For example, to set the border color to red:
 
         --cm=BORDER=R
+
+    To set the border label color:
+
+        --cm=BORDER_LABEL=RD
 
     See [Getopt::EX::Colormap](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3AColormap) for color specification details.
 

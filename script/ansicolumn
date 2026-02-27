@@ -567,6 +567,8 @@ The following placeholders are expanded:
 
     %n    sequential pane number (1-based, across pages)
     %p    page number (1-based)
+    %f    filename (basename only)
+    %F    filename (path as given)
 
 By default, left labels (C<NW>, C<SW>) start just inside the fill
 region, and right labels (C<NE>, C<SE>) end at the right edge of it.
