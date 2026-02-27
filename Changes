@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.5701 2026-02-27T04:54:36Z
+
+    - Fix pane numbering in parallel mode for --label %n
+
 1.57 2026-02-27T03:35:42Z
 
     - Add --label and --page-label options for border labels
