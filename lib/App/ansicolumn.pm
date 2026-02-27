@@ -35,7 +35,7 @@ my %DEFAULT_COLORMAP = (
     TEXT          => '',
 );
 
-use Getopt::EX::Hashed 1.07; {
+use Getopt::EX::Hashed 1.0701; {
 
     Getopt::EX::Hashed->configure( DEFAULT => [ is => 'rw' ] );
 
