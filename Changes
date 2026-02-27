@@ -2,6 +2,13 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.57 2026-02-27T03:35:42Z
+
+    - Add --label and --page-label options for border labels
+    - Support %f (basename) and %F (path) placeholders in labels
+    - Refactor column_out into _column_out factory pattern
+    - Require Getopt::EX::Hashed 1.07
+
 1.56 2026-02-25T06:20:54Z
 
     - Integrate formfeed handling into do_space_layout to fix page
