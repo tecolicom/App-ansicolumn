@@ -349,7 +349,7 @@ sub parallel_out {
     }
     $obj->set_contents($_) for @files;
     my $column_out = $obj->_column_out;
-    while (@files) {
+    for ($obj->current_page = 0; @files; $obj->current_page++) {
 	my @rows = splice @files, 0, $obj->pane;
 	my $max_length = max map { int @{$_->{data}} } @rows;
 	my @span = map { $_->{span} // $obj->span } @rows;
