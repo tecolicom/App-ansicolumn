@@ -2,6 +2,10 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.5702 2026-02-27T07:26:19Z
+
+    - Require Getopt::EX::Hashed 1.0701
+
 1.5701 2026-02-27T04:54:36Z
 
     - Fix pane numbering in parallel mode for --label %n
