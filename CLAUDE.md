@@ -93,6 +93,7 @@ cpanm --installdeps .
 - **Getopt::EX::Hashed**: すべてのオプションを has() DSL で宣言、自動的にgetter/setterを生成
 - **テキスト折り返し**: ANSIシーケンスを考慮した幅認識テキスト折り返しにText::ANSI::Foldを使用
 - **レイアウトエンジン**: ペイン幅を計算し、ボーダーを適用、ページネーションとfillupを処理
+- **ファクトリパターン**: `_column_out` はボーダー文字列・ラベルパース等の事前処理を行い、レンダリング用クロージャを返す。`page_out` と `parallel_out` はループ前に `$column_out = $obj->_column_out` で取得して再利用する
 - **拡張性**: ボーダースタイルは add_style() で追加可能、オプションは .ansicolumnrc で追加可能
 
 ## 設定ファイル

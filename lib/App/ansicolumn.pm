@@ -348,6 +348,7 @@ sub parallel_out {
 	}
     }
     $obj->set_contents($_) for @files;
+    my $column_out = $obj->_column_out;
     while (@files) {
 	my @rows = splice @files, 0, $obj->pane;
 	my $max_length = max map { int @{$_->{data}} } @rows;
@@ -364,8 +365,7 @@ sub parallel_out {
 		ansi_sprintf $obj->filename_format, $_->{name};
 	    } @rows;
 	}
-	$obj->column_out(
-	    { span => \@span },
+	$column_out->({ span => \@span },
 	    map {
 		my $data = $_->{data};
 		my $length = @$data;
@@ -499,6 +499,7 @@ sub set_vertical {
 
 sub page_out {
     my $obj = shift;
+    my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @_; $obj->current_page++) {
 	my @columns = grep { @$_ } do {
 	    if ($obj->fillrows) {
@@ -507,7 +508,7 @@ sub page_out {
 		map { [ splice @_, 0, $obj->effective_height ] } 1 .. $obj->panes;
 	    }
 	};
-	$obj->column_out(@columns);
+	$column_out->(@columns);
     }
     return $obj;
 }
@@ -558,46 +559,43 @@ sub _overlay_labels {
     $str;
 }
 
-sub column_out {
+sub _column_out {
     my $obj = shift;
-    my $opt = ref $_[0] eq 'HASH' ? shift : {};
-
-    # span list is given in parallel view mode
-    my @span = $opt->{span} ? @{$opt->{span}} : (($obj->{span}) x @_);
-    @span == @_ or die;
 
     my %bd = map { $_ => $obj->get_border($_) } qw(top bottom);
-    my $page = $obj->current_page // 0;
 
     my $bl  = $obj->{_bl}  //= _parse_labels($obj->label);
     my $pbl = $obj->{_pbl} //= _parse_labels($obj->page_label);
 
-    my(@top_labels, @bottom_labels);
+    # pre-build pane label closures per pane index
+    my(@pane_top, @pane_bottom, @page_top, @page_bottom);
+    my($bw_l, $bw_c, $bw_r);
     if ($bl || $pbl) {
-	my $bw_l = ansi_width($obj->get_border('left',   0, $page));
-	my $bw_c = ansi_width($obj->get_border('center', 0, $page));
-	my $bw_r = ansi_width($obj->get_border('right',  0, $page));
-	for my $set ([ \@top_labels,    qw(nw n ne) ],
-		     [ \@bottom_labels, qw(sw s se) ]) {
-	    my($list, @keys) = @$set;
+	$bw_l = ansi_width($obj->get_border('left',   0));
+	$bw_c = ansi_width($obj->get_border('center', 0));
+	$bw_r = ansi_width($obj->get_border('right',  0));
+	my $span = $obj->{span};
+	for my $set ([ \@pane_top, \@page_top, qw(nw n ne) ],
+		     [ \@pane_bottom, \@page_bottom, qw(sw s se) ]) {
+	    my($pane_list, $page_list, @keys) = @$set;
 	    if ($bl) {
 		my @g = map { $bl->{$_} } @keys;
 		if (grep { $_ } @g) {
 		    my $fp = $bw_l;
-		    for my $i (0..$#span) {
-			my($fs, $fe) = ($fp, $fp + $span[$i]);
-			push @$list, sub {
+		    for my $i (0 .. $obj->panes - 1) {
+			my($fs, $fe) = ($fp, $fp + $span);
+			push @$pane_list, sub {
 			    $obj->_overlay_labels($_[0], $fs, $fe, $bw_l, $bw_r,
 				$_[1] + $i + 1, $_[2], @g);
 			};
-			$fp += $span[$i] + $bw_c;
+			$fp += $span + $bw_c;
 		    }
 		}
 	    }
 	    if ($pbl) {
 		my @g = map { $pbl->{$_} } @keys;
 		if (grep { $_ } @g) {
-		    push @$list, sub {
+		    push @$page_list, sub {
 			my $w = ansi_width($_[0]);
 			$obj->_overlay_labels($_[0], 1, $w - 1, 1, 1,
 			    $_[1] + 1, $_[2], @g);
@@ -607,42 +605,68 @@ sub column_out {
 	}
     }
 
-    my($n0, $p) = @top_labels || @bottom_labels
-	? ($page * ($obj->panes // 1), $page + 1) : ();
+    my $has_labels = @pane_top || @pane_bottom || @page_top || @page_bottom;
+
+    # pre-build border strings for 3 positions (top=0, middle=1, bottom=2)
+    my %border;
+    for my $pos (0, 1, 2) {
+	$border{$pos} = {
+	    left   => $obj->color_border('left',   $pos),
+	    center => $obj->color_border('center', $pos),
+	    right  => $obj->color_border('right',  $pos),
+	};
+    }
 
     my $print_border = sub {
-	my($side, $pos, $labels) = @_;
+	my($side, $pos, $span, $npanes, $n0, $p, $pane_labels, $page_labels) = @_;
 	return unless $bd{$side};
+	my $bd = $border{$pos};
 	my $line = join '',
-	    $obj->color_border('left',   $pos, $page),
-	    join($obj->color_border('center', $pos, $page),
-		 map { $obj->color('BORDER', $bd{$side} x $_) } @span),
-	    $obj->color_border('right',  $pos, $page);
-	$line = $_->($line, $n0, $p) for @$labels;
+	    $bd->{left},
+	    join($bd->{center},
+		 map { $obj->color('BORDER', $bd{$side} x $_) } @$span),
+	    $bd->{right};
+	if (@$pane_labels) {
+	    $line = $_->($line, $n0, $p) for @{$pane_labels}[0 .. $npanes - 1];
+	}
+	$line = $_->($line, $n0, $p) for @$page_labels;
 	print $line, "\n";
     };
 
-    $print_border->('top', 0, \@top_labels);
+    sub {
+	my $opt = ref $_[0] eq 'HASH' ? shift : {};
+	my @span = $opt->{span} ? @{$opt->{span}} : (($obj->{span}) x @_);
+	my $page = $obj->current_page // 0;
+	my $npanes = scalar @_;
 
-    # content rows
-    my $max = max map $#{$_}, @_;
-    for my $i (0 .. $max) {
-	my $pos = !$bd{top} && $i == 0 ? 0
-		: !$bd{bottom} && $i == $max ? 2
-		: 1;
-	my @span = @span;
-	my @panes = map {
-	    @$_ ? ansi_sprintf("%-*s", shift @span, shift @$_) : ();
-	} @_;
-	print      $obj->color_border('left',   $pos, $page);
-	print join $obj->color_border('center', $pos, $page),
-	    map { $obj->color('TEXT', $_) } @panes;
-	print      $obj->color_border('right',  $pos, $page);
-	print      "\n";
-    }
+	my($n0, $p) = $has_labels
+	    ? ($page * ($obj->panes // 1), $page + 1) : ();
 
-    $print_border->('bottom', 2, \@bottom_labels);
-    return $obj;
+	$print_border->('top', 0, \@span, $npanes, $n0, $p,
+			 \@pane_top, \@page_top);
+
+	# content rows
+	my $max = max map $#{$_}, @_;
+	for my $i (0 .. $max) {
+	    my $pos = !$bd{top} && $i == 0 ? 0
+		    : !$bd{bottom} && $i == $max ? 2
+		    : 1;
+	    my $bd = $border{$pos};
+	    my @span = @span;
+	    my @panes = map {
+		@$_ ? ansi_sprintf("%-*s", shift @span, shift @$_) : ();
+	    } @_;
+	    print      $bd->{left};
+	    print join $bd->{center},
+		map { $obj->color('TEXT', $_) } @panes;
+	    print      $bd->{right};
+	    print      "\n";
+	}
+
+	$print_border->('bottom', 2, \@span, $npanes, $n0, $p,
+			 \@pane_bottom, \@page_bottom);
+	$obj;
+    };
 }
 
 sub _numbers {
