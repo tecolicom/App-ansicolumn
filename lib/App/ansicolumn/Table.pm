@@ -100,4 +100,66 @@ sub parse_cell_spec {
     \@fixed;
 }
 
+use Text::ANSI::Fold qw(:constants);
+use Text::ANSI::Fold::Util qw(ansi_width);
+
+#
+# table_fold($width)
+#
+# Text::ANSI::Fold object used to wrap table cells.  Word boundary
+# and full line-break (kinsoku) processing are on unless the user
+# chose otherwise.  Run-in characters need room, so the run-in width
+# is reserved as margin (clamped below the width; Text::ANSI::Fold
+# refuses margin >= width).
+#
+sub table_fold {
+    my($obj, $width) = @_;
+    my $lb = $obj->linebreak ? $obj->lb_flag : LINEBREAK_ALL;
+    my $margin = ($lb & LINEBREAK_RUNIN) ? max(0, min($obj->runin, $width - 1)) : 0;
+    my $fold = Text::ANSI::Fold->new(
+	width     => $width,
+	margin    => $margin,
+	boundary  => ($obj->boundary || 'word'),
+	linebreak => $lb,
+	runin     => $obj->runin,
+	runout    => $obj->runout,
+	ambiguous => $obj->ambiguous,
+	padchar   => $obj->padchar,
+	padding   => 0,
+	);
+    $fold->configure(discard => [ 'EL' ]) if $obj->discard_el;
+    $fold;
+}
+
+#
+# expand_table_rows(\@rows, \@target)
+#
+# Wrap cells wider than their target width and expand each logical
+# row into as many physical rows as its tallest cell.  Missing cell
+# lines are filled with empty strings.  Ragged rows stay ragged.
+#
+sub expand_table_rows {
+    my($obj, $rows, $target) = @_;
+    my %fold;
+    my @out;
+    for my $row (@$rows) {
+	my @cells = map {
+	    my($cell, $w) = ($row->[$_], $target->[$_]);
+	    if (defined $w and ansi_width($cell) > $w) {
+		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops;
+		s/\h+((?:\e\[[\d;]*m)*)$/$1/ for @chops;
+		@chops ? \@chops : [ '' ];
+	    } else {
+		[ $cell ];
+	    }
+	} keys @$row;
+	my $height = max(1, map { int @$_ } @cells);
+	push @out, map {
+	    my $k = $_;
+	    [ map { $_->[$k] // '' } @cells ];
+	} 0 .. $height - 1;
+    }
+    @out;
+}
+
 1;

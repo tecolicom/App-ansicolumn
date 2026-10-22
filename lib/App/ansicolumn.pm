@@ -713,6 +713,21 @@ sub table_out {
 	    0 .. max(map { $#$_ } @lines);
 	@$_ = @$_[@keep] for @lines;
     }
+    #
+    # -w / --cell: fit table into width, wrapping over-wide cells
+    #
+    my @fixed_width;
+    if (not $obj->table_align and not $obj->table_tabs
+	and (defined $obj->width or $obj->cell)) {
+	my @content = map { max @$_ } xpose map { [ map { ansi_width $_ } @$_ ] } @lines;
+	my $overhead = $obj->item_format ? ansi_width(ansi_sprintf($obj->item_format, '')) : 0;
+	my $sep = ansi_width($obj->output_separator);
+	my $fixed = $obj->cell ? parse_cell_spec($obj->cell, \@content) : undef;
+	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
+	my $target = table_widths(\@content, $budget, $overhead, $fixed, 4);
+	@lines = $obj->expand_table_rows(\@lines, $target);
+	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
+    }
     if (my $fmt = $obj->item_format) {
 	for my $line (@lines) {
 	    @$line = map { ansi_sprintf($fmt, $_) } @$line;
@@ -720,6 +735,9 @@ sub table_out {
     }
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max = map { max @$_ } xpose @length;
+    for my $i (grep { defined $fixed_width[$_] } keys @fixed_width) {
+	$max[$i] = max($max[$i] // 0, $fixed_width[$i]);
+    }
     if ($obj->table_align) {
 	my @tabs = map { roundup $_, $obj->column_unit, $obj->margin } @max;
 	#
