@@ -19,6 +19,7 @@ use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
+use App::ansicolumn::Table;
 use App::ansicolumn::Border;
 use Getopt::EX::RPN qw(rpn_calc);
 
