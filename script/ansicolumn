@@ -18,7 +18,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 ansicolumn [options] [file ...]
 
-    -w#, -c#             output width
+    -w#, -c#             output width (fit table width in -t mode)
     -s#                  separator string
     -l#                  maximum number of table columns
     -x                   exchange rows and columns
@@ -32,7 +32,7 @@ ansicolumn [options] [file ...]
     -V,  --parallel      parallel view mode
     -H,  --filename      print filename header in parallel view mode
     -I,  --ignore-empty  ignore empty files
-    -X#, --cell=#        set text width for files in parallel view mode
+    -X#, --cell=#        text width of files (parallel) or columns (table)
     -C#, --pane=#        number of panes
     -S#, --pane-width=#  pane width
     -W,  --widen         widen to terminal width
@@ -152,6 +152,9 @@ default, from the standard input.
 Output is formatted for a display I<#> columns wide.  See L</CALCULATION>
 section.
 
+In table mode (C<-t>), the table is fit into this width by wrapping
+cells of over-wide columns.  See the C<-t> option.
+
 Accepts C<-c> for compatibility, but C<-w> is more popular.
 
 =item B<-s>#, B<--separator>=#
@@ -168,6 +171,19 @@ with the characters supplied using the C<-s> option.  Useful for
 pretty-printing displays.
 
 Unlike the original L<column(1)> command, empty fields are not ignored.
+
+When the C<-w> option is given, the table is fit into that width.
+A table that already fits is not changed.  Otherwise, columns whose
+content fits keep their width, and the over-wide columns share the
+remaining width equally (the "water level" rule), so one very long
+column does not squeeze the others.  Cells in those columns are
+wrapped at word boundaries, with line-break rules for Japanese text,
+and tokens longer than the column are split.  Each wrapped column
+is at least 4 columns wide; if even that does not fit, the table
+overflows.  Per-column widths can be set with the C<--cell> option.
+Fitting is ignored with C<-A> and C<-T>.
+
+    $ ansicolumn -t -s '|' -w80 table.txt
 
 =item B<-l>#, B<--table-columns-limit>=#
 
@@ -325,10 +341,10 @@ Ignore empty files.  Default false.
 
 =item B<-X>#, B<--cell>=#
 
-Sets the display width of each file.  This option is only valid in
-parallel view mode.  For example, if you are displaying three files
-and want the first file to be displayed in 80 columns and the
-remaining files in 40 columns, specify it like this:
+Sets the display width of each file in parallel view mode, or of
+each column in table mode (see below).  For example, if you are
+displaying three files and want the first file to be displayed in 80
+columns and the remaining files in 40 columns, specify it like this:
 
     --cell 80,40,40
 
@@ -362,6 +378,20 @@ longest line they contain. C<=> may be followed by a maximum value.
 will set the cell width to the length of the longest line if it is less
 than 80, or to 80 if it is greater than 80.  C<< < >> may be used instead
 of C<=>.
+
+In table mode (C<-t>), the same notation sets the content width of
+each column, and cells wider than that are wrapped.  I<N> fixes the
+column to I<N> columns (padding it when the content is shorter),
+C<< <N >> caps it at I<N>, C<+N> and C<-N> are relative to the
+natural width of the column, and C<0> leaves the column to the
+automatic allocation.  As in parallel view mode, the last value is
+repeated for the remaining columns.
+
+    --cell '<30'      # no column wider than 30
+    --cell 0,0,20     # only the third column is limited
+
+When combined with C<-w>, columns set by C<--cell> are taken out of
+the budget and the remaining width is shared by the other columns.
 
     -X'<80'
 
