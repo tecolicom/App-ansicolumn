@@ -147,7 +147,7 @@ sub expand_table_rows {
 	    my($cell, $w) = ($row->[$_], $target->[$_]);
 	    if (defined $w and ansi_width($cell) > $w) {
 		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops;
-		s/\h+((?:\e\[[\d;]*m)*)$/$1/ for @chops;
+		s/\h+((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$1/ for @chops;
 		@chops ? \@chops : [ '' ];
 	    } else {
 		[ $cell ];

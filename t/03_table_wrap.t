@@ -160,6 +160,13 @@ is(ac->new('-t', '-A', '-w', 20)->exec("a bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n"),
 is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt', 't/data/para2.txt')->exec(''),
    read_text('t/data/parallel-baseline.txt'), 'parallel-unchanged');
 
+{
+    my $link = "\e]8;;https://example.com\e\\the quick brown fox jumps over the lazy dog\e]8;;\e\\";
+    my $o = out("|k|$link|\n" x 2, @T, q(-w), 30, q(--table-right=2), q(-o), q(|));
+    my @vis = map { s/\e\]8;;[^\e]*\e\\//gr } split /\n/, $o;
+    ok(@vis >= 4 && !(grep { /\h$/ } @vis), q(osc8-right: no trailing space hidden inside a hyperlink));
+}
+
 done_testing;
 
 __DATA__
