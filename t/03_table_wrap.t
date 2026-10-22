@@ -21,4 +21,18 @@ is_deeply(tw([50,50], -3, 0, undef, 4),       [4,4],        'budget-negative');
 is_deeply(tw([10,30,30], 40, 0, [undef,8,undef], 4), [10,8,22], 'fixed column removed from budget');
 is_deeply(tw([3,3], undef, 0, [20,undef], 4), [20,3],       'fixed without budget');
 
+######################################################################
+# parse_cell_spec: --cell in table mode
+######################################################################
+
+sub pc { App::ansicolumn::parse_cell_spec(@_) }
+
+is_deeply(pc(q(0,0,20), [5,5,50]),  [undef,undef,20], q(single constrained column));
+is_deeply(pc(q(<20),    [8,50]),    [8,20],           q(upper bound, last repeated));
+is_deeply(pc(q(20),     [8,50]),    [20,20],          q(fixed, last repeated));
+is_deeply(pc(q(-10,+2), [30,5]),    [20,7],           q(relative to content));
+is_deeply(pc(q(=),      [30]),      [30],             q(bare = is content width));
+is_deeply(pc(q(10,20,30), [5,5]),   [10,20],          q(extra entries ignored));
+eval { pc(q(abc), [5]) }; like($@, qr/^Invalid number: abc$/m, q(invalid token dies));
+
 done_testing;
