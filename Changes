@@ -2,6 +2,14 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.58 2026-10-24T09:34:29Z
+
+    - Fit tables into the -w width in table mode (-t): columns that fit
+      keep their width, over-wide columns share the remaining width
+      equally and their cells are wrapped by Text::ANSI::Fold
+    - Accept --cell in table mode to set fixed or capped widths per
+      column
+
 1.5702 2026-02-27T07:26:19Z
 
     - Require Getopt::EX::Hashed 1.0701
