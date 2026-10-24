@@ -152,15 +152,15 @@ default, from the standard input.
     Unlike the original [column(1)](http://man.he.net/man1/column) command, empty fields are not ignored.
 
     When the `-w` option is given, the table is fit into that width.
-    A table that already fits is not changed.  Otherwise, columns whose
-    content fits keep their width, and the over-wide columns share the
-    remaining width equally (the "water level" rule), so one very long
-    column does not squeeze the others.  Cells in those columns are
-    wrapped at word boundaries, with line-break rules for Japanese text,
-    and tokens longer than the column are split.  Each wrapped column
-    is at least 4 columns wide; if even that does not fit, the table
-    overflows.  Per-column widths can be set with the `--cell` option.
-    Fitting is ignored with `-A` and `-T`.
+    A table that already fits is left alone.  Otherwise the table is
+    narrowed by wrapping the cells of its wide columns: short columns
+    keep their width, long columns are cut to about the same width as
+    each other, and width that wrapping leaves unused is passed on to
+    the other columns.  Cells are wrapped at word boundaries, with
+    line-break (kinsoku) rules, and tokens longer than the column are
+    split.  A wrapped column is at least 4 columns wide; if even that
+    does not fit, the table overflows.  Per-column widths can be set
+    with the `--cell` option.  Fitting is ignored with `-A` and `-T`.
 
         $ ansicolumn -t -s '|' -w80 table.txt
 

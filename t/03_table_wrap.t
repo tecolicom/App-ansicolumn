@@ -20,6 +20,11 @@ is_deeply(tw([50,50,50], 10, 0, undef, 4),    [4,4,4],      'floor');
 is_deeply(tw([50,50], -3, 0, undef, 4),       [4,4],        'budget-negative');
 is_deeply(tw([10,30,30], 40, 0, [undef,8,undef], 4), [10,8,22], 'fixed column removed from budget');
 is_deeply(tw([3,3], undef, 0, [20,undef], 4), [20,3],       'fixed without budget');
+is_deeply(tw([6,12,60,300], 75, 0, undef, 4), [6,12,28,29], 'leftover: longest content first');
+is_deeply(tw([6,12,300,60], 75, 0, undef, 4), [6,12,29,28], 'leftover: follows content, not position');
+is_deeply(tw([6,12,60,60], 75, 0, undef, 4),  [6,12,29,28], 'leftover: tie goes to the left column');
+is_deeply(tw([30,30,30], 41, 0, [undef,8,undef], 4), [17,8,16], 'leftover: fixed column does not take it');
+is_deeply(tw([50,50,50], 11, 0, undef, 4),    [4,4,4],      'leftover: none below floor');
 
 ######################################################################
 # parse_cell_spec: --cell in table mode
@@ -80,7 +85,7 @@ for (
 
 {
     my $row = "|j|ああああああああああ。いいいいいいいいいい、ううう|\n";
-    my $o = out(encode_utf8($row x 3), @T, '-w', 24);
+    my $o = out($row x 3, @T, '-w', 24);
     ok(!(grep { $_ > 24 } widths($o)), 'japanese: within width');
     unlike($o, qr/^\s*[。、]/m, 'japanese: no closing punctuation at line start');
     unlike($o, qr/^j\s+[。、]/m, 'japanese: no closing punctuation at cell start');
@@ -165,6 +170,26 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     my $o = out("|k|$link|\n" x 2, @T, q(-w), 30, q(--table-right=2), q(-o), q(|));
     my @vis = map { s/\e\]8;;[^\e]*\e\\//gr } split /\n/, $o;
     ok(@vis >= 4 && !(grep { /\h$/ } @vis), q(osc8-right: no trailing space hidden inside a hyperlink));
+}
+
+{
+    # Column 1 wraps at a word boundary and leaves slack; column 2 is
+    # hard-wrapped.  The slack goes back to column 2.
+    my $in = "|aaaaaaaaaa bbbbbbbbbb|" . ("c" x 30) . "|\n" x 2;
+    my $o = out($in, @T, '-w', 30, '-o', '|');
+    my @r = cols($o);
+    ok(!(grep { ansi_width($_->[0]) != 10 } @r), 'redistribute: column 1 keeps its wrapped width');
+    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 17, 'redistribute: column 2 takes the slack');
+    ok(!(grep { $_ > 30 } widths($o)), 'redistribute: within width');
+}
+
+{
+    # Double-width characters cannot fill an odd width; being one
+    # column short is not slack, so both columns keep sharing.
+    my $in = "|" . ("\x{3042}" x 20) . "|" . ("c" x 40) . "|\n";
+    my $o = out($in, @T, q(-w), 30, q(-o), q(|));
+    my @r = cols($o);
+    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 12, 'parity: one column short is not slack');
 }
 
 done_testing;

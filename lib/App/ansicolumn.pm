@@ -724,8 +724,7 @@ sub table_out {
 	my $sep = ansi_width($obj->output_separator);
 	my $fixed = $obj->cell ? parse_cell_spec($obj->cell, \@content) : undef;
 	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
-	my $target = table_widths(\@content, $budget, $overhead, $fixed, 4);
-	@lines = $obj->expand_table_rows(\@lines, $target);
+	@lines = $obj->fit_table_rows(\@lines, \@content, $budget, $overhead, $fixed, 4);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
     }
     if (my $fmt = $obj->item_format) {
