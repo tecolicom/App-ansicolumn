@@ -2,6 +2,13 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.5801 2026-10-24T13:40:13Z
+
+    - Use the width that wrapped table columns leave unused: a column
+      whose lines break before the limit is fixed at its actual width
+      and the difference goes to the other wrapped columns; the
+      remainder of the equal share is handed out as well
+
 1.58 2026-10-24T09:34:29Z
 
     - Fit tables into the -w width in table mode (-t): columns that fit
