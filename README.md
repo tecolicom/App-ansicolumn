@@ -65,6 +65,7 @@ Table style options:
          --table-center=#  center table columns
     -K#, --table-remove=#  discard specified columns
          --item-format=#   apply sprintf format to each cell
+         --table-wrap-mark=# mark continuation lines of wrapped cells
          --table-squeeze   remove all-empty columns
          --padding         pad last column to full width
 
@@ -205,6 +206,17 @@ default, from the standard input.
     `--item-format=' %s '` adds a space before and after each cell.
     This is applied before column width calculation, so the padding
     is included in the column width.
+
+- **--table-wrap-mark**=_string_
+
+    When a cell is wrapped by `-w` or `--cell`, put _string_ at the
+    start of its second and later lines, so that a continuation line
+    can be told from a new row.  The mark takes the place of leading
+    space from `--item-format` as far as it is wide; with
+    `--item-format=' %s '` and a one-column mark such as `›` (U+203A), column
+    widths do not change.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-wrap-mark=› table.txt
 
 - **--table-remove**=#
 

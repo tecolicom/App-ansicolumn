@@ -76,6 +76,7 @@ Table style options:
          --table-center=#  center table columns
     -K#, --table-remove=#  discard specified columns
          --item-format=#   apply sprintf format to each cell
+         --table-wrap-mark=# mark continuation lines of wrapped cells
          --table-squeeze   remove all-empty columns
          --padding         pad last column to full width
 
@@ -226,6 +227,17 @@ Apply sprintf-style format to each cell content.  For example,
 C<--item-format=' %s '> adds a space before and after each cell.
 This is applied before column width calculation, so the padding
 is included in the column width.
+
+=item B<--table-wrap-mark>=I<string>
+
+When a cell is wrapped by C<-w> or C<--cell>, put I<string> at the
+start of its second and later lines, so that a continuation line
+can be told from a new row.  The mark takes the place of leading
+space from C<--item-format> as far as it is wide; with
+C<--item-format=' %s '> and a one-column mark such as C<›> (U+203A), column
+widths do not change.
+
+    $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-wrap-mark=› table.txt
 
 =item B<--table-remove>=#
 

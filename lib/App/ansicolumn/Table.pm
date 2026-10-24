@@ -153,14 +153,17 @@ sub table_fold {
 }
 
 #
-# expand_table_rows(\@rows, \@target)
+# expand_table_rows(\@rows, \@target, \@continued)
 #
 # Wrap cells wider than their target width and expand each logical
 # row into as many physical rows as its tallest cell.  Missing cell
 # lines are filled with empty strings.  Ragged rows stay ragged.
+# When \@continued is given, $continued[row][col] is set for every
+# cell that is the second or later line of a wrapped cell.
 #
 sub expand_table_rows {
-    my($obj, $rows, $target) = @_;
+    my($obj, $rows, $target, $continued) = @_;
+    @$continued = () if $continued;
     my %fold;
     my @out;
     for my $row (@$rows) {
@@ -175,16 +178,17 @@ sub expand_table_rows {
 	    }
 	} keys @$row;
 	my $height = max(1, map { int @$_ } @cells);
-	push @out, map {
-	    my $k = $_;
-	    [ map { $_->[$k] // '' } @cells ];
-	} 0 .. $height - 1;
+	for my $k (0 .. $height - 1) {
+	    push @out, [ map { $_->[$k] // '' } @cells ];
+	    next unless $continued and $k;
+	    $continued->[$#out][$_] = 1 for grep { defined $cells[$_][$k] } keys @cells;
+	}
     }
     @out;
 }
 
 #
-# fit_table_rows(\@rows, \@content, $budget, $overhead, \@fixed, $floor)
+# fit_table_rows(\@rows, \@content, $budget, $overhead, \@fixed, $floor, \@continued)
 #
 # Wrap the table into the budget.  Each round:
 #
@@ -203,17 +207,18 @@ sub expand_table_rows {
 # fill an odd width.  Each round fixes at least one more column or
 # stops, so the loop ends within (number of columns + 1) rounds.
 #
-# Returns the expanded rows.
+# Returns the expanded rows.  \@continued is passed to
+# expand_table_rows() and describes the rows returned.
 #
 sub fit_table_rows {
-    my($obj, $rows, $content, $budget, $overhead, $fixed, $floor) = @_;
+    my($obj, $rows, $content, $budget, $overhead, $fixed, $floor, $continued) = @_;
     my @fix = $fixed ? @$fixed : ();
     my @wrap;			# width each column was wrapped at
     my @out;
     while (1) {
 	my $target = table_widths($content, $budget, $overhead, \@fix, $floor);
 	my @width = map { $wrap[$_] // $target->[$_] } keys @$content;
-	@out = $obj->expand_table_rows($rows, \@width);
+	@out = $obj->expand_table_rows($rows, \@width, $continued);
 	my $changed = 0;
 	for my $i (keys @$content) {
 	    next if defined $fix[$i] or $content->[$i] <= $target->[$i];

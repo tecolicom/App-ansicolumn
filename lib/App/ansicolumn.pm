@@ -52,6 +52,7 @@ use Getopt::EX::Hashed 1.0701; {
     has table_right         => ' =s R    ' , default => '' ;
     has table_center        => ' =s      ' , default => '' ;
     has item_format         => ' =s      ' , default => '' ;
+    has table_wrap_mark     => ' =s      ' , default => '' ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
     has padding             => ' !       ' ;
@@ -717,6 +718,7 @@ sub table_out {
     # -w / --cell: fit table into width, wrapping over-wide cells
     #
     my @fixed_width;
+    my @continued;		# [row][col] true for a wrapped cell's 2nd+ line
     if (not $obj->table_align and not $obj->table_tabs
 	and (defined $obj->width or $obj->cell)) {
 	my @content = map { max @$_ } xpose map { [ map { ansi_width $_ } @$_ ] } @lines;
@@ -724,12 +726,24 @@ sub table_out {
 	my $sep = ansi_width($obj->output_separator);
 	my $fixed = $obj->cell ? parse_cell_spec($obj->cell, \@content) : undef;
 	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
-	@lines = $obj->fit_table_rows(\@lines, \@content, $budget, $overhead, $fixed, 4);
+	@lines = $obj->fit_table_rows(\@lines, \@content, $budget, $overhead, $fixed, 4, \@continued);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
     }
     if (my $fmt = $obj->item_format) {
 	for my $line (@lines) {
 	    @$line = map { ansi_sprintf($fmt, $_) } @$line;
+	}
+    }
+    #
+    # --table-wrap-mark: put the mark where a continuation line starts,
+    # in place of leading pad as far as the mark is wide
+    #
+    if ((my $mark = $obj->table_wrap_mark) ne '') {
+	my $mw = ansi_width($mark);
+	for my $r (grep { $continued[$_] } keys @continued) {
+	    for my $c (grep { $continued[$r][$_] } keys @{$continued[$r]}) {
+		$lines[$r][$c] =~ s/^\h{0,$mw}/$mark/;
+	    }
 	}
     }
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;

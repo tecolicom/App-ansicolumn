@@ -192,6 +192,20 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 12, 'parity: one column short is not slack');
 }
 
+{
+    # the mark is passed to the command as UTF-8 bytes
+    my @M = (q(-o), q(|), q(--table-wrap-mark), encode_utf8("\x{b7}"));
+    my @F = (q(--item-format= %s ));
+    my $o = out($tbl, @T, q(-w), 34, @M, @F);
+    like($o, qr/^\s+\|\x{b7}jumps over the lazy dog$/m, q(wrap-mark: replaces the leading pad of a continuation line));
+    like($o, qr/^ k1  \| the quick brown fox$/m, 'wrap-mark: first line keeps its pad');
+    like($o, qr/^ k2  \| short$/m, 'wrap-mark: unwrapped cell untouched');
+    is($o =~ s/\x{b7}/ /gr, out($tbl, @T, q(-w), 34, q(-o), q(|), @F), 'wrap-mark: widths unchanged');
+    like(out($tbl, @T, q(-w), 30, @M), qr/^\s+\|\x{b7}jumps over the lazy dog$/m, 'wrap-mark: prepended when there is no pad');
+    my $sgr = out("|k|\e[1mthe quick brown fox jumps over the lazy dog\e[m|\n", @T, q(-w), 34, @M, @F);
+    like($sgr, qr/^\s+\|\x{b7}\e\[1mover the lazy dog\e\[m$/m, q(wrap-mark: placed before the reopened SGR));
+}
+
 done_testing;
 
 __DATA__
