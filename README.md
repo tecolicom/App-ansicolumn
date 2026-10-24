@@ -7,7 +7,7 @@ ansicolumn - ANSI terminal sequence aware column command
 
 ansicolumn \[options\] \[file ...\]
 
-    -w#, -c#             output width
+    -w#, -c#             output width (fit table width in -t mode)
     -s#                  separator string
     -l#                  maximum number of table columns
     -x                   exchange rows and columns
@@ -21,7 +21,7 @@ ansicolumn \[options\] \[file ...\]
     -V,  --parallel      parallel view mode
     -H,  --filename      print filename header in parallel view mode
     -I,  --ignore-empty  ignore empty files
-    -X#, --cell=#        set text width for files in parallel view mode
+    -X#, --cell=#        text width of files (parallel) or columns (table)
     -C#, --pane=#        number of panes
     -S#, --pane-width=#  pane width
     -W,  --widen         widen to terminal width
@@ -131,6 +131,9 @@ default, from the standard input.
     Output is formatted for a display _#_ columns wide.  See ["CALCULATION"](#calculation)
     section.
 
+    In table mode (`-t`), the table is fit into this width by wrapping
+    cells of over-wide columns.  See the `-t` option.
+
     Accepts `-c` for compatibility, but `-w` is more popular.
 
 - **-s**#, **--separator**=#
@@ -147,6 +150,19 @@ default, from the standard input.
     pretty-printing displays.
 
     Unlike the original [column(1)](http://man.he.net/man1/column) command, empty fields are not ignored.
+
+    When the `-w` option is given, the table is fit into that width.
+    A table that already fits is not changed.  Otherwise, columns whose
+    content fits keep their width, and the over-wide columns share the
+    remaining width equally (the "water level" rule), so one very long
+    column does not squeeze the others.  Cells in those columns are
+    wrapped at word boundaries, with line-break rules for Japanese text,
+    and tokens longer than the column are split.  Each wrapped column
+    is at least 4 columns wide; if even that does not fit, the table
+    overflows.  Per-column widths can be set with the `--cell` option.
+    Fitting is ignored with `-A` and `-T`.
+
+        $ ansicolumn -t -s '|' -w80 table.txt
 
 - **-l**#, **--table-columns-limit**=#
 
@@ -299,10 +315,10 @@ default, from the standard input.
 
 - **-X**#, **--cell**=#
 
-    Sets the display width of each file.  This option is only valid in
-    parallel view mode.  For example, if you are displaying three files
-    and want the first file to be displayed in 80 columns and the
-    remaining files in 40 columns, specify it like this:
+    Sets the display width of each file in parallel view mode, or of
+    each column in table mode (see below).  For example, if you are
+    displaying three files and want the first file to be displayed in 80
+    columns and the remaining files in 40 columns, specify it like this:
 
         --cell 80,40,40
 
@@ -336,6 +352,20 @@ default, from the standard input.
     will set the cell width to the length of the longest line if it is less
     than 80, or to 80 if it is greater than 80.  `<` may be used instead
     of `=`.
+
+    In table mode (`-t`), the same notation sets the content width of
+    each column, and cells wider than that are wrapped.  _N_ fixes the
+    column to _N_ columns (padding it when the content is shorter),
+    `<N` caps it at _N_, `+N` and `-N` are relative to the
+    natural width of the column, and `0` leaves the column to the
+    automatic allocation.  As in parallel view mode, the last value is
+    repeated for the remaining columns.
+
+        --cell '<30'      # no column wider than 30
+        --cell 0,0,20     # only the third column is limited
+
+    When combined with `-w`, columns set by `--cell` are taken out of
+    the budget and the remaining width is shared by the other columns.
 
         -X'<80'
 
