@@ -80,7 +80,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.5801
+Version 1.59
 
 # DESCRIPTION
 

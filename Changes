@@ -2,6 +2,16 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.59 2026-10-25T04:35:51Z
+
+    - Add --table-wrap-mark to put a string at the start of the second
+      and later lines of a wrapped table cell in place of the leading
+      pad, so that column widths do not change
+    - Add --table-cell-mark to mark the first line of every non-empty
+      cell the same way when any cell of the table is wrapped; a table
+      with no wrapped cell is left as it is.  Marks on right- and
+      center-aligned cells sit at the left edge of the column
+
 1.5801 2026-10-24T13:40:13Z
 
     - Use the width that wrapped table columns leave unused: a column
