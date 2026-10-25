@@ -77,6 +77,7 @@ Table style options:
     -K#, --table-remove=#  discard specified columns
          --item-format=#   apply sprintf format to each cell
          --table-wrap-mark=# mark continuation lines of wrapped cells
+         --table-cell-mark=# mark the first line of every cell when wrapped
          --table-squeeze   remove all-empty columns
          --padding         pad last column to full width
 
@@ -238,6 +239,19 @@ C<--item-format=' %s '> and a one-column mark such as C<›> (U+203A), column
 widths do not change.
 
     $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-wrap-mark=› table.txt
+
+=item B<--table-cell-mark>=I<string>
+
+When any cell of the table is wrapped, put I<string> at the start
+of the first line of every non-empty cell, so that the lines where
+a row starts stand out from the continuation lines.  A table with
+no wrapped cell is left as it is.  The mark takes the place of
+leading space in the same way as B<--table-wrap-mark>.  Both can
+be used together.
+
+    $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=· table.txt
+
+The example uses C<·> (U+00B7).
 
 =item B<--table-remove>=#
 

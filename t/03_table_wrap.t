@@ -206,6 +206,41 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     like($sgr, qr/^\s+\|\x{b7}\e\[1mover the lazy dog\e\[m$/m, q(wrap-mark: placed before the reopened SGR));
 }
 
+{
+    # --table-cell-mark: the first line of every cell, wrapped or not
+    my @F = (q(-o), q(|), q(--item-format= %s ));
+    my @I = (q(--table-cell-mark=+));
+    my $o = out($tbl, @T, q(-w), 34, @F, @I);
+    like($o, qr/^\+k1  \|\+the quick brown fox$/m, q(cell-mark: replaces the leading pad of every cell));
+    like($o, qr/^\s+\| jumps over the lazy dog$/m, q(cell-mark: continuation line keeps its pad));
+    like($o, qr/^\+k2  \|\+short$/m, q(cell-mark: unwrapped cell is marked));
+    is($o =~ s/\+/ /gr, out($tbl, @T, q(-w), 34, @F), q(cell-mark: widths unchanged));
+    is(out($tbl, @T, @F, @I), out($tbl, @T, @F), q(cell-mark: a table with no wrapped cell is left alone));
+    is(out($tbl, @T, q(-w), 80, @F, @I), out($tbl, @T, @F), q(cell-mark: nor when -w is wide enough));
+    my $both = out($tbl, @T, q(-w), 34, @F, @I, q(--table-wrap-mark=-));
+    like($both, qr/^\s+\|-jumps over the lazy dog$/m, q(cell-mark: continuation line gets the wrap mark));
+    like($both, qr/^\+k1  \|\+the quick brown fox$/m, q(cell-mark: first line gets the cell mark));
+    like(out($tbl, @T, q(-w), 30, q(-o), q(|), @I), qr/^\+k1 \|\+the quick brown fox$/m, q(cell-mark: prepended when there is no pad));
+    is(out("|a||\n|bbbbbbbbbb|c|\n", @T, q(-o), q(|), q(--cell), q(5,0), @I), "+a   |\n+bbb |+c\nbbb  |\nbbb  |\nb    |\n", q(cell-mark: empty cells are not marked));
+}
+
+{
+    # marks stay at the left edge of the cell when the column is aligned
+    my @F = (q(-o), q(|), q(--item-format= %s ));
+    my $in = "|a|1|\n|bbb|22222|\n|c|the quick brown fox|\n";
+    my @C = (q(--cell), q(0,<9), q(--table-cell-mark=+));
+    is(out($in, @T, @F, @C, q(--table-right=2)),
+       "+a   |+        1\n+bbb |+    22222\n+c   |+      the\n     |     quick\n     |     brown\n     |       fox\n",
+       q(cell-mark: left edge of a right-aligned cell));
+    is(out($in, @T, @F, @C, q(--table-center=2)),
+       "+a   |+    1\n+bbb |+  22222\n+c   |+   the\n     |   quick\n     |   brown\n     |    fox\n",
+       q(cell-mark: left edge of a centered cell));
+    is(out("|k|the quick brown fox jumps over the lazy dog|\n|kk|short|\n",
+	   @T, @F, q(-w), 26, q(--table-right=2), q(--table-wrap-mark=-)),
+       " k  | the quick brown\n    |- fox jumps over\n    |-   the lazy dog\n kk |           short\n",
+       q(wrap-mark: left edge of a right-aligned cell));
+}
+
 done_testing;
 
 __DATA__

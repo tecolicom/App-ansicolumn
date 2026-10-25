@@ -53,6 +53,7 @@ use Getopt::EX::Hashed 1.0701; {
     has table_center        => ' =s      ' , default => '' ;
     has item_format         => ' =s      ' , default => '' ;
     has table_wrap_mark     => ' =s      ' , default => '' ;
+    has table_cell_mark     => ' =s      ' , default => '' ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
     has padding             => ' !       ' ;
@@ -729,6 +730,7 @@ sub table_out {
 	@lines = $obj->fit_table_rows(\@lines, \@content, $budget, $overhead, $fixed, 4, \@continued);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
     }
+    my @blank = map { [ map { $_ eq '' } @$_ ] } @lines;
     if (my $fmt = $obj->item_format) {
 	for my $line (@lines) {
 	    @$line = map { ansi_sprintf($fmt, $_) } @$line;
@@ -736,14 +738,25 @@ sub table_out {
     }
     #
     # --table-wrap-mark: put the mark where a continuation line starts,
-    # in place of leading pad as far as the mark is wide
+    # in place of leading pad as far as the mark is wide.
+    # --table-cell-mark: same for the first line of every non-empty cell,
+    # but only when the table has a continuation line to tell them from.
     #
-    if ((my $mark = $obj->table_wrap_mark) ne '') {
+    my @marked;			# [row][col] mark string, for alignment below
+    my $put_mark = sub {
+	my($mark, $r, $c) = @_;
 	my $mw = ansi_width($mark);
+	$lines[$r][$c] =~ s/^\h{0,$mw}/$mark/;
+	$marked[$r][$c] = $mark;
+    };
+    if ((my $mark = $obj->table_wrap_mark) ne '') {
 	for my $r (grep { $continued[$_] } keys @continued) {
-	    for my $c (grep { $continued[$r][$_] } keys @{$continued[$r]}) {
-		$lines[$r][$c] =~ s/^\h{0,$mw}/$mark/;
-	    }
+	    $put_mark->($mark, $r, $_) for grep { $continued[$r][$_] } keys @{$continued[$r]};
+	}
+    }
+    if ((my $mark = $obj->table_cell_mark) ne '' and grep { $_ } @continued) {
+	for my $r (grep { not $continued[$_] } keys @lines) {
+	    $put_mark->($mark, $r, $_) for grep { not $blank[$r][$_] } keys @{$lines[$r]};
 	}
     }
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
@@ -781,11 +794,19 @@ sub table_out {
 			     _numbers(max => int @max)->parse($_)->sequence
 			 } split /,/, $obj->table_center ] => '=');
     my @format = map { $align[$_] eq '=' ? "%-$max[$_]s" : "%$align[$_]$max[$_]s" } keys @max;
-    for my $line (@lines) {
+    for my $r (keys @lines) {
+	my $line = $lines[$r];
 	next unless @$line;
 	for my $i (keys @$line) {
-	    if ($align[$i] eq '=' and (my $w = ansi_width($line->[$i])) < $max[$i]) {
-		$line->[$i] = (' ' x int(($max[$i] - $w) / 2)) . $line->[$i];
+	    # Pad right/center aligned cells here, keeping a mark at the
+	    # left edge of the cell rather than in front of the content.
+	    next if $align[$i] eq '-';
+	    my $pad = $max[$i] - ansi_width($line->[$i]);
+	    next if $pad <= 0;
+	    $pad = int($pad / 2) if $align[$i] eq '=';
+	    $line->[$i] = (' ' x $pad) . $line->[$i];
+	    if (my $mark = $marked[$r][$i]) {
+		$line->[$i] =~ s/^(\h+)\Q$mark\E/$mark$1/;
 	    }
 	}
 	my @fmt = @format[keys @$line];
