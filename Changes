@@ -2,6 +2,11 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.60 2026-10-26T09:30:00Z
+
+    - --table-cell-mark marks only the columns that have a wrapped cell
+    - Add --table-head=N: header rows that --table-cell-mark leaves alone
+
 1.59 2026-10-25T04:35:51Z
 
     - Add --table-wrap-mark to put a string at the start of the second
