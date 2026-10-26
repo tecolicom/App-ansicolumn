@@ -13,7 +13,7 @@ jobs:
         perl: [ '5.40', '5.38', '5.30', '5.28', '5.18', '5.16' ]
     name: Perl ${{ matrix.perl }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup perl
         uses: shogo82148/actions-setup-perl@v1
         with:
