@@ -54,6 +54,7 @@ use Getopt::EX::Hashed 1.0701; {
     has item_format         => ' =s      ' , default => '' ;
     has table_wrap_mark     => ' =s      ' , default => '' ;
     has table_cell_mark     => ' =s      ' , default => '' ;
+    has table_head          => ' =i      ' , default => 0  ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
     has padding             => ' !       ' ;
@@ -739,8 +740,10 @@ sub table_out {
     #
     # --table-wrap-mark: put the mark where a continuation line starts,
     # in place of leading pad as far as the mark is wide.
-    # --table-cell-mark: same for the first line of every non-empty cell,
-    # but only when the table has a continuation line to tell them from.
+    # --table-cell-mark: same for the first line of every non-empty cell
+    # in a column that has a wrapped cell, so that a row start can be
+    # told from a continuation line; the first --table-head rows (a
+    # wrapped row counting as one) are a header and get no mark.
     #
     my @marked;			# [row][col] mark string, for alignment below
     my $put_mark = sub {
@@ -755,8 +758,14 @@ sub table_out {
 	}
     }
     if ((my $mark = $obj->table_cell_mark) ne '' and grep { $_ } @continued) {
+	my %wrapped;
+	for my $r (grep { $continued[$_] } keys @continued) {
+	    $wrapped{$_}++ for grep { $continued[$r][$_] } keys @{$continued[$r]};
+	}
+	my $row = 0;		# logical row number of a non-continuation line
 	for my $r (grep { not $continued[$_] } keys @lines) {
-	    $put_mark->($mark, $r, $_) for grep { not $blank[$r][$_] } keys @{$lines[$r]};
+	    next if $row++ < $obj->table_head;
+	    $put_mark->($mark, $r, $_) for grep { $wrapped{$_} and not $blank[$r][$_] } keys @{$lines[$r]};
 	}
     }
     my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;

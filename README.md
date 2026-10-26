@@ -66,7 +66,8 @@ Table style options:
     -K#, --table-remove=#  discard specified columns
          --item-format=#   apply sprintf format to each cell
          --table-wrap-mark=# mark continuation lines of wrapped cells
-         --table-cell-mark=# mark the first line of every cell when wrapped
+         --table-cell-mark=# mark the first line of cells in wrapped columns
+         --table-head=#     header rows, not marked by --table-cell-mark
          --table-squeeze   remove all-empty columns
          --padding         pad last column to full width
 
@@ -221,16 +222,26 @@ default, from the standard input.
 
 - **--table-cell-mark**=_string_
 
-    When any cell of the table is wrapped, put _string_ at the start
-    of the first line of every non-empty cell, so that the lines where
-    a row starts stand out from the continuation lines.  A table with
-    no wrapped cell is left as it is.  The mark takes the place of
-    leading space in the same way as **--table-wrap-mark**.  Both can
-    be used together.
+    When a cell of the table is wrapped, put _string_ at the start of
+    the first line of every non-empty cell in the columns that have a
+    wrapped cell, so that the lines where a row starts stand out from the
+    continuation lines.  Columns without a wrapped cell, and a table with
+    no wrapped cell, are left as they are.  The mark takes the place of
+    leading space in the same way as **--table-wrap-mark**.  Both can be
+    used together.
 
-        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=· table.txt
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ table.txt
 
-    The example uses `·` (U+00B7).
+    The example uses `‣` (U+2023).
+
+- **--table-head**=_N_
+
+    Treat the first _N_ rows as a header: **--table-cell-mark** leaves
+    them alone.  A row whose cell is wrapped still counts as one row.  A
+    Markdown pipe table passed with its separator row is a header of two
+    rows.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ --table-head=2 table.md
 
 - **--table-remove**=#
 

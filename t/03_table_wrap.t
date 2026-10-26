@@ -207,21 +207,49 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
 }
 
 {
-    # --table-cell-mark: the first line of every cell, wrapped or not
+    # --table-cell-mark: the first line of every non-empty cell in a column
+    # that has a wrapped cell; other columns are left alone
     my @F = (q(-o), q(|), q(--item-format= %s ));
     my @I = (q(--table-cell-mark=+));
     my $o = out($tbl, @T, q(-w), 34, @F, @I);
-    like($o, qr/^\+k1  \|\+the quick brown fox$/m, q(cell-mark: replaces the leading pad of every cell));
+    like($o, qr/^ k1  \|\+the quick brown fox$/m, q(cell-mark: replaces the leading pad in the wrapped column));
     like($o, qr/^\s+\| jumps over the lazy dog$/m, q(cell-mark: continuation line keeps its pad));
-    like($o, qr/^\+k2  \|\+short$/m, q(cell-mark: unwrapped cell is marked));
+    like($o, qr/^ k2  \|\+short$/m, q(cell-mark: unwrapped cell of a wrapped column is marked));
+    unlike($o, qr/^\+/m, q(cell-mark: a column with no wrapped cell is not marked));
+    like($o, qr/^ key \|\+description$/m, q(cell-mark: the first row is marked like any other without --table-head));
     is($o =~ s/\+/ /gr, out($tbl, @T, q(-w), 34, @F), q(cell-mark: widths unchanged));
     is(out($tbl, @T, @F, @I), out($tbl, @T, @F), q(cell-mark: a table with no wrapped cell is left alone));
     is(out($tbl, @T, q(-w), 80, @F, @I), out($tbl, @T, @F), q(cell-mark: nor when -w is wide enough));
     my $both = out($tbl, @T, q(-w), 34, @F, @I, q(--table-wrap-mark=-));
     like($both, qr/^\s+\|-jumps over the lazy dog$/m, q(cell-mark: continuation line gets the wrap mark));
-    like($both, qr/^\+k1  \|\+the quick brown fox$/m, q(cell-mark: first line gets the cell mark));
-    like(out($tbl, @T, q(-w), 30, q(-o), q(|), @I), qr/^\+k1 \|\+the quick brown fox$/m, q(cell-mark: prepended when there is no pad));
-    is(out("|a||\n|bbbbbbbbbb|c|\n", @T, q(-o), q(|), q(--cell), q(5,0), @I), "+a   |\n+bbb |+c\nbbb  |\nbbb  |\nb    |\n", q(cell-mark: empty cells are not marked));
+    like($both, qr/^ k1  \|\+the quick brown fox$/m, q(cell-mark: first line gets the cell mark));
+    like(out($tbl, @T, q(-w), 30, q(-o), q(|), @I), qr/^k1 \|\+the quick brown fox$/m, q(cell-mark: prepended when there is no pad));
+    is(out("|a||\n|bbbbbbbbbb|c|\n", @T, q(-o), q(|), q(--cell), q(5,0), @I), "+a   |\n+bbb |c\nbbb  |\nbbb  |\nb    |\n", q(cell-mark: empty cells are not marked, nor the unwrapped column));
+    my $two = out("|aaaaaaaaaa|bbbbbbbbbb|\n|c|d|\n", @T, @F, q(--cell), q(6,6), @I);
+    like($two, qr/^\+a+\s*\|\+b+\s*$/m, q(cell-mark: every column that wrapped is marked));
+    like($two, qr/^\+c\s+\|\+d\s*$/m, q(cell-mark: unwrapped cells of both wrapped columns are marked));
+}
+
+{
+    # --table-head=N: the first N rows are a header and get no cell mark;
+    # a row that wraps is still one row
+    my @F = (q(-o), q(|), q(--item-format= %s ));
+    my @I = (q(--table-cell-mark=+));
+    my $o = out($tbl, @T, q(-w), 34, @F, @I, q(--table-head=1));
+    like($o, qr/^ key \| description$/m, q(table-head: the header row is not marked));
+    like($o, qr/^ k1  \|\+the quick brown fox$/m, q(table-head: body rows are marked));
+    like($o, qr/^ k2  \|\+short$/m, q(table-head: all body rows are marked));
+    my $sep = "|key|description|\n|-|-|\n|k1|the quick brown fox jumps over the lazy dog|\n";
+    my $s = out($sep, @T, q(-w), 34, @F, @I, q(--table-head=2));
+    like($s, qr/^ key \| description$/m, q(table-head=2: the header row is not marked));
+    like($s, qr/^ -   \| -$/m, q(table-head=2: the separator row is not marked));
+    like($s, qr/^ k1  \|\+the quick brown fox$/m, q(table-head=2: the body row is marked));
+    my $long = "|key|a long header that wraps|\n|-|-|\n|k1|the quick brown fox jumps over the lazy dog|\n";
+    my $w = out($long, @T, q(-w), 30, @F, @I, q(--table-head=2));
+    unlike($w, qr/^\+| \+[^|]*$/m, q(table-head: no mark in the header rows even when the header wraps));
+    like($w, qr/^ k1  \|\+the quick/m, q(table-head: a wrapped header still counts as one row));
+    is(out($tbl, @T, q(-w), 34, @F, @I, q(--table-head=0)), out($tbl, @T, q(-w), 34, @F, @I), q(table-head=0: same as no --table-head));
+    is(out($tbl, @T, @F, q(--table-head=1)), out($tbl, @T, @F), q(table-head: no effect without a mark));
 }
 
 {
@@ -230,10 +258,10 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     my $in = "|a|1|\n|bbb|22222|\n|c|the quick brown fox|\n";
     my @C = (q(--cell), q(0,<9), q(--table-cell-mark=+));
     is(out($in, @T, @F, @C, q(--table-right=2)),
-       "+a   |+        1\n+bbb |+    22222\n+c   |+      the\n     |     quick\n     |     brown\n     |       fox\n",
+       " a   |+        1\n bbb |+    22222\n c   |+      the\n     |     quick\n     |     brown\n     |       fox\n",
        q(cell-mark: left edge of a right-aligned cell));
     is(out($in, @T, @F, @C, q(--table-center=2)),
-       "+a   |+    1\n+bbb |+  22222\n+c   |+   the\n     |   quick\n     |   brown\n     |    fox\n",
+       " a   |+    1\n bbb |+  22222\n c   |+   the\n     |   quick\n     |   brown\n     |    fox\n",
        q(cell-mark: left edge of a centered cell));
     is(out("|k|the quick brown fox jumps over the lazy dog|\n|kk|short|\n",
 	   @T, @F, q(-w), 26, q(--table-right=2), q(--table-wrap-mark=-)),
