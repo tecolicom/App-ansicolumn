@@ -6,6 +6,10 @@ use Test::More 0.98;
 use lib './t';
 use App::ansicolumn;
 
+# do not read the rc file of the user
+use File::Spec;
+$ENV{HOME} = File::Spec->rel2abs('t/home');
+
 ######################################################################
 # table_widths: water-level allocation
 ######################################################################
