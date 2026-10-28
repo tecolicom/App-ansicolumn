@@ -2,6 +2,12 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.61 2026-10-28T11:51:39Z
+
+    - Set Getopt::EX config options for each call, so that ansicolumn
+      called as a function in another program works with its own rc file
+    - Require Getopt::EX 3.04
+
 1.60 2026-10-26T09:30:00Z
 
     - --table-cell-mark marks only the columns that have a wrapped cell
