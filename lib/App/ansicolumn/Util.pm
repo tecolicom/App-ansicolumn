@@ -111,24 +111,47 @@ sub do_space_layout {
     my($dp) = @_;
     my $height = $obj->effective_height || die;
     return if $height <= 0;
-    my $pagebreak = $obj->pagebreak;
-    for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
-	# Handle formfeed within the current page
-	if ($pagebreak) {
-	    use List::Util qw(first);
-	    my $end = $top + $height;
-	    $end = @$dp if $end > @$dp;
-	    if (defined(my $i = first { $dp->[$_] =~ /\f/ } $top .. $end - 1)) {
-		$dp->[$i] =~ s/^([^\f]*)\f// or die;
-		splice @$dp, $i, ($dp->[$i] eq '' ? 1 : 0), ($1 ne '' ? $1 : ());
-		my $lines = ($i - $top) + ($1 ne '' ? 1 : 0);
-		if ($lines > 0) {
-		    my $fill = $height - $lines;
-		    splice @$dp, $top + $lines, 0, ($obj->fillup_str) x $fill if $fill > 0;
-		}
-		next;
-	    }
+    # A formfeed moves to the next pane.  Split the lines at formfeeds
+    # and lay out each part by itself, so that moving lines within a
+    # part never carries a formfeed into a pane already laid out.
+    my @part = $obj->pagebreak ? split_formfeed(@$dp) : [ @$dp ];
+    @$dp = ();
+    for my $i (keys @part) {
+	$obj->space_layout($part[$i], $height);
+	push @$dp, @{$part[$i]};
+	# every part but the last ends at the bottom of a pane
+	_fillup($dp, $height, $obj->fillup_str) if $i < $#part;
+    }
+    return $obj;
+}
+
+#
+# Split lines into parts at formfeeds.  Text before a formfeed ends
+# the part and text after it begins the next part.  When the text
+# before or after a formfeed is an empty string, it is not added as a
+# line ("\f" alone adds no line).  Empty lines without a formfeed are
+# kept.
+#
+sub split_formfeed {
+    my @part = ([]);
+    for my $line (@_) {
+	if ($line !~ /\f/) {
+	    push @{$part[-1]}, $line;
+	    next;
 	}
+	my @piece = split /\f/, $line, -1;
+	for my $j (keys @piece) {
+	    push @part, [] if $j > 0;
+	    push @{$part[-1]}, $piece[$j] if $piece[$j] ne '';
+	}
+    }
+    @part;
+}
+
+sub space_layout {
+    my $obj = shift;
+    my($dp, $height) = @_;
+    for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
 	if ($height >= 4 and $top > 2 and !$obj->isolation) {
 	    if ($dp->[$top - 2] !~ /\S/ and
 		$dp->[$top - 1] =~ /\S/
