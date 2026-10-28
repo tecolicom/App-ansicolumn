@@ -9,8 +9,6 @@ use Encode;
 use open IO => 'utf8', ':std';
 use Pod::Usage;
 use Getopt::EX::Long qw(:DEFAULT Configure ExConfigure);
-ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
-Configure qw(bundling no_auto_abbrev no_ignore_case);
 
 use Data::Dumper;
 use List::Util qw(max sum min any);
@@ -223,6 +221,8 @@ sub list_tabstyle {
 sub perform {
     my $obj = shift;
     local @ARGV = decode_argv(@_);
+    ExConfigure BASECLASS => [ __PACKAGE__, "Getopt::EX" ];
+    Configure qw(bundling no_auto_abbrev no_ignore_case);
     $obj->getopt || pod2usage(2);
 
     $obj->setup_options;
