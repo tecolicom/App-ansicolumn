@@ -2,6 +2,14 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.62 2026-10-29T06:01:53Z
+
+    - Wrap a table cell that fits only by reaching into the run-in
+      margin, in a column that has wrapped cells, as lines in panes are
+    - Make table output faster by measuring each cell only once
+    - Require Text::ANSI::Fold 2.35
+    - Gather the table options in a TABLE OPTIONS section of the manual
+
 1.6101 2026-10-28T12:58:53Z
 
     - Fix a formfeed left in the output when blank lines at the top
