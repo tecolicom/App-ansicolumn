@@ -721,20 +721,37 @@ sub table_out {
     #
     my @fixed_width;
     my @continued;		# [row][col] true for a wrapped cell's 2nd+ line
+    my @length;			# [row][col] width of the cell
     if (not $obj->table_align and not $obj->table_tabs
 	and (defined $obj->width or $obj->cell)) {
-	my @content = map { max @$_ } xpose map { [ map { ansi_width $_ } @$_ ] } @lines;
+	my @cw = map { [ map { ansi_width $_ } @$_ ] } @lines;
+	my @content = map { max @$_ } xpose @cw;
 	my $overhead = $obj->item_format ? ansi_width(ansi_sprintf($obj->item_format, '')) : 0;
 	my $sep = ansi_width($obj->output_separator);
 	my $fixed = $obj->cell ? parse_cell_spec($obj->cell, \@content) : undef;
 	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
-	@lines = $obj->fit_table_rows(\@lines, \@content, $budget, $overhead, $fixed, 4, \@continued);
+	@lines = $obj->fit_table_rows(\@lines, \@cw, \@content, $budget, $overhead, $fixed, 4, \@continued, \@length);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
     }
     my @blank = map { [ map { $_ eq '' } @$_ ] } @lines;
+    @length = map { [ map { ansi_width $_ } @$_ ] } @lines unless @length;
     if (my $fmt = $obj->item_format) {
-	for my $line (@lines) {
-	    @$line = map { ansi_sprintf($fmt, $_) } @$line;
+	# A format with a single %s only adds text around the cell, so
+	# it is put by hand and the width of the text is added.
+	if (my($pre, $post) = $fmt =~ /\A([^%]*+)%s([^%]*+)\z/) {
+	    my $add = ansi_width($pre . $post);
+	    for my $r (keys @lines) {
+		my $line = $lines[$r];
+		for my $c (keys @$line) {
+		    $line->[$c] = defined $line->[$c] ? "$pre$line->[$c]$post" : ansi_sprintf($fmt, undef);
+		    $length[$r][$c] += $add;
+		}
+	    }
+	} else {
+	    for my $line (@lines) {
+		@$line = map { ansi_sprintf($fmt, $_) } @$line;
+	    }
+	    @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
 	}
     }
     #
@@ -750,6 +767,7 @@ sub table_out {
 	my($mark, $r, $c) = @_;
 	my $mw = ansi_width($mark);
 	$lines[$r][$c] =~ s/^\h{0,$mw}/$mark/;
+	$length[$r][$c] = ansi_width($lines[$r][$c]);
 	$marked[$r][$c] = $mark;
     };
     if ((my $mark = $obj->table_wrap_mark) ne '') {
@@ -768,7 +786,6 @@ sub table_out {
 	    $put_mark->($mark, $r, $_) for grep { $wrapped{$_} and not $blank[$r][$_] } keys @{$lines[$r]};
 	}
     }
-    my @length = map { [ map { ansi_width $_ } @$_ ] } @lines;
     my @max = map { max @$_ } xpose @length;
     for my $i (grep { defined $fixed_width[$_] } keys @fixed_width) {
 	$max[$i] = max($max[$i] // 0, $fixed_width[$i]);
@@ -810,18 +827,30 @@ sub table_out {
 	    # Pad right/center aligned cells here, keeping a mark at the
 	    # left edge of the cell rather than in front of the content.
 	    next if $align[$i] eq '-';
-	    my $pad = $max[$i] - ansi_width($line->[$i]);
+	    my $pad = $max[$i] - $length[$r][$i];
 	    next if $pad <= 0;
 	    $pad = int($pad / 2) if $align[$i] eq '=';
 	    $line->[$i] = (' ' x $pad) . $line->[$i];
+	    $length[$r][$i] += $pad;
 	    if (my $mark = $marked[$r][$i]) {
 		$line->[$i] =~ s/^(\h+)\Q$mark\E/$mark$1/;
 	    }
 	}
 	my @fmt = @format[keys @$line];
 	$fmt[$#fmt] = '%s' if $align[$#fmt] ne '' and !$obj->padding;
-	my $format = join($obj->output_separator, @fmt) . "\n";
-	ansi_printf $format, @$line;
+	if (grep { not defined } @$line) {
+	    my $format = join($obj->output_separator, @fmt) . "\n";
+	    ansi_printf $format, @$line;
+	    next;
+	}
+	# the width of every cell is known: pad it here
+	my @out = map {
+	    my $space = ' ' x ($max[$_] - $length[$r][$_]);
+	    $fmt[$_] eq '%s'    ? $line->[$_]
+	  : $align[$_] eq ''   ? $space . $line->[$_]
+	  :                      $line->[$_] . $space;
+	} keys @$line;
+	print join($obj->output_separator, @out), "\n";
     }
     return $obj;
 }

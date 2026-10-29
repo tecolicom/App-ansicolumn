@@ -153,11 +153,14 @@ sub table_fold {
 }
 
 #
-# expand_table_rows(\@rows, \@target, \@content, \@continued)
+# expand_table_rows(\@rows, \@rw, \@target, \@content, \@continued, \@ow)
 #
 # Wrap cells wider than their target width and expand each logical
 # row into as many physical rows as its tallest cell.  Missing cell
 # lines are filled with empty strings.  Ragged rows stay ragged.
+# \@rw holds the width of every cell of \@rows, and \@ow is set to
+# the width of every cell of the rows returned, so that no cell is
+# measured twice.
 # When \@continued is given, $continued[row][col] is set for every
 # cell that is the second or later line of a wrapped cell.
 #
@@ -167,8 +170,9 @@ sub table_fold {
 # fitting in the margin is not left longer than the wrapped lines.
 #
 sub expand_table_rows {
-    my($obj, $rows, $target, $content, $continued) = @_;
+    my($obj, $rows, $rw, $target, $content, $continued, $ow) = @_;
     @$continued = () if $continued;
+    @$ow = ();
     my @limit = map {
 	my($i, $w) = ($_, $target->[$_]);
 	!defined $w ? undef :
@@ -176,20 +180,31 @@ sub expand_table_rows {
     } keys @$target;
     my %fold;
     my @out;
-    for my $row (@$rows) {
+    for my $r (keys @$rows) {
+	my $row = $rows->[$r];
+	my @widths;
 	my @cells = map {
-	    my($cell, $w) = ($row->[$_], $target->[$_]);
-	    if (defined $w and ansi_width($cell) > $limit[$_]) {
-		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops;
-		s/\h+((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$1/ for @chops;
-		@chops ? \@chops : [ '' ];
+	    my($cell, $w, $cw) = ($row->[$_], $target->[$_], $rw->[$r][$_]);
+	    if (defined $w and $cw > $limit[$_]) {
+		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops(length => \my @length);
+		for my $k (keys @chops) {
+		    # trailing spaces are removed, and so is their width
+		    $chops[$k] =~ s/(\h+)((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$2/ or next;
+		    my $sp = $1;
+		    $length[$k] = $sp =~ /^ +$/ ? $length[$k] - length $sp : ansi_width($chops[$k]);
+		}
+		@chops or do { @chops = (''); @length = (0) };
+		$widths[$_] = \@length;
+		\@chops;
 	    } else {
+		$widths[$_] = [ $cw ];
 		[ $cell ];
 	    }
 	} keys @$row;
 	my $height = max(1, map { int @$_ } @cells);
 	for my $k (0 .. $height - 1) {
 	    push @out, [ map { $_->[$k] // '' } @cells ];
+	    push @$ow, [ map { $_->[$k] // 0 } @widths ];
 	    next unless $continued and $k;
 	    $continued->[$#out][$_] = 1 for grep { defined $cells[$_][$k] } keys @cells;
 	}
@@ -198,7 +213,7 @@ sub expand_table_rows {
 }
 
 #
-# fit_table_rows(\@rows, \@content, $budget, $overhead, \@fixed, $floor, \@continued)
+# fit_table_rows(\@rows, \@rw, \@content, $budget, $overhead, \@fixed, $floor, \@continued, \@ow)
 #
 # Wrap the table into the budget.  Each round:
 #
@@ -217,23 +232,24 @@ sub expand_table_rows {
 # fill an odd width.  Each round fixes at least one more column or
 # stops, so the loop ends within (number of columns + 1) rounds.
 #
-# Returns the expanded rows.  \@continued is passed to
-# expand_table_rows() and describes the rows returned.
+# Returns the expanded rows.  \@rw, \@continued and \@ow are passed
+# to expand_table_rows(); \@continued and \@ow describe the rows
+# returned.
 #
 sub fit_table_rows {
-    my($obj, $rows, $content, $budget, $overhead, $fixed, $floor, $continued) = @_;
+    my($obj, $rows, $rw, $content, $budget, $overhead, $fixed, $floor, $continued, $ow) = @_;
     my @fix = $fixed ? @$fixed : ();
     my @wrap;			# width each column was wrapped at
     my @out;
     while (1) {
 	my $target = table_widths($content, $budget, $overhead, \@fix, $floor);
 	my @width = map { $wrap[$_] // $target->[$_] } keys @$content;
-	@out = $obj->expand_table_rows($rows, \@width, $content, $continued);
+	@out = $obj->expand_table_rows($rows, $rw, \@width, $content, $continued, $ow);
 	my $changed = 0;
 	for my $i (keys @$content) {
 	    next if defined $fix[$i] or $content->[$i] <= $target->[$i];
 	    my $usable = $target->[$i] - $obj->table_margin($target->[$i]);
-	    my $measured = max 0, map { ansi_width($_->[$i] // q()) } @out;
+	    my $measured = max 0, map { $_->[$i] // 0 } @$ow;
 	    next if $measured >= $usable - 1;
 	    $fix[$i] = $measured;
 	    $wrap[$i] = $target->[$i];
