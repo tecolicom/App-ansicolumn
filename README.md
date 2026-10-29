@@ -167,6 +167,9 @@ default, from the standard input.
 
         $ ansicolumn -t -s '|' -w80 table.txt
 
+    Options to align, format and mark the table are described in
+    ["TABLE OPTIONS"](#table-options).
+
 - **-l**#, **--table-columns-limit**=#
 
     Specify the maximum number of input columns.  The last column will
@@ -188,88 +191,8 @@ default, from the standard input.
 
 - **-R**#, **--table-right**=#
 
-    Right align text in the specified columns.  Multiple columns are separated by
-    commas.  Only numbers are supported.
-
-    Parameters are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module, so you can
-    specify a range of numbers, as in `-R2:5` which is equivalent to
-    `-R2,3,4,5`. Option `-R:` makes all fields right-aligned.
-
-- **--table-center**=#
-
-    Center text in the specified columns.  Column specification is the same
-    as `--table-right`.  When the remaining space is odd, the extra space
-    is placed on the right side (i.e., the text is shifted slightly to the
-    left).
-
-- **--item-format**=#
-
-    Apply sprintf-style format to each cell content.  For example,
-    `--item-format=' %s '` adds a space before and after each cell.
-    This is applied before column width calculation, so the padding
-    is included in the column width.
-
-- **--table-wrap-mark**=_string_
-
-    When a cell is wrapped by `-w` or `--cell`, put _string_ at the
-    start of its second and later lines, so that a continuation line
-    can be told from a new row.  The mark takes the place of leading
-    space from `--item-format` as far as it is wide; with
-    `--item-format=' %s '` and a one-column mark such as `›` (U+203A), column
-    widths do not change.
-
-        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-wrap-mark=› table.txt
-
-- **--table-cell-mark**=_string_
-
-    When a cell of the table is wrapped, put _string_ at the start of
-    the first line of every non-empty cell in the columns that have a
-    wrapped cell, so that the lines where a row starts stand out from the
-    continuation lines.  Columns without a wrapped cell, and a table with
-    no wrapped cell, are left as they are.  The mark takes the place of
-    leading space in the same way as **--table-wrap-mark**.  Both can be
-    used together.
-
-        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ table.txt
-
-    The example uses `‣` (U+2023).
-
-- **--table-head**=_N_
-
-    Treat the first _N_ rows as a header: **--table-cell-mark** leaves
-    them alone.  A row whose cell is wrapped still counts as one row.  A
-    Markdown pipe table passed with its separator row is a header of two
-    rows.
-
-        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ --table-head=2 table.md
-
-- **--table-remove**=#
-
-    Discard specified columns.  Column numbers are 1-based, and
-    negative numbers count from the end (`-0` is the last column,
-    `-1` is the second to last).  Multiple columns are separated by
-    commas.  Ranges can be specified as `1:3`.
-
-    For example, `--table-remove=1,-0` removes the first and last
-    columns.  This is useful when processing pipe-delimited data with
-    border characters where the leading and trailing delimiters create
-    extra columns.
-
-    Column numbers are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module.
-
-- **--table-squeeze**
-
-    Remove columns where all items are empty.  This is useful when
-    processing pipe-delimited data with border characters (e.g.,
-    Markdown tables `| col1 | col2 |`, MySQL output), where the
-    leading and trailing `|` create empty columns.
-
-- **--padding**
-
-    Pad the last column to its full width.  Normally the last column
-    is not padded to avoid trailing whitespace, but this option forces
-    all columns including the last to be padded to their calculated
-    width.
+    Right align text in the specified columns.  See **--table-right** in
+    ["TABLE OPTIONS"](#table-options).
 
 ## EXTENDED OPTIONS
 
@@ -472,23 +395,6 @@ default, from the standard input.
     Each column has at least a single character margin on the right side so
     that they are not placed back-to-back.  This option specifies the
     margin width.
-
-- **-A**, **--table-align**
-
-    Align each field in the table output to the column unit.  If this option
-    is specified, the `--output-separator` option is ignored.
-    Implicitly enables the `--table` option.
-
-- **-T**, **-TT**, **--table-tabs**
-
-    This option enables the `--table` and `--table-align` options, and
-    forces the use of tab characters between items.  The tab width uses the
-    value of `--column-unit`.  The `--table-right` and `--table-center`
-    options do not take effect.
-
-    If the `-T` option is specified twice, the input separator is set to
-    repeating tabs (same as `-rs '\t+'`).  Thus, the `-TT` option can be
-    used to reformat tab-aligned text.
 
 - **--linestyle**=`none`|`truncate`|`wrap`|`wordwrap`, **--ls**=`...`
 
@@ -709,6 +615,112 @@ default, from the standard input.
 
     Split file content by formfeed characters, and treat each part as an
     individual file.  Use with the `--parallel` option.
+
+## TABLE OPTIONS
+
+These options work with the `-t` option.
+
+- **-A**, **--table-align**
+
+    Align each field in the table output to the column unit.  If this option
+    is specified, the `--output-separator` option is ignored.
+    Implicitly enables the `--table` option.
+
+- **-T**, **-TT**, **--table-tabs**
+
+    This option enables the `--table` and `--table-align` options, and
+    forces the use of tab characters between items.  The tab width uses the
+    value of `--column-unit`.  The `--table-right` and `--table-center`
+    options do not take effect.
+
+    If the `-T` option is specified twice, the input separator is set to
+    repeating tabs (same as `-rs '\t+'`).  Thus, the `-TT` option can be
+    used to reformat tab-aligned text.
+
+- **-R**#, **--table-right**=#
+
+    Right align text in the specified columns.  Multiple columns are separated by
+    commas.  Only numbers are supported.
+
+    Parameters are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module, so you can
+    specify a range of numbers, as in `-R2:5` which is equivalent to
+    `-R2,3,4,5`. Option `-R:` makes all fields right-aligned.
+
+- **--table-center**=#
+
+    Center text in the specified columns.  Column specification is the same
+    as `--table-right`.  When the remaining space is odd, the extra space
+    is placed on the right side (i.e., the text is shifted slightly to the
+    left).
+
+- **--item-format**=#
+
+    Apply sprintf-style format to each cell content.  For example,
+    `--item-format=' %s '` adds a space before and after each cell.
+    This is applied before column width calculation, so the padding
+    is included in the column width.
+
+- **--table-wrap-mark**=_string_
+
+    When a cell is wrapped by `-w` or `--cell`, put _string_ at the
+    start of its second and later lines, so that a continuation line
+    can be told from a new row.  The mark takes the place of leading
+    space from `--item-format` as far as it is wide; with
+    `--item-format=' %s '` and a one-column mark such as `›` (U+203A), column
+    widths do not change.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-wrap-mark=› table.txt
+
+- **--table-cell-mark**=_string_
+
+    When a cell of the table is wrapped, put _string_ at the start of
+    the first line of every non-empty cell in the columns that have a
+    wrapped cell, so that the lines where a row starts stand out from the
+    continuation lines.  Columns without a wrapped cell, and a table with
+    no wrapped cell, are left as they are.  The mark takes the place of
+    leading space in the same way as **--table-wrap-mark**.  Both can be
+    used together.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ table.txt
+
+    The example uses `‣` (U+2023).
+
+- **--table-head**=_N_
+
+    Treat the first _N_ rows as a header: **--table-cell-mark** leaves
+    them alone.  A row whose cell is wrapped still counts as one row.  A
+    Markdown pipe table passed with its separator row is a header of two
+    rows.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ --table-head=2 table.md
+
+- **-K**#, **--table-remove**=#
+
+    Discard specified columns.  Column numbers are 1-based, and
+    negative numbers count from the end (`-0` is the last column,
+    `-1` is the second to last).  Multiple columns are separated by
+    commas.  Ranges can be specified as `1:3`.
+
+    For example, `--table-remove=1,-0` removes the first and last
+    columns.  This is useful when processing pipe-delimited data with
+    border characters where the leading and trailing delimiters create
+    extra columns.
+
+    Column numbers are parsed by the [Getopt::EX::Numbers](https://metacpan.org/pod/Getopt%3A%3AEX%3A%3ANumbers) module.
+
+- **--table-squeeze**
+
+    Remove columns where all items are empty.  This is useful when
+    processing pipe-delimited data with border characters (e.g.,
+    Markdown tables `| col1 | col2 |`, MySQL output), where the
+    leading and trailing `|` create empty columns.
+
+- **--padding**
+
+    Pad the last column to its full width.  Normally the last column
+    is not padded to avoid trailing whitespace, but this option forces
+    all columns including the last to be padded to their calculated
+    width.
 
 # DEFAULT ALIASES
 
