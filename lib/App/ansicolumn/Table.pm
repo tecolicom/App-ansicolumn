@@ -153,7 +153,7 @@ sub table_fold {
 }
 
 #
-# expand_table_rows(\@rows, \@target, \@continued)
+# expand_table_rows(\@rows, \@target, \@content, \@continued)
 #
 # Wrap cells wider than their target width and expand each logical
 # row into as many physical rows as its tallest cell.  Missing cell
@@ -161,15 +161,25 @@ sub table_fold {
 # When \@continued is given, $continued[row][col] is set for every
 # cell that is the second or later line of a wrapped cell.
 #
+# In a column that has a cell wider than the target (its widest cell,
+# $content[col], is wider), every cell wider than the target minus the
+# run-in margin is wrapped, as lines are in panes, so that a cell
+# fitting in the margin is not left longer than the wrapped lines.
+#
 sub expand_table_rows {
-    my($obj, $rows, $target, $continued) = @_;
+    my($obj, $rows, $target, $content, $continued) = @_;
     @$continued = () if $continued;
+    my @limit = map {
+	my($i, $w) = ($_, $target->[$_]);
+	!defined $w ? undef :
+	$content->[$i] > $w ? $w - $obj->table_margin($w) : $w;
+    } keys @$target;
     my %fold;
     my @out;
     for my $row (@$rows) {
 	my @cells = map {
 	    my($cell, $w) = ($row->[$_], $target->[$_]);
-	    if (defined $w and ansi_width($cell) > $w) {
+	    if (defined $w and ansi_width($cell) > $limit[$_]) {
 		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops;
 		s/\h+((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$1/ for @chops;
 		@chops ? \@chops : [ '' ];
@@ -218,7 +228,7 @@ sub fit_table_rows {
     while (1) {
 	my $target = table_widths($content, $budget, $overhead, \@fix, $floor);
 	my @width = map { $wrap[$_] // $target->[$_] } keys @$content;
-	@out = $obj->expand_table_rows($rows, \@width, $continued);
+	@out = $obj->expand_table_rows($rows, \@width, $content, $continued);
 	my $changed = 0;
 	for my $i (keys @$content) {
 	    next if defined $fix[$i] or $content->[$i] <= $target->[$i];
