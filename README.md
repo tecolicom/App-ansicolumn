@@ -406,10 +406,14 @@ default, from the standard input.
 
 - **--boundary**=`none`|`word`|`space`
 
-    Set text wrap boundary.  If set to `word` or `space`, text is not
-    wrapped in the middle of an alphanumeric word or non-space sequence.
-    The `--document` option sets this to `word`.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold) for
-    details.
+    Set text wrap boundary.  If set to `word`, text is not wrapped in
+    the middle of an alphanumeric word, and with `space`, not in the
+    middle of a non-space sequence.  With `none`, a line is wrapped
+    wherever the width is reached, subject to the line break rules.
+    By default the boundary is not set, which works as `none`; the
+    `--document` option and table cell wrapping (`-t -w`) then use
+    `word`, unless `none` is given explicitly.  See [Text::ANSI::Fold](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AFold)
+    for details.
 
 - **--linebreak**=`none`|`all`|`runin`|`runout`, **--lb**=...
 

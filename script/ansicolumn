@@ -432,10 +432,14 @@ C<--boundary=word> at once.
 
 =item B<--boundary>=C<none>|C<word>|C<space>
 
-Set text wrap boundary.  If set to C<word> or C<space>, text is not
-wrapped in the middle of an alphanumeric word or non-space sequence.
-The C<--document> option sets this to C<word>.  See L<Text::ANSI::Fold> for
-details.
+Set text wrap boundary.  If set to C<word>, text is not wrapped in
+the middle of an alphanumeric word, and with C<space>, not in the
+middle of a non-space sequence.  With C<none>, a line is wrapped
+wherever the width is reached, subject to the line break rules.
+By default the boundary is not set, which works as C<none>; the
+C<--document> option and table cell wrapping (C<-t -w>) then use
+C<word>, unless C<none> is given explicitly.  See L<Text::ANSI::Fold>
+for details.
 
 =item B<--linebreak>=C<none>|C<all>|C<runin>|C<runout>, B<--lb>=...
 
