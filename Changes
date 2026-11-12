@@ -2,6 +2,16 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.6201 2026-11-12T11:12:03Z
+
+    - End with a message when the text is not consumed while tabs
+      are expanded: a formfeed in a color, as bat gives for a line
+      with a formfeed alone, made ansicolumn run forever
+    - Require Text::ANSI::Fold 2.3901, which handles such a formfeed
+    - Describe the default of --boundary and the value none in the
+      manual; --document and table cell wrapping use word when it is
+      not set
+
 1.62 2026-10-29T06:01:53Z
 
     - Wrap a table cell that fits only by reaching into the run-in
