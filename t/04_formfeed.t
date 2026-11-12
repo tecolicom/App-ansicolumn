@@ -48,4 +48,17 @@ END
 # --no-pagebreak: a formfeed is not a pane break.
 unlike(panes("a\fb\n", '--no-pagebreak'), qr/^b/m, '--no-pagebreak');
 
+# A formfeed in a color, as bat gives for a line with a formfeed alone.
+# It once made the tab expansion run forever (Text::ANSI::Fold before
+# 2.3901 gave the same text back as the rest).  The layout around it
+# is not defined, but the text has to come out.
+{
+    local $SIG{ALRM} = sub { die "timeout\n" };
+    alarm 30;
+    my $out = eval { panes("\e[31ma\e[m\n\e[31m\f\e[m\n\e[31mb\e[m\n") };
+    alarm 0;
+    is($@, '', 'formfeed in a color ends');
+    like($out // '', qr/a.*b/s, 'formfeed in a color: the text comes out');
+}
+
 done_testing;
