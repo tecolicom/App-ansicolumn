@@ -438,6 +438,11 @@ sub expand_tab {
 	    $result .= $folded;
 	    $length = $len if $len > $length;
 	    $result .= "\f" if $rest =~ s/^\f//;
+	    # every turn must take something from the text; otherwise
+	    # this loop never ends
+	    $rest eq '' or $rest ne $_ or die sprintf
+		"Text is not consumed, at %s (please report this).\n",
+		$rest =~ s/([^\x20-\x7e])/sprintf '\\x{%02x}', ord $1/ger;
 	    $_ = $rest;
 	} while ($_ ne '');
 	$_ = $result;
