@@ -437,7 +437,8 @@ sub expand_tab {
 	    (my $folded, my $rest, my $len) = ansi_fold $_, -1, expand => 1;
 	    $result .= $folded;
 	    $length = $len if $len > $length;
-	    $result .= "\f" if $rest =~ s/^\f//;
+	    # ansi_fold stops before formfeeds in the middle of the text
+	    $result .= $1 if $rest =~ s/^(\f+)//;
 	    # every turn must take something from the text; otherwise
 	    # this loop never ends
 	    $rest eq '' or $rest ne $_ or die sprintf
