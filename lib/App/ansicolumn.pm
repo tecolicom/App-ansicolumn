@@ -232,11 +232,11 @@ sub perform {
     my @files = $obj->read_files(@ARGV ? @ARGV : '-') or return 1;
 
     if ($obj->ignore_empty) {
-	@files = grep { @{$_->{data}} > 0 } @files;
+	@files = grep { grep { @$_ } @{$_->{parts}} } @files;
     }
 
     if ($obj->table) {
-	my @lines = map { @{$_->{data}} } @files;
+	my @lines = map { map { @$_ } @{$_->{parts}} } @files;
 	$obj->table_out(@lines);
     }
     elsif ($obj->parallel) {
@@ -352,6 +352,9 @@ sub parallel_out {
 	}
     }
     $obj->set_contents($_) for @files;
+    # a file has one part here: formfeeds make parts only with --pages,
+    # and then every part is a file
+    $_->{data} = $_->{parts}->[0] for @files;
     my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @files; $obj->current_page++) {
 	my @rows = splice @files, 0, $obj->pane;
@@ -386,13 +389,13 @@ sub nup_out {
     my $max_length = max map { $_->{length} } @files;
     $obj->set_horizontal($max_length);
     for my $file (@files) {
-	my $data = $file->{data};
-	next if @$data == 0;
-	clone($obj)
-	    ->set_contents($file)
-	    ->set_vertical($data)
-	    ->set_layout($data)
-	    ->page_out($file->{name}, @$data);
+	my @part = @{$file->{parts}};
+	next if not grep { @$_ } @part;
+	my $page = clone($obj)->set_contents($file);
+	my @data;
+	$page->set_vertical([ map { @$_ } @part ])
+	    ->set_layout(\@data, @part);
+	$page->page_out($file->{name}, @data);
     }
     return $obj;
 }
@@ -406,26 +409,45 @@ sub read_files {
 	    warn "$file: $!\n" if $!;
 	    next;
 	};
-	my @data = $obj->pages ? split(/\f/, $content) : $content;
-	for my $data (@data) {
-	    my @line = split /(?!\f)\R/, $data;
-	    @line = insert_space @line if $obj->paragraph;
-	    my $length = do {
+	my @part = $obj->read_parts($content);
+	# with --pages, every part is a file of its own
+	for my $parts ($obj->pages ? (map { [ $_ ] } @part) : \@part) {
+	    my @length;
+	    for my $line (@$parts) {
 		if ($obj->table) {
-		    max map length, @line;
+		    push @length, map length, @$line;
 		} else {
-		    $obj->expand_tab(\@line, \my @length);
-		    max @length;
+		    $obj->expand_tab($line, \@length);
 		}
-	    };
+	    }
 	    push @files, {
 		name   => $file,
-		length => $length // 0,
-		data   => \@line,
+		length => max(@length) // 0,
+		parts  => $parts,
 	    };
 	}
     }
     @files;
+}
+
+#
+# Split the content of a file into parts at formfeeds, and each part
+# into lines as a file is.  No formfeed is left in the lines, so that
+# what handles the text later never meets one.
+#
+# The content is one part, with the formfeeds left in the text, when
+# a formfeed is not a break: with --no-pagebreak, and in the table and
+# the parallel view, where the panes are not filled.  --pages makes
+# parts in any case.
+#
+sub read_parts {
+    my $obj = shift;
+    my $content = shift;
+    my $break = $obj->pagebreak && !$obj->parallel && !$obj->table;
+    map {
+	my @line = split /(?!\f)\R/;
+	$obj->paragraph ? [ insert_space @line ] : \@line;
+    } $obj->pages || $break ? split_formfeed($content) : $content;
 }
 
 sub expand_tab {
@@ -482,14 +504,13 @@ sub set_horizontal {
 sub set_contents {
     my $obj = shift;
     my $fp = shift;
-    my $dp = $fp->{data};
     (my $cell_width = $obj->span) < 1
 	and die "Not enough space.\n";
     # Fold long lines
     if ($obj->linestyle and $obj->linestyle ne 'none') {
 	my $w = $fp->{span} // $cell_width;
 	my $fold = $obj->foldsub($w) or die;
-	@$dp = map { $fold->($_) } @$dp;
+	@$_ = map { $fold->($_) } @$_ for @{$fp->{parts}};
     }
     return $obj;
 }

@@ -436,6 +436,18 @@ default, from the standard input.
     Move to the next pane when a form feed character is found.
     Default is true.
 
+    The text is divided at form feeds, and each part is read as a file
+    is.  The text before a form feed ends a pane, and what follows it
+    begins the next one: when a newline follows, the pane begins with an
+    empty line, which `--no-white-space` removes.  Put the form feed at
+    the top of the first line of the next part to have no such line.  A
+    part without a line makes no empty pane.
+
+    The colors just before a form feed, and a reset just after it, go with
+    the form feed.  A color is not carried over a form feed.  This is not
+    done with `--parallel` and `--table`, where a form feed is left in
+    the text.
+
 - **-r**, **--regex-sep**
 
     Treat the separator option as a regex pattern.  The following example specifies a
@@ -619,6 +631,10 @@ default, from the standard input.
 
     Split file content by formfeed characters, and treat each part as an
     individual file.  Use with the `--parallel` option.
+
+    The content is divided as with `--pagebreak`.  A part without a line
+    is a file without a line, and keeps its place in the parallel view,
+    except the one after the last form feed.
 
 ## TABLE OPTIONS
 

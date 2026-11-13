@@ -49,4 +49,20 @@ b
 d
 END
 
+# the newline after a formfeed is an empty line at the top of the part
+is(pages("a\n\f\nb\n"), <<'END', 'a formfeed alone on a line');
+a
+          b
+END
+
+# a formfeed in a color, as bat gives, is the same as a plain one
+is(pages("\e[31ma\e[m\n\e[31m\f\e[m\n\e[31mb\e[m\n") =~ s/\e\[[\d;]*m//gr, <<'END', 'a formfeed in a color');
+a
+          b
+END
+
+# -V without --pages does not fill panes, and leaves a formfeed in the text
+like(ac->new(qw(-V --no-filename --border=none -c30))->exec("a\fb\n"), qr/^\fb/m,
+     'a formfeed is left in the parallel view');
+
 done_testing;
