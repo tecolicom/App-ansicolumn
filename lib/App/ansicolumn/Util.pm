@@ -128,32 +128,6 @@ sub do_space_layout {
     return $obj;
 }
 
-#
-# Split text into parts at formfeeds.  A formfeed is the end of the
-# part before it and the top of the next: what follows it, a newline
-# as well, belongs to the next part.  No part is made after the last
-# formfeed when nothing follows it.
-#
-# The colors just before a formfeed, and a reset just after it, are
-# for the formfeed and go with it: bat gives a formfeed alone as
-# "\e[38;2;...m\f\e[0m".  Colors are not carried over a formfeed, as
-# they are not over a newline.
-#
-sub split_formfeed {
-    my $text = shift;
-    state $sgr = qr/\e\[[\d;:]*m/;
-    # Remove the colors just before a formfeed and a reset just after
-    # it.  Without this, what bat gives leaves a line of a color alone
-    # at the end of the part ("\e[38;2;...m"), which is counted as a
-    # line, and a line of a reset alone at the top of the next part
-    # ("\e[0m"), which --no-white-space does not take as a blank line:
-    # every page of "nup bat" would begin a line lower than it should.
-    # A color just after a formfeed is for the text and is left.
-    $text =~ s/(?:$sgr)*\f(?:\e\[0*m)*/\f/g;
-    my @part = split /\f/, $text;
-    @part ? @part : '';
-}
-
 sub space_layout {
     my $obj = shift;
     my($dp, $height) = @_;

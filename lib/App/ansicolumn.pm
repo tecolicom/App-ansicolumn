@@ -17,6 +17,7 @@ use Text::ANSI::Fold qw(ansi_fold);
 use Text::ANSI::Fold::Util qw(ansi_width);
 use Text::ANSI::Printf qw(ansi_printf ansi_sprintf);
 use App::ansicolumn::Util;
+use App::ansicolumn::Document;
 use App::ansicolumn::Table;
 use App::ansicolumn::Border;
 use Getopt::EX::RPN qw(rpn_calc);
@@ -232,11 +233,11 @@ sub perform {
     my @files = $obj->read_files(@ARGV ? @ARGV : '-') or return 1;
 
     if ($obj->ignore_empty) {
-	@files = grep { grep { @$_ } @{$_->{parts}} } @files;
+	@files = grep { not $_->is_empty } @files;
     }
 
     if ($obj->table) {
-	my @lines = map { map { @$_ } @{$_->{parts}} } @files;
+	my @lines = map { $_->lines } @files;
 	$obj->table_out(@lines);
     }
     elsif ($obj->parallel) {
@@ -328,7 +329,7 @@ sub parallel_out {
     my $obj = shift;
     my @files = @_;
 
-    my $max_line_length = max map { $_->{length} } @files;
+    my $max_line_length = max map { $_->width } @files;
     $obj->pane ||= @files;
     $obj->set_horizontal($max_line_length);
 
@@ -342,24 +343,22 @@ sub parallel_out {
 		$span < 0 and die "Invalid number: $cell\n";
 	    }
 	    elsif ($span =~ s/^(<=|[<=])//) {
-		my $length = $files[$i]->{length};
+		my $length = $files[$i]->width;
 		$span = $span ? min($length, $span) : $length;
 	    }
 	    elsif ($span !~ /^\d+$/) {
 		die "Invalid number: $cell\n";
 	    }
-	    $files[$i]->{span} = $span;
+	    $files[$i]->span($span);
 	}
     }
     $obj->set_contents($_) for @files;
-    # a file has one part here: formfeeds make parts only with --pages,
-    # and then every part is a file
-    $_->{data} = $_->{parts}->[0] for @files;
     my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @files; $obj->current_page++) {
 	my @rows = splice @files, 0, $obj->pane;
-	my $max_length = max map { int @{$_->{data}} } @rows;
-	my @span = map { $_->{span} // $obj->span } @rows;
+	my @data = map { [ $_->lines ] } @rows;
+	my $max_length = max map { int @$_ } @data;
+	my @span = map { $_->span // $obj->span } @rows;
 	if ($obj->filename) {
 	    my $w = $obj->span + $obj->border_width('center');
 	    my $format = join '', (
@@ -369,16 +368,14 @@ sub parallel_out {
 		} @span[0..$#span-1]),
 		"%s\n");
 	    ansi_printf $format, map {
-		ansi_sprintf $obj->filename_format, $_->{name};
+		ansi_sprintf $obj->filename_format, $_->name;
 	    } @rows;
 	}
-	$column_out->({ span => \@span, names => [ map $_->{name}, @rows ] },
+	$column_out->({ span => \@span, names => [ map $_->name, @rows ] },
 	    map {
-		my $data = $_->{data};
-		my $length = @$data;
-		push @$data, (($obj->fillup_str) x ($max_length - $length));
-		$data;
-	    } @rows);
+		push @$_, (($obj->fillup_str) x ($max_length - @$_));
+		$_;
+	    } @data);
     }
     return $obj;
 }
@@ -386,16 +383,15 @@ sub parallel_out {
 sub nup_out {
     my $obj = shift;
     my @files = @_;
-    my $max_length = max map { $_->{length} } @files;
+    my $max_length = max map { $_->width } @files;
     $obj->set_horizontal($max_length);
     for my $file (@files) {
-	my @part = @{$file->{parts}};
-	next if not grep { @$_ } @part;
+	next if $file->is_empty;
 	my $page = clone($obj)->set_contents($file);
 	my @data;
-	$page->set_vertical([ map { @$_ } @part ])
-	    ->set_layout(\@data, @part);
-	$page->page_out($file->{name}, @data);
+	$page->set_vertical([ $file->lines ])
+	    ->set_layout(\@data, $file->parts);
+	$page->page_out($file->name, @data);
     }
     return $obj;
 }
@@ -409,45 +405,32 @@ sub read_files {
 	    warn "$file: $!\n" if $!;
 	    next;
 	};
-	my @part = $obj->read_parts($content);
-	# with --pages, every part is a file of its own
-	for my $parts ($obj->pages ? (map { [ $_ ] } @part) : \@part) {
+	# The content is divided at formfeeds where a formfeed is a
+	# break.  It is not with --no-pagebreak, and in the table and
+	# the parallel view, where the panes are not filled: the
+	# formfeeds are left in the text there.  --pages divides it in
+	# any case, and makes a file of every part.
+	my $break = $obj->pagebreak && !$obj->parallel && !$obj->table;
+	my $doc = App::ansicolumn::Document->new(
+	    name     => $file,
+	    text     => $content,
+	    formfeed => $obj->pages || $break,
+	);
+	for my $doc ($obj->pages ? $doc->pages : $doc) {
 	    my @length;
-	    for my $line (@$parts) {
+	    for my $line ($doc->parts) {
+		@$line = insert_space @$line if $obj->paragraph;
 		if ($obj->table) {
 		    push @length, map length, @$line;
 		} else {
 		    $obj->expand_tab($line, \@length);
 		}
 	    }
-	    push @files, {
-		name   => $file,
-		length => max(@length) // 0,
-		parts  => $parts,
-	    };
+	    $doc->width(max(@length) // 0);
+	    push @files, $doc;
 	}
     }
     @files;
-}
-
-#
-# Split the content of a file into parts at formfeeds, and each part
-# into lines as a file is.  No formfeed is left in the lines, so that
-# what handles the text later never meets one.
-#
-# The content is one part, with the formfeeds left in the text, when
-# a formfeed is not a break: with --no-pagebreak, and in the table and
-# the parallel view, where the panes are not filled.  --pages makes
-# parts in any case.
-#
-sub read_parts {
-    my $obj = shift;
-    my $content = shift;
-    my $break = $obj->pagebreak && !$obj->parallel && !$obj->table;
-    map {
-	my @line = split /(?!\f)\R/;
-	$obj->paragraph ? [ insert_space @line ] : \@line;
-    } $obj->pages || $break ? split_formfeed($content) : $content;
 }
 
 sub expand_tab {
@@ -508,9 +491,9 @@ sub set_contents {
 	and die "Not enough space.\n";
     # Fold long lines
     if ($obj->linestyle and $obj->linestyle ne 'none') {
-	my $w = $fp->{span} // $cell_width;
+	my $w = $fp->span // $cell_width;
 	my $fold = $obj->foldsub($w) or die;
-	@$_ = map { $fold->($_) } @$_ for @{$fp->{parts}};
+	$fp->replace($fold);
     }
     return $obj;
 }
