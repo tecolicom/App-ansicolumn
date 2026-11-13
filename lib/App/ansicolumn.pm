@@ -398,6 +398,13 @@ sub nup_out {
 
 sub read_files {
     my $obj = shift;
+    # The content is divided at formfeeds where a formfeed is a break.
+    # It is not with --no-pagebreak, and in the table and the parallel
+    # view, where the panes are not filled: the formfeeds are left in
+    # the text there.  --pages divides it in any case, and makes a
+    # file of every part.
+    my $divide = $obj->pages ||
+	($obj->pagebreak && !$obj->parallel && !$obj->table);
     my @files;
     for my $file (@_) {
 	open my $fh, $file or die "$file: $!";
@@ -405,55 +412,60 @@ sub read_files {
 	    warn "$file: $!\n" if $!;
 	    next;
 	};
-	# The content is divided at formfeeds where a formfeed is a
-	# break.  It is not with --no-pagebreak, and in the table and
-	# the parallel view, where the panes are not filled: the
-	# formfeeds are left in the text there.  --pages divides it in
-	# any case, and makes a file of every part.
-	my $break = $obj->pagebreak && !$obj->parallel && !$obj->table;
 	my $doc = App::ansicolumn::Document->new(
 	    name     => $file,
 	    text     => $content,
-	    formfeed => $obj->pages || $break,
+	    formfeed => $divide,
 	);
-	for my $doc ($obj->pages ? $doc->pages : $doc) {
-	    my @length;
-	    for my $line ($doc->parts) {
-		@$line = insert_space @$line if $obj->paragraph;
-		if ($obj->table) {
-		    push @length, map length, @$line;
-		} else {
-		    $obj->expand_tab($line, \@length);
-		}
-	    }
-	    $doc->width(max(@length) // 0);
-	    push @files, $doc;
-	}
+	push @files, map { $obj->prepare($_) }
+	    $obj->pages ? $doc->pages : $doc;
     }
     @files;
 }
 
+#
+# Make the lines of a document ready to be laid out, and find the
+# width of the longest.
+#
+sub prepare {
+    my $obj = shift;
+    my $doc = shift;
+    $doc->filter(\&insert_space) if $obj->paragraph;
+    my @width;
+    if ($obj->table) {
+	@width = map { length } $doc->lines;
+    } else {
+	$doc->replace(sub {
+	    my($text, $width) = $obj->expand_tab($_[0]);
+	    push @width, $width;
+	    $text;
+	});
+    }
+    $doc->width(max(@width) // 0);
+    $doc;
+}
+
+#
+# Expand the tabs in a line.  Returns the line and its width.
+#
 sub expand_tab {
     my $obj = shift;
-    my($dp, $lp) = @_;
-    for (@$dp) {
-	my ($result, $length) = ('', 0);
-	do {
-	    (my $folded, my $rest, my $len) = ansi_fold $_, -1, expand => 1;
-	    $result .= $folded;
-	    $length = $len if $len > $length;
-	    # ansi_fold stops before formfeeds in the middle of the text
-	    $result .= $1 if $rest =~ s/^(\f+)//;
-	    # every turn must take something from the text; otherwise
-	    # this loop never ends
-	    $rest eq '' or $rest ne $_ or die sprintf
-		"Text is not consumed, at %s (please report this).\n",
-		$rest =~ s/([^\x20-\x7e])/sprintf '\\x{%02x}', ord $1/ger;
-	    $_ = $rest;
-	} while ($_ ne '');
-	$_ = $result;
-	push @$lp, $length;
-    }
+    my $text = shift;
+    my($result, $width) = ('', 0);
+    do {
+	my($folded, $rest, $w) = ansi_fold $text, -1, expand => 1;
+	$result .= $folded;
+	$width = $w if $w > $width;
+	# ansi_fold stops before formfeeds in the middle of the text
+	$result .= $1 if $rest =~ s/^(\f+)//;
+	# every turn must take something from the text; otherwise
+	# this loop never ends
+	$rest eq '' or $rest ne $text or die sprintf
+	    "Text is not consumed, at %s (please report this).\n",
+	    $rest =~ s/([^\x20-\x7e])/sprintf '\\x{%02x}', ord $1/ger;
+	$text = $rest;
+    } while ($text ne '');
+    ($result, $width);
 }
 
 sub set_horizontal {

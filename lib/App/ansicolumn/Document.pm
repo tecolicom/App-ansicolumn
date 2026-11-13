@@ -65,12 +65,19 @@ sub lines { map { @$_ } $_[0]->parts }
 
 sub is_empty { not any { @$_ } $_[0]->parts }
 
+# replace the lines of every part with what the code gives for them
+sub filter {
+    my $obj = shift;
+    my $code = shift;
+    @$_ = $code->(@$_) for $obj->parts;
+    $obj;
+}
+
 # replace every line with what the code gives for it, within its part
 sub replace {
     my $obj = shift;
     my $code = shift;
-    @$_ = map { $code->($_) } @$_ for $obj->parts;
-    $obj;
+    $obj->filter(sub { map { $code->($_) } @_ });
 }
 
 # a document for each part
