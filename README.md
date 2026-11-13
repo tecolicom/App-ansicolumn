@@ -440,8 +440,11 @@ default, from the standard input.
     is.  The text before a form feed ends a pane, and what follows it
     begins the next one: when a newline follows, the pane begins with an
     empty line, which `--no-white-space` removes.  Put the form feed at
-    the top of the first line of the next part to have no such line.  A
-    part without a line makes no empty pane.
+    the top of the first line of the next part to have no such line.
+
+    A part without a line is an empty page and takes a pane: two form
+    feeds one after another make one, and so does a form feed at the top
+    of the file.  Nothing follows a form feed at the end of the file.
 
     The colors just before a form feed, and a reset just after it, go with
     the form feed.  A color is not carried over a form feed.  This is not
@@ -633,8 +636,9 @@ default, from the standard input.
     individual file.  Use with the `--parallel` option.
 
     The content is divided as with `--pagebreak`.  A part without a line
-    is a file without a line, and keeps its place in the parallel view,
-    except the one after the last form feed.
+    is a file without a line: it keeps its place in the parallel view,
+    and gives nothing otherwise, as an empty file does.  No part is made
+    after the last form feed.
 
 ## TABLE OPTIONS
 

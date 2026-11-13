@@ -87,9 +87,19 @@ END
     unlike($out, qr/\e\[31mb/, 'the color ends at the formfeed');
 }
 
-# formfeeds one after another, and at the ends, make no empty pane
-is(panes("\fa\n\f\f\nb\n\f"), <<'END', 'no empty pane');
-a         b
+# A part without a line is an empty page and takes a pane: the one
+# before a formfeed at the top, and the one between two formfeeds.
+# Nothing follows the formfeed at the end.
+is(panes("\fa\n\f\f\nb\n\f"), <<'END', 'empty pages');
+          a
+
+
+
+b
+END
+
+is(panes("a\n\f\fb\n"), <<'END', 'an empty page between formfeeds');
+a                   b
 
 
 
@@ -131,10 +141,16 @@ a       b
 
 END
 
-# a part with empty lines alone has no line, as such a file has none
+# a part with empty lines alone has no line, as such a file has none,
+# and is an empty page
 is(keep("a\n\f\n\n\fb\n"), <<'END', 'empty lines between formfeeds');
-a       b
+a
 
+b
 END
+
+# colors around formfeeds, as bat gives, make no difference
+is(panes("a\n\e[31m\f\f\e[m\nb\n"), panes("a\n\f\f\nb\n"),
+   'formfeeds one after another in a color');
 
 done_testing;

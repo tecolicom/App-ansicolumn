@@ -118,8 +118,12 @@ sub do_space_layout {
     for my $i (keys @part) {
 	$obj->space_layout($part[$i], $height);
 	push @$dp, @{$part[$i]};
-	# every part but the last ends at the bottom of a pane
-	_fillup($dp, $height, $obj->fillup_str) if $i < $#part;
+	# every part but the last ends at the bottom of a pane, and
+	# takes one even without a line: an empty page
+	if ($i < $#part) {
+	    push @$dp, $obj->fillup_str if @{$part[$i]} == 0;
+	    _fillup($dp, $height, $obj->fillup_str);
+	}
     }
     return $obj;
 }
