@@ -2,6 +2,28 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.63 2026-11-13T10:31:06Z
+
+    - Divide the content of a file at formfeeds when it is read, so
+      that the text handled later has none.  --pagebreak and --pages
+      divide it in the same way now
+    - A newline after a formfeed is an empty line at the top of the
+      next pane.  It was not a line without --pages.  Use
+      --no-white-space (or --document) to remove it, or put the
+      formfeed at the top of the first line of the next part
+    - A formfeed in a color, as bat gives ("\e[38;2;...m\f\e[0m"),
+      is a break of panes like a plain one: the colors just before it
+      and a reset just after it go with it
+    - A part without a line is an empty page and takes a pane: two
+      formfeeds one after another make one, and so does a formfeed at
+      the top of the file
+    - A formfeed at the end of a file does nothing: it was counted
+      as a line for the height of panes, and filled the last pane to
+      the bottom
+    - --paragraph puts no empty line between the lines before and
+      after a formfeed
+    - --pages ends with status 0 for an empty file, as without it
+
 1.6201 2026-11-12T11:12:03Z
 
     - End with a message when the text is not consumed while tabs
