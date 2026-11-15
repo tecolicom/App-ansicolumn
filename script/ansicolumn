@@ -31,6 +31,7 @@ ansicolumn [options] [file ...]
     -D,  --document      document mode
     -V,  --parallel      parallel view mode
     -H,  --filename      print filename header in parallel view mode
+    --filename-format=#  filename header format (default ": %s")
     -I,  --ignore-empty  ignore empty files
     -X#, --cell=#        text width of files (parallel) or columns (table)
     -C#, --pane=#        number of panes
@@ -40,8 +41,9 @@ ansicolumn [options] [file ...]
     -r,  --regex-sep     treat separator string as regex
 
     -B,  --border[=#]    print border with optional style
+         --no-border     same as --border=none
     -F,  --fillup[=#]    fill-up unit (pane|page|none)
-    --fillup-str=#       fill-up string (default empty)
+         --fillup-str=#  fill-up string (default empty)
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
@@ -54,8 +56,8 @@ ansicolumn [options] [file ...]
     --runlen=#           set both run-in and run-out width
     --[no-]pagebreak     allow page break
     --border-style=#     border style
-    --label POS=TEXT         pane border label
-    --page-label POS=TEXT    page border label
+    --label X=Y          pane border label
+    --page-label X=Y     page border label
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
     --[no-]isolation     page-end isolated line
