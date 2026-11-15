@@ -157,11 +157,6 @@ use Getopt::EX::Hashed 1.0701; {
     has '+runlen' => sub {
 	$_->runin = $_->runout = $_[1];
     };
-    # for backward compatibility, would be deplicated
-    has run => '=i';
-    has '+run' => sub {
-	$_->runin = $_->runout = $_[1];
-    };
 
     ### --tabstop, --tabstyle
     has [ qw(+tabstop +tabstyle) ] => sub {
