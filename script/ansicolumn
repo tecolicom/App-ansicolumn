@@ -41,6 +41,7 @@ ansicolumn [options] [file ...]
 
     -B,  --border[=#]    print border with optional style
     -F,  --fillup[=#]    fill-up unit (pane|page|none)
+    --fillup-str=#       fill-up string (default empty)
 
     --height=#           page height
     --column-unit=#      column unit (default 8)
