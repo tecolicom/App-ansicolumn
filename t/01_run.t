@@ -6,6 +6,10 @@ use lib './t';
 use ac;
 use Data::Section::Simple qw(get_data_section);
 
+# do not read the rc file of the user
+use File::Spec;
+$ENV{HOME} = File::Spec->rel2abs('t/home');
+
 is(ac->new()->exec(''), '', 'empty');
 is(ac->new(qw(-t))->exec(''), '', 'empty: -t');
 
