@@ -56,7 +56,7 @@ ansicolumn \[options\] \[file ...\]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
-    --polarizer=#        read files through a converter of IO::Polarizer
+    --factotum=#         read files through a converter of IO::Factotum
     --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
@@ -82,7 +82,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --highlight, --hilite  syntax highlight (--polarizer=skylighting)
+    --highlight, --hilite  syntax highlight (--factotum=skylighting)
 
 # VERSION
 
@@ -645,24 +645,24 @@ default, from the standard input.
     and gives nothing otherwise, as an empty file does.  No part is made
     after the last form feed.
 
-- **--polarizer**=_name_
+- **--factotum**=_name_
 
-    Read the files through the converter of [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) of the
+    Read the files through the converter of [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) of the
     _name_.  The file which the converter takes is replaced by the output
     of the converter, and the others are read as they are.  The names of
     the files, shown by `--filename`, are not changed.
 
-    `--polarizer=skylighting` shows source files with syntax highlight,
-    by the `skylighting` command.  See [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting),
+    `--factotum=skylighting` shows source files with syntax highlight,
+    by the `skylighting` command.  See [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting),
     and `--highlight` below.
 
     The option can be repeated, and the names can be joined by commas.
-    [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) has to be installed.
+    [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) has to be installed.
 
 - **--highlight**, **--hilite**
 
     Show source files with syntax highlight.  They are defined in the
-    default module as `--polarizer=skylighting`:
+    default module as `--factotum=skylighting`:
 
         ansicolumn --highlight -PC2 *.c
 
