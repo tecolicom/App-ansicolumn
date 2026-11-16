@@ -103,7 +103,7 @@ subtest '--factotum' => sub {
 	'unknown name';
 };
 
-# --highlight and --hl are --factotum=skylighting: here with a
+# --highlight and --hi are --factotum=skylighting: here with a
 # module of that name made for the test, found before the real one
 subtest '--highlight' => sub {
     open my $fh, '>', "$dir/lib/IO/Factotum/skylighting.pm" or die;
@@ -117,7 +117,7 @@ sub setup {
 END
     close $fh;
     is ac_option(qw(--highlight -C1 f1)), "<one\n<two\n", '--highlight';
-    is ac_option(qw(--hl -C1 f1)), "<one\n<two\n", q(--hl);
+    is ac_option(qw(--hi -C1 f1)), "<one\n<two\n", q(--hi);
     is ac_option(qw(-C1 f1 --highlight)), "<one\n<two\n", 'after the file';
 };
 

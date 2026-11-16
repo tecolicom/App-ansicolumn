@@ -81,7 +81,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --hl, --highlight      syntax highlight of source files
+    --hi, --highlight      syntax highlight of source files
 
 # VERSION
 
@@ -644,7 +644,7 @@ default, from the standard input.
     and gives nothing otherwise, as an empty file does.  No part is made
     after the last form feed.
 
-- **--hl**, **--highlight**
+- **--hi**, **--highlight**
 
     Show source files with syntax highlight, by the `skylighting`
     command.  The language is told from the name of the file.  A file

@@ -92,7 +92,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --hl, --highlight      syntax highlight of source files
+    --hi, --highlight      syntax highlight of source files
 
 =head1 VERSION
 
@@ -673,7 +673,7 @@ is a file without a line: it keeps its place in the parallel view,
 and gives nothing otherwise, as an empty file does.  No part is made
 after the last form feed.
 
-=item B<--hl>, B<--highlight>
+=item B<--hi>, B<--highlight>
 
 Show source files with syntax highlight, by the C<skylighting>
 command.  The language is told from the name of the file.  A file
