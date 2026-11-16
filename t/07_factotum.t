@@ -103,22 +103,47 @@ subtest '--factotum' => sub {
 	'unknown name';
 };
 
-# --highlight and --hi are --factotum=skylighting: here with a
-# module of that name made for the test, found before the real one
+# --highlight[=NAME] (--hi) reads the files through the highlighter
+# IO::Factotum::Highlight::NAME, skylighting by default, and
+# --no-highlight (--no-hi) turns it off.  Here the highlighters are
+# modules made for the test, found before the real ones.
 subtest '--highlight' => sub {
-    open my $fh, '>', "$dir/lib/IO/Factotum/skylighting.pm" or die;
-    print $fh <<'END';
-package IO::Factotum::skylighting;
+    mkdir "$dir/lib/IO/Factotum/Highlight" or die;
+    for (['skylighting', '<'], ['gnu', '>']) {
+	my($name, $mark) = @$_;
+	open my $fh, '>', "$dir/lib/IO/Factotum/Highlight/$name.pm" or die;
+	print $fh <<"END";
+package IO::Factotum::Highlight::$name;
 use IO::Factotum;
 sub setup {
-    IO::Factotum::register(match => qr/^f\d$/, command => ['perl', '-pe', '$_ = "<$_"']);
+    IO::Factotum::register(match => qr/^f\\d\$/, command => ['perl', '-pe', '\$_ = "$mark\$_"']);
 }
 1;
 END
-    close $fh;
-    is ac_option(qw(--highlight -C1 f1)), "<one\n<two\n", '--highlight';
-    is ac_option(qw(--hi -C1 f1)), "<one\n<two\n", q(--hi);
-    is ac_option(qw(-C1 f1 --highlight)), "<one\n<two\n", 'after the file';
+	close $fh;
+    }
+    my($sky, $gnu, $none) = ("<one\n<two\n", ">one\n>two\n", "one\ntwo\n");
+    is ac_option(qw(--highlight -C1 f1)), $sky, '--highlight';
+    is ac_option(qw(--hi -C1 f1)), $sky, '--hi';
+    is ac_option(qw(-C1 f1 --highlight)), $sky, 'after the file';
+    is ac_option(qw(--highlight=gnu -C1 f1)), $gnu, '--highlight=gnu';
+    is ac_option(qw(--hi=gnu -C1 f1)), $gnu, '--hi=gnu';
+    is ac_option(qw(--no-highlight -C1 f1)), $none, '--no-highlight';
+    is ac_option(qw(--no-hi -C1 f1)), $none, '--no-hi';
+    is ac_option(qw(--hi --no-hi -C1 f1)), $none, '--no-hi after --hi';
+    is ac_option(qw(--hi=gnu --no-hi -C1 f1)), $none, '--no-hi after --hi=gnu';
+    is ac_option(qw(--no-hi --hi=gnu -C1 f1)), $gnu, '--hi=gnu after --no-hi';
+    is ac_option(qw(--hi=gnu --hi -C1 f1)), $sky, '--hi after --hi=gnu';
+    like ac_option(qw(--hi=nosuch -C1 f1)), qr/Highlight::nosuch: no such converter/,
+	'unknown name';
+
+    # The value is optional, and a file after the option is not taken
+    # for the name of a highlighter
+    is ac_option(qw(--hi f1 -C1)), $sky, '--hi FILE';
+    is ac_option(qw(-C1 --hi gnu f1)), $gnu, '--hi NAME FILE';
+    like ac_option(qw(-V --no-border --hi f1 f2)), qr/<one +<three/, '--hi FILE FILE';
+    like ac_option(qw(-V --no-border f1 --hi f2)), qr/<one +<three/,
+	'FILE --hi FILE keeps the order';
 };
 
 done_testing;

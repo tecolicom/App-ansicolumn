@@ -57,6 +57,8 @@ ansicolumn \[options\] \[file ...\]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
     --colormap=#         color mapping (LABEL=COLOR)
+    --highlight[=#]      syntax highlight (sky|gnu), --hi
+    --no-highlight       disable syntax highlight, --no-hi
 
 Table style options:
 
@@ -81,7 +83,6 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --hi, --highlight      syntax highlight of source files
 
 # VERSION
 
@@ -644,17 +645,31 @@ default, from the standard input.
     and gives nothing otherwise, as an empty file does.  No part is made
     after the last form feed.
 
-- **--hi**, **--highlight**
+- **--hi**, **--highlight**\[=_name_\]
+- **--no-hi**, **--no-highlight**
 
-    Show source files with syntax highlight, by the `skylighting`
-    command.  The language is told from the name of the file.  A file
-    whose language is not known, as one without an extension, is shown as
-    it is, and so is the text when `skylighting` is not installed.  The
-    names of the files, shown by `--filename`, are not changed.
+    Show source files with syntax highlight.  The language is told from
+    the name of the file, or from the first line of a script.  A file
+    whose language is not known is shown as it is, and so is the text
+    when the command of the highlighter is not installed.  The names of
+    the files, shown by `--filename`, are not changed.
+
+    _name_ is the highlighter, `skylighting` when it is not given:
+
+        skylighting, sky       skylighting, the highlighter of pandoc
+        sourcehighlight, gnu   source-highlight of GNU Source-highlight
 
         ansicolumn --highlight -PC2 *.c
+        ansicolumn --hi=gnu -PC2 *.c
 
-    See [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting).
+    `--no-highlight` turns it off, when `--highlight` is given before
+    it, as in `~/.ansicolumnrc`:
+
+        option default --highlight=gnu
+
+    The highlighters are the modules of [IO::Factotum::Highlight](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight):
+    see [IO::Factotum::Highlight::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight%3A%3Askylighting) and
+    [IO::Factotum::Highlight::sourcehighlight](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight%3A%3Asourcehighlight).
 
 ## TABLE OPTIONS
 

@@ -19,6 +19,3 @@ option --white-board --board-color 000 L24
 option --black-board --board-color 555 L05
 option --green-board --board-color 555 (30,77,43)
 option --slate-board --board-color 555 <dark_slategray>
-
-option --highlight --factotum=skylighting
-option --hi        --highlight

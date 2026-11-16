@@ -68,6 +68,8 @@ ansicolumn [options] [file ...]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
     --colormap=#         color mapping (LABEL=COLOR)
+    --highlight[=#]      syntax highlight (sky|gnu), --hi
+    --no-highlight       disable syntax highlight, --no-hi
 
 Table style options:
 
@@ -92,7 +94,6 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --hi, --highlight      syntax highlight of source files
 
 =head1 VERSION
 
@@ -673,17 +674,32 @@ is a file without a line: it keeps its place in the parallel view,
 and gives nothing otherwise, as an empty file does.  No part is made
 after the last form feed.
 
-=item B<--hi>, B<--highlight>
+=item B<--hi>, B<--highlight>[=I<name>]
 
-Show source files with syntax highlight, by the C<skylighting>
-command.  The language is told from the name of the file.  A file
-whose language is not known, as one without an extension, is shown as
-it is, and so is the text when C<skylighting> is not installed.  The
-names of the files, shown by C<--filename>, are not changed.
+=item B<--no-hi>, B<--no-highlight>
+
+Show source files with syntax highlight.  The language is told from
+the name of the file, or from the first line of a script.  A file
+whose language is not known is shown as it is, and so is the text
+when the command of the highlighter is not installed.  The names of
+the files, shown by C<--filename>, are not changed.
+
+I<name> is the highlighter, C<skylighting> when it is not given:
+
+    skylighting, sky       skylighting, the highlighter of pandoc
+    sourcehighlight, gnu   source-highlight of GNU Source-highlight
 
     ansicolumn --highlight -PC2 *.c
+    ansicolumn --hi=gnu -PC2 *.c
 
-See L<IO::Factotum::skylighting>.
+C<--no-highlight> turns it off, when C<--highlight> is given before
+it, as in F<~/.ansicolumnrc>:
+
+    option default --highlight=gnu
+
+The highlighters are the modules of L<IO::Factotum::Highlight>:
+see L<IO::Factotum::Highlight::skylighting> and
+L<IO::Factotum::Highlight::sourcehighlight>.
 
 =begin comment
 
@@ -694,8 +710,8 @@ I<name>.  The file which the converter takes is replaced by the output
 of the converter, and the others are read as they are.  The names of
 the files, shown by C<--filename>, are not changed.
 
-C<--highlight> is defined in the default module as
-C<--factotum=skylighting>.
+C<--highlight>[=I<name>] is the same as
+C<--factotum=Highlight::>I<name>.
 
 The option can be repeated, and the names can be joined by commas.
 

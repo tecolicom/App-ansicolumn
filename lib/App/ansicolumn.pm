@@ -103,6 +103,9 @@ use Getopt::EX::Hashed 1.0701; {
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
     has factotum            => ' =s@     ' , default => [] ;
+    has highlight           => ' :s   hi ' , action => \&_highlight ;
+    has no_highlight        => '         ' , action => sub { $_->highlight = undef } ;
+    has no_hi               => '         ' , action => sub { $_->highlight = undef } ;
 
     has '+boundary'  => any => [ qw(none word space) ] ;
     has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
@@ -215,6 +218,25 @@ sub list_tabstyle {
     }
 }
 
+# --highlight[=NAME]: the value is optional, so Getopt::Long takes
+# the word after the option for it.  When the word is a file and not
+# the name of a highlighter, it is given back to be read as a file.
+sub _highlight {
+    my $obj = $_;
+    my($name, $value) = @_;
+    if ($value ne '' and not _highlighter($value) and -e $value) {
+	unshift @ARGV, $value;
+	$value = '';
+    }
+    $obj->highlight = $value;
+}
+
+sub _highlighter {
+    my $name = shift;
+    $name =~ /\A\w+\z/
+	and grep { !ref and -f "$_/IO/Factotum/Highlight/$name.pm" } @INC;
+}
+
 sub perform {
     my $obj = shift;
     local @ARGV = decode_argv(@_);
@@ -224,8 +246,14 @@ sub perform {
 
     $obj->setup_options;
 
-    # --factotum: converters of IO::Factotum, for read_files
-    if (my @names = map { split /,/ } @{$obj->factotum}) {
+    # --factotum: converters of IO::Factotum, for read_files.
+    # --highlight[=NAME] is that of IO::Factotum::Highlight::NAME,
+    # skylighting by default.
+    my @names = map { split /,/ } @{$obj->factotum};
+    if (defined(my $name = $obj->highlight)) {
+	push @names, 'Highlight::' . ($name eq '' ? 'skylighting' : $name);
+    }
+    if (@names) {
 	eval { require IO::Factotum; 1 }
 	    or die "--factotum requires IO::Factotum.\n";
 	IO::Factotum::load(@names);
