@@ -401,8 +401,18 @@ sub read_files {
     my $divide = $obj->pages ||
 	($obj->pagebreak && !$obj->parallel && !$obj->table);
     my @files;
+    # When IO::Polarizer is loaded (-MPolarizer::load=NAME), the files
+    # are opened by it, and those which a converter takes are read
+    # through that converter.  The names stay as they are.
+    my $polarizer = IO::Polarizer->can('open_input');
     for my $file (@_) {
-	open my $fh, $file or die "$file: $!";
+	my $fh;
+	if ($polarizer) {
+	    $fh = $polarizer->($file) or die "$file: $!";
+	    binmode $fh, ':utf8';
+	} else {
+	    open $fh, $file or die "$file: $!";
+	}
 	my $content = do { local $/; <$fh> } // do {
 	    warn "$file: $!\n" if $!;
 	    next;
