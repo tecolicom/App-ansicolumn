@@ -56,7 +56,6 @@ ansicolumn \[options\] \[file ...\]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
-    --factotum=#         read files through a converter of IO::Factotum
     --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
@@ -82,7 +81,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --hl, --highlight      syntax highlight (--factotum=skylighting)
+    --hl, --highlight      syntax highlight of source files
 
 # VERSION
 
@@ -645,25 +644,17 @@ default, from the standard input.
     and gives nothing otherwise, as an empty file does.  No part is made
     after the last form feed.
 
-- **--factotum**=_name_
-
-    Read the files through the converter of [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) of the
-    _name_.  The file which the converter takes is replaced by the output
-    of the converter, and the others are read as they are.  The names of
-    the files, shown by `--filename`, are not changed.
-
-    `--factotum=skylighting` shows source files with syntax highlight,
-    by the `skylighting` command.  See [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting),
-    and `--highlight` below.
-
-    The option can be repeated, and the names can be joined by commas.
-
 - **--hl**, **--highlight**
 
-    Show source files with syntax highlight.  They are defined in the
-    default module as `--factotum=skylighting`:
+    Show source files with syntax highlight, by the `skylighting`
+    command.  The language is told from the name of the file.  A file
+    whose language is not known, as one without an extension, is shown as
+    it is, and so is the text when `skylighting` is not installed.  The
+    names of the files, shown by `--filename`, are not changed.
 
         ansicolumn --highlight -PC2 *.c
+
+    See [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting).
 
 ## TABLE OPTIONS
 
