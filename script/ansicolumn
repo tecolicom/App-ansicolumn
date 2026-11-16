@@ -686,7 +686,6 @@ by the C<skylighting> command.  See L<IO::Factotum::skylighting>,
 and C<--highlight> below.
 
 The option can be repeated, and the names can be joined by commas.
-L<IO::Factotum> has to be installed.
 
 =item B<--highlight>, B<--hilite>
 

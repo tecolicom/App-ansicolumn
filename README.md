@@ -657,7 +657,6 @@ default, from the standard input.
     and `--highlight` below.
 
     The option can be repeated, and the names can be joined by commas.
-    [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) has to be installed.
 
 - **--highlight**, **--hilite**
 
