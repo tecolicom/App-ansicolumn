@@ -103,5 +103,24 @@ subtest '--polarizer' => sub {
 	'unknown name';
 };
 
+# --highlight and --hilite are --polarizer=skylighting: here with a
+# module of that name made for the test, found before the real one
+subtest '--highlight' => sub {
+    open my $fh, '>', "$dir/lib/IO/Polarizer/skylighting.pm" or die;
+    print $fh <<'END';
+package IO::Polarizer::skylighting;
+use IO::Polarizer;
+sub setup {
+    IO::Polarizer::register(match => qr/^f\d$/, command => ['perl', '-pe', '$_ = "<$_"']);
+}
+1;
+END
+    close $fh;
+    is ac_option(qw(--highlight -C1 f1)), "<one\n<two\n", '--highlight';
+    is ac_option(qw(--hilite -C1 f1)), "<one\n<two\n", '--hilite';
+    is ac_option(qw(-C1 f1 --highlight)), "<one\n<two\n", 'after the file';
+};
+
 done_testing;
+
 

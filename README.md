@@ -82,6 +82,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
+    --highlight, --hilite  syntax highlight (--polarizer=skylighting)
 
 # VERSION
 
@@ -651,13 +652,19 @@ default, from the standard input.
     of the converter, and the others are read as they are.  The names of
     the files, shown by `--filename`, are not changed.
 
-    Next command shows source files with syntax highlight, by the
-    `skylighting` command.  See [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting).
-
-        ansicolumn --polarizer=skylighting -PC2 *.c
+    `--polarizer=skylighting` shows source files with syntax highlight,
+    by the `skylighting` command.  See [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting),
+    and `--highlight` below.
 
     The option can be repeated, and the names can be joined by commas.
     [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) has to be installed.
+
+- **--highlight**, **--hilite**
+
+    Show source files with syntax highlight.  They are defined in the
+    default module as `--polarizer=skylighting`:
+
+        ansicolumn --highlight -PC2 *.c
 
 ## TABLE OPTIONS
 

@@ -93,6 +93,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
+    --highlight, --hilite  syntax highlight (--polarizer=skylighting)
 
 =head1 VERSION
 
@@ -680,13 +681,19 @@ I<name>.  The file which the converter takes is replaced by the output
 of the converter, and the others are read as they are.  The names of
 the files, shown by C<--filename>, are not changed.
 
-Next command shows source files with syntax highlight, by the
-C<skylighting> command.  See L<IO::Polarizer::skylighting>.
-
-    ansicolumn --polarizer=skylighting -PC2 *.c
+C<--polarizer=skylighting> shows source files with syntax highlight,
+by the C<skylighting> command.  See L<IO::Polarizer::skylighting>,
+and C<--highlight> below.
 
 The option can be repeated, and the names can be joined by commas.
 L<IO::Polarizer> has to be installed.
+
+=item B<--highlight>, B<--hilite>
+
+Show source files with syntax highlight.  They are defined in the
+default module as C<--polarizer=skylighting>:
+
+    ansicolumn --highlight -PC2 *.c
 
 =begin comment
 
