@@ -82,7 +82,7 @@ Default alias options:
     --black-board          white on black board
     --green-board          white on green board
     --slate-board          white on dark slategray board
-    --highlight, --hilite  syntax highlight (--factotum=skylighting)
+    --hl, --highlight      syntax highlight (--factotum=skylighting)
 
 # VERSION
 
@@ -658,7 +658,7 @@ default, from the standard input.
 
     The option can be repeated, and the names can be joined by commas.
 
-- **--highlight**, **--hilite**
+- **--hl**, **--highlight**
 
     Show source files with syntax highlight.  They are defined in the
     default module as `--factotum=skylighting`:
