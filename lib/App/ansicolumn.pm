@@ -102,6 +102,7 @@ use Getopt::EX::Hashed 1.0701; {
     has discard_el          => ' !       ' , default => 1 ;
     has padchar             => ' =s      ' , default => ' ' ;
     has colormap            => ' =s@  cm ' , default => [] ;
+    has polarizer           => ' =s@     ' , default => [] ;
 
     has '+boundary'  => any => [ qw(none word space) ] ;
     has '+linestyle' => any => [ qw(none wordwrap wrap truncate) ] ;
@@ -222,6 +223,13 @@ sub perform {
     $obj->getopt || pod2usage(2);
 
     $obj->setup_options;
+
+    # --polarizer: converters of IO::Polarizer, for read_files
+    if (my @names = map { split /,/ } @{$obj->polarizer}) {
+	eval { require IO::Polarizer; 1 }
+	    or die "--polarizer requires IO::Polarizer.\n";
+	IO::Polarizer::load(@names);
+    }
 
     warn Dumper $obj if $obj->debug;
 
@@ -401,7 +409,7 @@ sub read_files {
     my $divide = $obj->pages ||
 	($obj->pagebreak && !$obj->parallel && !$obj->table);
     my @files;
-    # When IO::Polarizer is loaded (-MPolarizer::load=NAME), the files
+    # When IO::Polarizer is loaded (--polarizer=NAME), the files
     # are opened by it, and those which a converter takes are read
     # through that converter.  The names stay as they are.
     my $polarizer = IO::Polarizer->can('open_input');

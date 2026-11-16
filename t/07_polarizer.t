@@ -68,4 +68,40 @@ subtest 'polarizer: missing file' => sub {
     like $out, qr/^none: No such file or directory/, 'error message';
 };
 
+# --polarizer loads IO::Polarizer and the converter of the name: here
+# IO::Polarizer::upper, a module made for the test
+{
+    mkdir "$dir/lib" and mkdir "$dir/lib/IO" and mkdir "$dir/lib/IO/Polarizer" or die;
+    open my $fh, '>', "$dir/lib/IO/Polarizer/upper.pm" or die;
+    print $fh <<'END';
+package IO::Polarizer::upper;
+use IO::Polarizer;
+sub setup {
+    IO::Polarizer::register(match => qr/^f\d$/, command => ['perl', '-pe', '$_ = uc']);
+}
+1;
+END
+    close $fh;
+}
+
+sub ac_option {
+    my $args = join ' ', @_;
+    my $script = File::Spec->rel2abs('script/ansicolumn');
+    my $out = qx{cd "$dir" && $^X -I"$ENV{PWD}/lib" -I"$dir/lib" "$script" $args 2>&1};
+    utf8::decode($out);
+    $out =~ s/ +$//mgr;
+}
+
+subtest '--polarizer' => sub {
+    is ac_option(qw(-C1 f1)), "one\ntwo\n", 'not converted without it';
+    is ac_option(qw(--polarizer=upper -C1 f1)), "ONE\nTWO\n", 'converted';
+    is ac_option(qw(-C1 f1 --polarizer upper)), "ONE\nTWO\n", 'after the file';
+    my $out = ac_option(qw(--polarizer=upper -V --filename f1 j1));
+    like $out, qr/: f1 +: j1/, 'file names';
+    like $out, qr/ONE.*あいう/, 'only the files of the converter';
+    like ac_option(qw(--polarizer=nosuch -C1 f1)), qr/nosuch: no such converter/,
+	'unknown name';
+};
+
 done_testing;
+

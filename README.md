@@ -56,6 +56,7 @@ ansicolumn \[options\] \[file ...\]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
+    --polarizer=#        read files through a converter of IO::Polarizer
     --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
@@ -642,6 +643,21 @@ default, from the standard input.
     is a file without a line: it keeps its place in the parallel view,
     and gives nothing otherwise, as an empty file does.  No part is made
     after the last form feed.
+
+- **--polarizer**=_name_
+
+    Read the files through the converter of [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) of the
+    _name_.  The file which the converter takes is replaced by the output
+    of the converter, and the others are read as they are.  The names of
+    the files, shown by `--filename`, are not changed.
+
+    Next command shows source files with syntax highlight, by the
+    `skylighting` command.  See [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting).
+
+        ansicolumn --polarizer=skylighting -PC2 *.c
+
+    The option can be repeated, and the names can be joined by commas.
+    [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) has to be installed.
 
 ## TABLE OPTIONS
 

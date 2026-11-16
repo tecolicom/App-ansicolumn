@@ -67,6 +67,7 @@ ansicolumn [options] [file ...]
     --tabstyle=#         tab style
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
+    --polarizer=#        read files through a converter of IO::Polarizer
     --colormap=#         color mapping (LABEL=COLOR)
 
 Table style options:
@@ -671,6 +672,21 @@ The content is divided as with C<--pagebreak>.  A part without a line
 is a file without a line: it keeps its place in the parallel view,
 and gives nothing otherwise, as an empty file does.  No part is made
 after the last form feed.
+
+=item B<--polarizer>=I<name>
+
+Read the files through the converter of L<IO::Polarizer> of the
+I<name>.  The file which the converter takes is replaced by the output
+of the converter, and the others are read as they are.  The names of
+the files, shown by C<--filename>, are not changed.
+
+Next command shows source files with syntax highlight, by the
+C<skylighting> command.  See L<IO::Polarizer::skylighting>.
+
+    ansicolumn --polarizer=skylighting -PC2 *.c
+
+The option can be repeated, and the names can be joined by commas.
+L<IO::Polarizer> has to be installed.
 
 =begin comment
 
