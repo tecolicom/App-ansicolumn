@@ -5,7 +5,7 @@ requires 'Term::ReadKey';
 requires 'Getopt::EX', '3.04';
 requires 'Getopt::EX::Hashed', '1.0701';
 requires 'Getopt::EX::RPN', '0.01';
-requires 'IO::Factotum', '0.02';
+requires 'IO::Factotum', '0.04';
 requires 'Term::ANSIColor::Concise', '2.08';
 requires 'Text::ANSI::Fold', '2.3901';
 requires 'Text::ANSI::Fold::Util', '1.05';

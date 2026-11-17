@@ -2,6 +2,15 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.65 2026-11-17T00:59:32Z
+
+    - --highlight takes the name of the highlighter: --highlight=gnu
+      is source-highlight of GNU Source-highlight, and skylighting
+      (sky) is the default.  --no-highlight turns it off.  The
+      highlighters are the modules of IO::Factotum::Highlight
+    - The short name of --highlight is --hi, in place of --hl
+    - Requires IO::Factotum 0.04
+
 1.64 2026-11-16T08:00:34Z
 
     - Add --highlight (--hl) to show source files with syntax highlight,
