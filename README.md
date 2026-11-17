@@ -588,6 +588,13 @@ default, from the standard input.
 
         --mark RIGHT='>>' --mark LEFT='<<'
 
+    `LEFT_END`, `RIGHT_END`, `UP_END` and `DOWN_END` are the marks of
+    the ends, where there is nothing in that direction.  They are empty by
+    default.  Next labels are `[ 1 >` on the first pane of a row and
+    `< 9 ]` on the last.
+
+        --label S=' %L %n %R ' --mark LEFT_END='[' --mark RIGHT_END=']'
+
 - **--page-label** _position_=_string_
 
     Place a label string on the border of the entire page.  Unlike

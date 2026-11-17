@@ -614,6 +614,13 @@ C<DOWN>, case-insensitive.
 
     --mark RIGHT='>>' --mark LEFT='<<'
 
+C<LEFT_END>, C<RIGHT_END>, C<UP_END> and C<DOWN_END> are the marks of
+the ends, where there is nothing in that direction.  They are empty by
+default.  Next labels are C<[ 1 E<gt>> on the first pane of a row and
+C<E<lt> 9 ]> on the last.
+
+    --label S=' %L %n %R ' --mark LEFT_END='[' --mark RIGHT_END=']'
+
 =item B<--page-label> I<position>=I<string>
 
 Place a label string on the border of the entire page.  Unlike

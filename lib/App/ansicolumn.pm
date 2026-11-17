@@ -639,7 +639,11 @@ sub _parse_labels {
 
 # The marks of --label for the directions with something there, set
 # by --mark
-my %MARK = (LEFT => '<', RIGHT => '>', UP => '^', DOWN => 'v');
+my %MARK = (
+    LEFT     => '<', RIGHT     => '>', UP     => '^', DOWN     => 'v',
+    # where there is nothing in that direction
+    LEFT_END => '',  RIGHT_END => '',  UP_END => '',  DOWN_END => '',
+);
 
 sub _marks {
     my $obj = shift;
@@ -662,10 +666,10 @@ sub _label_more {
     my $mark = $obj->_marks;
     my $pages = $obj->{_total_pages} // 0;
     [ $obj->{_total_panes} // 0, $pages,
-      (defined $i && $i > 0            ? $mark->{LEFT}  : ''),
-      (defined $i && $i < $npanes - 1  ? $mark->{RIGHT} : ''),
-      ($p > 1                          ? $mark->{UP}    : ''),
-      ($p < $pages                     ? $mark->{DOWN}  : '') ];
+      (!defined $i      ? '' : $i > 0           ? $mark->{LEFT}  : $mark->{LEFT_END}),
+      (!defined $i      ? '' : $i < $npanes - 1 ? $mark->{RIGHT} : $mark->{RIGHT_END}),
+      ($p > 1      ? $mark->{UP}   : $mark->{UP_END}),
+      ($p < $pages ? $mark->{DOWN} : $mark->{DOWN_END}) ];
 }
 
 # Overlay labels onto a border line string.

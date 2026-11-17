@@ -82,6 +82,25 @@ subtest '--mark' => sub {
     like pages('--mark', 'FOO=x'), qr/FOO: unknown mark/i, 'unknown name';
 };
 
+# The marks of the ends: where there is nothing in that direction
+subtest 'end marks' => sub {
+    my @mark = map { ('--mark', $_) }
+	'LEFT=<', 'LEFT_END=[', 'RIGHT=>', 'RIGHT_END=]',
+	'UP=^', 'UP_END=T', 'DOWN=v', 'DOWN_END=B';
+    is_deeply top(pages('--label', 'N= %L%n%R ', @mark)),
+	[ '┌──── [1> ────┐┌──── <2] ────┐',
+	  '┌──── [3] ────┐' ],
+	'%L and %R at the ends of the row';
+    is_deeply bottom(pages('--label', 'S= %U%D ', @mark)),
+	[ '└───── Tv ────┘└───── Tv ────┘',
+	  '└───── ^B ────┘' ],
+	'%U and %D at the first and the last page';
+    is_deeply top(pages('--label', 'N= %L%n%R ', '--mark', 'right_end=]')),
+	[ '┌───── 1> ────┐┌──── <2] ────┐',
+	  '┌───── 3] ────┐' ],
+	'an end mark by itself, and the name is case-insensitive';
+};
+
 subtest 'with other text' => sub {
     is_deeply top(pages('--label', 'NE= %n%R ')),
 	[ '┌───────── 1> ┐┌────────── 2 ┐',
