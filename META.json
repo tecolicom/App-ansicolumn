@@ -78,7 +78,7 @@
          "web" : "https://github.com/tecolicom/App-ansicolumn"
       }
    },
-   "version" : "1.65",
+   "version" : "1.66",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"

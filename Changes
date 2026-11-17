@@ -2,6 +2,14 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.66 2026-11-17T06:39:22Z
+
+    - Labels (--label, --page-label) have %N and %P, the numbers of all
+      the panes and pages, and %L, %R, %U and %D, the marks which tell
+      that there is a pane on the left or the right in the row, or a
+      page above or below.  --mark sets the marks, and the marks of
+      the ends (LEFT_END and so on)
+
 1.65 2026-11-17T00:59:32Z
 
     - --highlight takes the name of the highlighter: --highlight=gnu
