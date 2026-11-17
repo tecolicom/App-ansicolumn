@@ -58,6 +58,7 @@ ansicolumn [options] [file ...]
     --border-style=#     border style
     --label X=Y          pane border label
     --page-label X=Y     page border label
+    --mark X=Y           mark of %L %R %U %D in labels (LEFT=<)
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
     --[no-]isolation     page-end isolated line
@@ -563,9 +564,30 @@ multiple times to set labels at different positions.
 The following placeholders are expanded:
 
     %n    sequential pane number (1-based, across pages)
+    %N    number of all the panes
     %p    page number (1-based)
+    %P    number of all the pages
     %f    filename (basename only)
     %F    filename (path as given)
+    %L    mark of a pane on the left in the row
+    %R    mark of a pane on the right in the row
+    %U    mark of a page above
+    %D    mark of a page below
+
+Next command shows the number of the pane with the number of all:
+
+    seq 100 | ansicolumn -P --label S=' %n/%N ' --2up
+
+The marks tell that there is more in that direction: they are C<E<lt>>,
+C<E<gt>>, C<^> and C<v>, and nothing where there is no pane or page
+there.  A label which they leave with no text is not shown.  They are
+for a row or pages which go on out of the screen, as a row wider than
+the screen which is scrolled sideways:
+
+    seq 100 | ansicolumn -P10 -w 1000 -S 20 --border \
+        --label NW=' %L ' --label NE=' %R ' | less -S
+
+Use C<--mark> to change the marks.
 
 By default, left labels (C<NW>, C<SW>) start just inside the fill
 region, and right labels (C<NE>, C<SE>) end at the right edge of it.
@@ -583,6 +605,14 @@ Example with page mode:
 Use C<--cm BORDER_LABEL=>I<color> to colorize labels:
 
     seq 100 | ansicolumn -P --label SE=%n --cm BORDER_LABEL=RD --2up
+
+=item B<--mark> I<name>=I<string>
+
+Set the mark which C<%L>, C<%R>, C<%U> and C<%D> of C<--label> and
+C<--page-label> give.  The I<name> is C<LEFT>, C<RIGHT>, C<UP> or
+C<DOWN>, case-insensitive.
+
+    --mark RIGHT='>>' --mark LEFT='<<'
 
 =item B<--page-label> I<position>=I<string>
 

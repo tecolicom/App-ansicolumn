@@ -94,6 +94,7 @@ use Getopt::EX::Hashed 1.0701; {
     has border_style        => ' =s   bs ' , default => 'box' ;
     has label               => ' =s%     ' , default => {} ;
     has page_label          => ' =s%     ' , default => {} ;
+    has mark                => ' =s%     ' , default => {} ;
     has white_space         => ' !       ' , default => 2 ;
     has isolation           => ' !       ' , default => 2 ;
     has fillup              => ' :s      ' ; has F => '' , action => sub { $_->fillup = '' } ;
@@ -125,6 +126,9 @@ use Getopt::EX::Hashed 1.0701; {
     has current_page  => ;
     has _bl           => ;
     has _pbl          => ;
+    has _mk           => ;
+    has _total_panes  => ;
+    has _total_pages  => ;
 
     Getopt::EX::Hashed->configure( DEFAULT => [] );
 
@@ -245,6 +249,9 @@ sub perform {
     $obj->getopt || pod2usage(2);
 
     $obj->setup_options;
+
+    # --mark: an unknown name is an error, with or without a label
+    $obj->_marks;
 
     # --factotum: converters of IO::Factotum, for read_files.
     # --highlight[=NAME] is that of IO::Factotum::Highlight::NAME,
@@ -384,6 +391,9 @@ sub parallel_out {
 	}
     }
     $obj->set_contents($_) for @files;
+    # for the labels: every file is a pane
+    $obj->{_total_panes} = @files;
+    $obj->{_total_pages} = roundup(scalar @files, $obj->pane) / $obj->pane;
     my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @files; $obj->current_page++) {
 	my @rows = splice @files, 0, $obj->pane;
@@ -567,6 +577,19 @@ sub set_vertical {
 sub page_out {
     my $obj = shift;
     my $name = shift;
+    # for the labels: the numbers of all the pages and the panes.  A
+    # page is filled by panes, or by rows with --fillrows; the last
+    # one has the panes which the rest of the lines take.
+    {
+	my($lines, $panes, $height) = (scalar @_, $obj->panes, $obj->effective_height);
+	my $pages = roundup($lines, $panes * $height) / ($panes * $height);
+	my $rest  = $lines - ($pages - 1) * $panes * $height;
+	my $last  = $pages == 0 ? 0
+		  : $obj->fillrows ? min($panes, $rest)
+		  : roundup($rest, $height) / $height;
+	$obj->{_total_pages} = $pages;
+	$obj->{_total_panes} = $pages == 0 ? 0 : ($pages - 1) * $panes + $last;
+    }
     my $column_out = $obj->_column_out;
     for ($obj->current_page = 0; @_; $obj->current_page++) {
 	my @columns = grep { @$_ } do {
@@ -596,13 +619,53 @@ sub _parse_labels {
 	if ($s =~ s/@(\d+)$//) {
 	    $offset = $1 + 0;
 	}
+	# the marks are empty where there is nothing in that direction,
+	# and a label left with no text by them is not shown
+	my $marked = $s =~ /%[LRUD]/;
 	$s =~ s/%n/%1\$d/g;
 	$s =~ s/%p/%2\$d/g;
 	$s =~ s/%f/%3\$s/g;
 	$s =~ s/%F/%4\$s/g;
-	$result{lc $key} = [ $offset, $s ];
+	$s =~ s/%N/%5\$d/g;
+	$s =~ s/%P/%6\$d/g;
+	$s =~ s/%L/%7\$s/g;
+	$s =~ s/%R/%8\$s/g;
+	$s =~ s/%U/%9\$s/g;
+	$s =~ s/%D/%10\$s/g;
+	$result{lc $key} = [ $offset, $s, $marked ];
     }
     %result ? \%result : 0;
+}
+
+# The marks of --label for the directions with something there, set
+# by --mark
+my %MARK = (LEFT => '<', RIGHT => '>', UP => '^', DOWN => 'v');
+
+sub _marks {
+    my $obj = shift;
+    $obj->{_mk} //= do {
+	my %mark = %MARK;
+	while (my($name, $text) = each %{$obj->mark}) {
+	    exists $mark{uc $name} or die "$name: unknown mark\n";
+	    $mark{uc $name} = $text;
+	}
+	\%mark;
+    };
+}
+
+# What a label has besides the numbers of the pane and the page: the
+# numbers of all the panes and pages, and the marks.  $p is the page
+# (from 1), $i the pane in the row (from 0) of $npanes panes; a label
+# of the page has no pane, and no mark for the left and the right.
+sub _label_more {
+    my($obj, $p, $i, $npanes) = @_;
+    my $mark = $obj->_marks;
+    my $pages = $obj->{_total_pages} // 0;
+    [ $obj->{_total_panes} // 0, $pages,
+      (defined $i && $i > 0            ? $mark->{LEFT}  : ''),
+      (defined $i && $i < $npanes - 1  ? $mark->{RIGHT} : ''),
+      ($p > 1                          ? $mark->{UP}    : ''),
+      ($p < $pages                     ? $mark->{DOWN}  : '') ];
 }
 
 # Overlay labels onto a border line string.
@@ -610,8 +673,11 @@ sub _parse_labels {
 # $ml/$mr: border margin accessible via @0.
 # $n/$p: pane number / page number for sprintf expansion.
 # $file: filename (path as given) - used as %3$s (basename) and %4$s (path as given).
+# $more: the numbers of all the panes and pages (%N, %P), and the
+# marks for the left, right, up and down (%L, %R, %U, %D), each empty
+# where there is nothing in that direction.
 sub _overlay_labels {
-    my($obj, $str, $fs, $fe, $ml, $mr, $n, $p, $file, $left, $center, $right) = @_;
+    my($obj, $str, $fs, $fe, $ml, $mr, $n, $p, $file, $more, $left, $center, $right) = @_;
     use File::Basename qw(basename);
     use Text::ANSI::Fold::Util qw(ansi_substr);
     my $base = defined $file ? basename($file) : '';
@@ -624,7 +690,8 @@ sub _overlay_labels {
 	next unless $spec;
 	my $fmt = $spec->[1];
 	next unless defined $fmt && $fmt ne '';
-	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p, $base, $file // '') : $fmt;
+	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p, $base, $file // '', @$more) : $fmt;
+	next if $spec->[2] and $text !~ /\S/;
 	my $lw = ansi_width($text);
 	my $label = $obj->color('BORDER_LABEL', $text);
 	$str = ansi_substr($str, $pos_fn->($spec->[0], $lw), $lw, $label);
@@ -658,8 +725,10 @@ sub _column_out {
 		    for my $i (0 .. $obj->panes - 1) {
 			my($fs, $fe) = ($fp, $fp + $span);
 			push @$pane_list, sub {
-			    $obj->_overlay_labels($_[0], $fs, $fe, $bw_l, $bw_r,
-				$_[1] + $i + 1, $_[2], $_[3], @g);
+			    my($line, $n0, $p, $name, $npanes) = @_;
+			    $obj->_overlay_labels($line, $fs, $fe, $bw_l, $bw_r,
+				$n0 + $i + 1, $p, $name,
+				$obj->_label_more($p, $i, $npanes), @g);
 			};
 			$fp += $span + $bw_c;
 		    }
@@ -669,9 +738,11 @@ sub _column_out {
 		my @g = map { $pbl->{$_} } @keys;
 		if (grep { $_ } @g) {
 		    push @$page_list, sub {
-			my $w = ansi_width($_[0]);
-			$obj->_overlay_labels($_[0], 1, $w - 1, 1, 1,
-			    $_[1] + 1, $_[2], $_[3], @g);
+			my($line, $n0, $p, $name) = @_;
+			my $w = ansi_width($line);
+			$obj->_overlay_labels($line, 1, $w - 1, 1, 1,
+			    $n0 + 1, $p, $name,
+			    $obj->_label_more($p), @g);
 		    };
 		}
 	    }
@@ -703,7 +774,7 @@ sub _column_out {
 	if (@$pane_labels) {
 	    my $i = 0;
 	    for (@{$pane_labels}[0 .. $npanes - 1]) {
-		$line = $_->($line, $n0, $p, $names->[$i++] // '');
+		$line = $_->($line, $n0, $p, $names->[$i++] // '', $npanes);
 	    }
 	}
 	$line = $_->($line, $n0, $p, $names->[0] // '') for @$page_labels;

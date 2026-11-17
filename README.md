@@ -47,6 +47,7 @@ ansicolumn \[options\] \[file ...\]
     --border-style=#     border style
     --label X=Y          pane border label
     --page-label X=Y     page border label
+    --mark X=Y           mark of %L %R %U %D in labels (LEFT=<)
     --[no-]ignore-space  ignore space in table output
     --[no-]white-space   allow white spaces at the top of each pane
     --[no-]isolation     page-end isolated line
@@ -537,9 +538,30 @@ default, from the standard input.
     The following placeholders are expanded:
 
         %n    sequential pane number (1-based, across pages)
+        %N    number of all the panes
         %p    page number (1-based)
+        %P    number of all the pages
         %f    filename (basename only)
         %F    filename (path as given)
+        %L    mark of a pane on the left in the row
+        %R    mark of a pane on the right in the row
+        %U    mark of a page above
+        %D    mark of a page below
+
+    Next command shows the number of the pane with the number of all:
+
+        seq 100 | ansicolumn -P --label S=' %n/%N ' --2up
+
+    The marks tell that there is more in that direction: they are `<`,
+    `>`, `^` and `v`, and nothing where there is no pane or page
+    there.  A label which they leave with no text is not shown.  They are
+    for a row or pages which go on out of the screen, as a row wider than
+    the screen which is scrolled sideways:
+
+        seq 100 | ansicolumn -P10 -w 1000 -S 20 --border \
+            --label NW=' %L ' --label NE=' %R ' | less -S
+
+    Use `--mark` to change the marks.
 
     By default, left labels (`NW`, `SW`) start just inside the fill
     region, and right labels (`NE`, `SE`) end at the right edge of it.
@@ -557,6 +579,14 @@ default, from the standard input.
     Use `--cm BORDER_LABEL=`_color_ to colorize labels:
 
         seq 100 | ansicolumn -P --label SE=%n --cm BORDER_LABEL=RD --2up
+
+- **--mark** _name_=_string_
+
+    Set the mark which `%L`, `%R`, `%U` and `%D` of `--label` and
+    `--page-label` give.  The _name_ is `LEFT`, `RIGHT`, `UP` or
+    `DOWN`, case-insensitive.
+
+        --mark RIGHT='>>' --mark LEFT='<<'
 
 - **--page-label** _position_=_string_
 
