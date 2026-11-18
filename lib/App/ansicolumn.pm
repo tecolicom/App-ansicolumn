@@ -235,10 +235,11 @@ sub _highlight {
     $obj->highlight = $value;
 }
 
+# The name of a highlighter of Text::ANSI::Highlight, or its short name
 sub _highlighter {
     my $name = shift;
-    $name =~ /\A\w+\z/
-	and grep { !ref and -f "$_/IO/Factotum/Highlight/$name.pm" } @INC;
+    eval { require Text::ANSI::Highlight; 1 }
+	and defined Text::ANSI::Highlight->highlighter($name);
 }
 
 sub perform {
@@ -253,17 +254,25 @@ sub perform {
     # --mark: an unknown name is an error, with or without a label
     $obj->_marks;
 
-    # --factotum: converters of IO::Factotum, for read_files.
-    # --highlight[=NAME] is that of IO::Factotum::Highlight::NAME,
-    # skylighting by default.
+    # The files are read through IO::Factotum when it is loaded
+    # (read_files), and this is the only place which knows what it
+    # reads them through.
+    #
+    # --factotum: converters of IO::Factotum, by their names.
     my @names = map { split /,/ } @{$obj->factotum};
-    if (defined(my $name = $obj->highlight)) {
-	push @names, 'Highlight::' . ($name eq '' ? 'skylighting' : $name);
-    }
     if (@names) {
 	eval { require IO::Factotum; 1 }
 	    or die "--factotum requires IO::Factotum.\n";
 	IO::Factotum::load(@names);
+    }
+    # --highlight[=NAME]: Text::ANSI::Highlight::IO gives the
+    # highlighter of the name to IO::Factotum, the default one without
+    # the name.
+    if (defined(my $name = $obj->highlight)) {
+	eval { require Text::ANSI::Highlight::IO; 1 }
+	    or die "--highlight requires Text::ANSI::Highlight::IO.\n";
+	eval { Text::ANSI::Highlight::IO->setup($name eq '' ? () : $name); 1 }
+	    or die $@ =~ s/ at .* line \d+\.?\n\z/\n/r;
     }
 
     warn Dumper $obj if $obj->debug;

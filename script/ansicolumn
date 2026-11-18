@@ -69,7 +69,7 @@ ansicolumn [options] [file ...]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
     --colormap=#         color mapping (LABEL=COLOR)
-    --highlight[=#]      syntax highlight (sky|gnu), --hi
+    --highlight[=#]      syntax highlight (pandoc|gnu|sky), --hi
     --no-highlight       disable syntax highlight, --no-hi
 
 Table style options:
@@ -716,15 +716,20 @@ after the last form feed.
 =item B<--no-hi>, B<--no-highlight>
 
 Show source files with syntax highlight.  The language is told from
-the name of the file, or from the first line of a script.  A file
+the name of the file, or from the first line of a script.  In a
+Markdown file, the code in a fence is colored by the language of the
+fence.  A file
 whose language is not known is shown as it is, and so is the text
 when the command of the highlighter is not installed.  The names of
-the files, shown by C<--filename>, are not changed.
+the files, shown by C<--filename>, are not changed, and the standard
+input is shown as it is.
 
-I<name> is the highlighter, C<skylighting> when it is not given:
+I<name> is the highlighter, C<pandoc> when it is not given:
 
-    skylighting, sky       skylighting, the highlighter of pandoc
-    sourcehighlight, gnu   source-highlight of GNU Source-highlight
+    pandoc                 pandoc, by its ansi writer
+    sourcehighlight, gnu   source-highlight of GNU Source-highlight,
+                           the colors of less
+    skylighting, sky       the skylighting command
 
     ansicolumn --highlight -PC2 *.c
     ansicolumn --hi=gnu -PC2 *.c
@@ -734,9 +739,9 @@ it, as in F<~/.ansicolumnrc>:
 
     option default --highlight=gnu
 
-The highlighters are the modules of L<IO::Factotum::Highlight>:
-see L<IO::Factotum::Highlight::skylighting> and
-L<IO::Factotum::Highlight::sourcehighlight>.
+The highlighters are those of L<Text::ANSI::Highlight>.  The files
+are read through L<IO::Factotum>, to which
+L<Text::ANSI::Highlight::IO> gives the highlighter.
 
 =begin comment
 
@@ -746,9 +751,6 @@ Read the files through the converter of L<IO::Factotum> of the
 I<name>.  The file which the converter takes is replaced by the output
 of the converter, and the others are read as they are.  The names of
 the files, shown by C<--filename>, are not changed.
-
-C<--highlight>[=I<name>] is the same as
-C<--factotum=Highlight::>I<name>.
 
 The option can be repeated, and the names can be joined by commas.
 

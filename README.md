@@ -58,7 +58,7 @@ ansicolumn \[options\] \[file ...\]
     --ambiguous=#        ambiguous character width (narrow|wide)
     --pages              split file by formfeed
     --colormap=#         color mapping (LABEL=COLOR)
-    --highlight[=#]      syntax highlight (sky|gnu), --hi
+    --highlight[=#]      syntax highlight (pandoc|gnu|sky), --hi
     --no-highlight       disable syntax highlight, --no-hi
 
 Table style options:
@@ -686,15 +686,20 @@ default, from the standard input.
 - **--no-hi**, **--no-highlight**
 
     Show source files with syntax highlight.  The language is told from
-    the name of the file, or from the first line of a script.  A file
+    the name of the file, or from the first line of a script.  In a
+    Markdown file, the code in a fence is colored by the language of the
+    fence.  A file
     whose language is not known is shown as it is, and so is the text
     when the command of the highlighter is not installed.  The names of
-    the files, shown by `--filename`, are not changed.
+    the files, shown by `--filename`, are not changed, and the standard
+    input is shown as it is.
 
-    _name_ is the highlighter, `skylighting` when it is not given:
+    _name_ is the highlighter, `pandoc` when it is not given:
 
-        skylighting, sky       skylighting, the highlighter of pandoc
-        sourcehighlight, gnu   source-highlight of GNU Source-highlight
+        pandoc                 pandoc, by its ansi writer
+        sourcehighlight, gnu   source-highlight of GNU Source-highlight,
+                               the colors of less
+        skylighting, sky       the skylighting command
 
         ansicolumn --highlight -PC2 *.c
         ansicolumn --hi=gnu -PC2 *.c
@@ -704,9 +709,9 @@ default, from the standard input.
 
         option default --highlight=gnu
 
-    The highlighters are the modules of [IO::Factotum::Highlight](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight):
-    see [IO::Factotum::Highlight::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight%3A%3Askylighting) and
-    [IO::Factotum::Highlight::sourcehighlight](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3AHighlight%3A%3Asourcehighlight).
+    The highlighters are those of [Text::ANSI::Highlight](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AHighlight).  The files
+    are read through [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum), to which
+    [Text::ANSI::Highlight::IO](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AHighlight%3A%3AIO) gives the highlighter.
 
 ## TABLE OPTIONS
 
