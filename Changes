@@ -2,6 +2,14 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.67 2026-11-18T08:20:34Z
+
+    - --highlight is by Text::ANSI::Highlight, and the highlighters are
+      pandoc (default), sourcehighlight (gnu) and skylighting (sky).
+      In a Markdown file, the code in a fence is colored by the
+      language of the fence, each block by itself
+    - Requires Text::ANSI::Highlight 0.02 and IO::Factotum 0.05
+
 1.66 2026-11-17T06:39:22Z
 
     - Labels (--label, --page-label) have %N and %P, the numbers of all
