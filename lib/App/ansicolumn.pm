@@ -706,8 +706,18 @@ sub _overlay_labels {
 	my $text = $fmt =~ /%/ ? sprintf($fmt, $n, $p, $base, $file // '', @$more) : $fmt;
 	next if $spec->[2] and $text !~ /\S/;
 	my $lw = ansi_width($text);
+	my $pos = $pos_fn->($spec->[0], $lw);
+	# A label in the middle grows to the left first, when its number
+	# gets a digit more, then to the right, and so on.  It is placed
+	# from the narrowest one, that of the first pane and page: a
+	# label longer than that by one is longer on the left.
+	if ($spec == ($center // 0) and $fmt =~ /%/) {
+	    my $narrow = ansi_width(sprintf $fmt, 1, 1, $base, $file // '', @$more);
+	    $pos = $pos_fn->($spec->[0], $narrow) - int(($lw - $narrow + 1) / 2)
+		if $lw > $narrow;
+	}
 	my $label = $obj->color('BORDER_LABEL', $text);
-	$str = ansi_substr($str, $pos_fn->($spec->[0], $lw), $lw, $label);
+	$str = ansi_substr($str, $pos, $lw, $label);
     }
     $str;
 }

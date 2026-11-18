@@ -101,6 +101,38 @@ subtest 'end marks' => sub {
 	'an end mark by itself, and the name is case-insensitive';
 };
 
+# A label in the middle grows to the left first when its number gets
+# a digit more, then to the right: it is placed from the narrowest
+# one, that of the first pane and page
+subtest 'a label in the middle grows to the left first' => sub {
+    my $in = join '', map "$_\n", 1 .. 36;	# 12 panes
+    my $out = ac->new(qw(-P5 -C2 -w30 --border), '--label', 'N= %n/%N ')->exec($in);
+    my @top = @{ top($out) };
+    is scalar(@top), 6, 'six pages';
+    is $top[3], '┌──── 7/12 ───┐┌──── 8/12 ───┐', 'one digit';
+    is $top[4], '┌──── 9/12 ───┐┌─── 10/12 ───┐', 'one and two digits: /12 is at the same place';
+    is $top[5], '┌─── 11/12 ───┐┌─── 12/12 ───┐', 'two digits';
+
+    # the page number of a page label in the same way
+    $out = ac->new(qw(-P5 -C1 -w15 --border), '--page-label', 'S= %p/%P ')
+	->exec(join '', map "$_\n", 1 .. 30);
+    my @bottom = @{ bottom($out) };
+    is $bottom[8],  '└─── 9/10 ────┘', 'page label: one digit';
+    is $bottom[9],  '└── 10/10 ────┘', 'page label: two digits, longer on the left';
+
+    # three digits: to the left, then to the right
+    $out = ac->new(qw(-P5 -C1 -w16 --border), '--label', 'S= %n/%N ')
+	->exec(join '', map "$_\n", 1 .. 300);
+    @bottom = @{ bottom($out) };
+    is $bottom[8],  '└──── 9/100 ───┘', 'three digits: one';
+    is $bottom[9],  '└─── 10/100 ───┘', 'three digits: two, to the left';
+    is $bottom[99], '└─── 100/100 ──┘', 'three digits: three, to the right';
+
+    # a label which does not change is in the middle as before
+    is_deeply top(pages('--label', 'N= abc ')),
+	[ '┌──── abc ────┐┌──── abc ────┐', '┌──── abc ────┐' ], 'no number';
+};
+
 subtest 'with other text' => sub {
     is_deeply top(pages('--label', 'NE= %n%R ')),
 	[ '┌───────── 1> ┐┌────────── 2 ┐',
