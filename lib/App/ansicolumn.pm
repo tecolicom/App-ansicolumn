@@ -25,6 +25,10 @@ use Getopt::EX::RPN qw(rpn_calc);
 use Exporter 'import';
 our @EXPORT_OK = qw(ansicolumn);
 
+# --intact: what joins the lines to be kept intact into one line
+# (UNIT SEPARATOR, for now)
+our $INTACT_SEP = "\x1F";
+
 sub ansicolumn {
     __PACKAGE__->new->perform(@_);
 }
@@ -89,6 +93,7 @@ use Getopt::EX::Hashed 1.0701; {
     has runout              => ' =i      ' , min => 0, default => 2 ;
     has runlen              => ' =i      ' ;
     has pagebreak           => ' !       ' , default => 1 ;
+    has intact              => ' !       ' ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
     has no_border           => '         ' , action => sub { $_->border = 'none' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
@@ -492,15 +497,25 @@ sub read_files {
 sub prepare {
     my $obj = shift;
     my $doc = shift;
+    my $intact = $obj->intact && !$obj->table;
+    # --intact: a line which has the separator holds lines to be kept
+    # intact, joined into one; it is divided into them, and every one
+    # keeps the separator at its start as its mark, until the line is
+    # folded (set_contents)
+    $doc->filter(sub {
+	map { /$INTACT_SEP/ ? map("$INTACT_SEP$_", split /$INTACT_SEP/, $_, -1) : $_ } @_;
+    }) if $intact;
     $doc->filter(\&insert_space) if $obj->paragraph;
     my @width;
     if ($obj->table) {
 	@width = map { length } $doc->lines;
     } else {
 	$doc->replace(sub {
-	    my($text, $width) = $obj->expand_tab($_[0]);
+	    my $line = shift;
+	    my $mark = $intact && $line =~ s/^$INTACT_SEP//;
+	    my($text, $width) = $obj->expand_tab($line);
 	    push @width, $width;
-	    $text;
+	    $mark ? "$INTACT_SEP$text" : $text;
 	});
     }
     $doc->width(max(@width) // 0);
@@ -564,10 +579,35 @@ sub set_contents {
     (my $cell_width = $obj->span) < 1
 	and die "Not enough space.\n";
     # Fold long lines
+    my $intact = $obj->intact && !$obj->table;
     if ($obj->linestyle and $obj->linestyle ne 'none') {
 	my $w = $fp->span // $cell_width;
 	my $fold = $obj->foldsub($w) or die;
+	if ($intact) {
+	    # A line kept intact is laid out as it is: the room kept for
+	    # run-in characters, word boundaries and line-break (kinsoku)
+	    # rules are for text folded into lines.  One that fits the
+	    # pane is not folded, and a wider one is cut at the pane
+	    # width, as a terminal does with a long line.
+	    my $intact_fold = $obj->foldobj($w);
+	    $intact_fold->configure(
+		margin    => 0,
+		boundary  => '',
+		linebreak => Text::ANSI::Fold::LINEBREAK_NONE,
+		);
+	    my $line_fold = $fold;
+	    my $truncate = $obj->linestyle eq 'truncate';
+	    $fold = sub {
+		my $line = shift;
+		$line =~ s/^$INTACT_SEP// or return $line_fold->($line);
+		my @chops = $intact_fold->text($line)->chops;
+		$truncate ? $chops[0] : @chops;
+	    };
+	}
 	$fp->replace($fold);
+    }
+    elsif ($intact) {
+	$fp->replace(sub { $_[0] =~ s/^$INTACT_SEP//r });
     }
     return $obj;
 }

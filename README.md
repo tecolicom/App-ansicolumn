@@ -44,6 +44,7 @@ ansicolumn \[options\] \[file ...\]
     --runout=#           run-out width
     --runlen=#           set both run-in and run-out width
     --[no-]pagebreak     allow page break
+    --intact             keep lines joined by US as they are
     --border-style=#     border style
     --label X=Y          pane border label
     --page-label X=Y     page border label
@@ -177,7 +178,9 @@ default, from the standard input.
     narrowed by wrapping the cells of its wide columns: short columns
     keep their width, long columns are cut to about the same width as
     each other, and width that wrapping leaves unused is passed on to
-    the other columns.  Cells are wrapped at word boundaries, with
+    the other columns, the room kept for run-in characters
+    (`--runin`) too when none goes there, so that the table is as wide
+    as it may be.  Cells are wrapped at word boundaries, with
     line-break (kinsoku) rules, and tokens longer than the column are
     split.  A wrapped column is at least 4 columns wide; if even that
     does not fit, the table overflows.  Per-column widths can be set
@@ -448,6 +451,25 @@ default, from the standard input.
     like this:
 
         option default --runin=4 --runout=4
+
+- **--intact**
+
+    Keep lines as they are: a line which fits the pane is not folded,
+    even into the room kept for run-in characters (`--runin`), and a
+    wider one is cut at the pane width, as a terminal does with a long
+    line, with no word boundary (`--boundary`) and no line-break rules
+    (`--linebreak`) applied.  The lines to be kept are given joined into
+    one line by UNIT SEPARATOR characters (US, 0x1F) for now; the line
+    is divided at them.  A program which makes lines that fit the pane
+    width, such as a table, can send them this way, so that they are
+    laid out as they are, while lines of text are folded leaving the
+    run-in room.  The width of the panes is that of
+    the widest of the lines.  This is not done in the table mode (`-t`),
+    where US can be a separator.
+
+        $ printf '| a | b |\037| c | d |\n' | ansicolumn -C1 --intact
+        | a | b |
+        | c | d |
 
 - **--**\[**no-**\]**pagebreak**
 
