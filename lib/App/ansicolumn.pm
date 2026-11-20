@@ -128,6 +128,7 @@ use Getopt::EX::Hashed 1.0701; {
     has _pbl          => ;
     has _mk           => ;
     has _total_panes  => ;
+    has _cell_fold    => ;	# cells wrapped by the table mode, by width
     has _total_pages  => ;
 
     Getopt::EX::Hashed->configure( DEFAULT => [] );

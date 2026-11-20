@@ -201,16 +201,61 @@ sub cell_width {
 # run-in margin is wrapped, as lines are in panes, so that a cell
 # fitting in the margin is not left longer than the wrapped lines.
 #
+#
+# cell_limit($width, $content): the width over which a cell is wrapped
+# in a column of the target width whose widest cell is $content wide.
+#
+sub cell_limit {
+    my($obj, $w, $content) = @_;
+    $content > $w ? $w - $obj->table_margin($w) : $w;
+}
+
+#
+# wrap_cell_line($line, $width): a line of a cell wrapped at the width,
+# as [ \@chops, \@widths ].  Trailing spaces are removed from the
+# chops, and so is their width.  fit_table_rows wraps the same cells at
+# the same widths again and again, so the result is kept by the object.
+#
+sub wrap_cell_line {
+    my($obj, $line, $w) = @_;
+    my $cache = $obj->{_cell_fold}{$w} //= { fold => $obj->table_fold($w), line => {} };
+    $cache->{line}{$line} //= do {
+	my @c = $cache->{fold}->text($line)->chops(length => \my @l);
+	for my $k (keys @c) {
+	    $c[$k] =~ s/(\h+)((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$2/ or next;
+	    my $sp = $1;
+	    $l[$k] = $sp =~ /^ +$/ ? $l[$k] - length $sp : ansi_width($c[$k]);
+	}
+	@c ? [ \@c, \@l ] : [ [ '' ], [ 0 ] ];
+    };
+}
+
+#
+# column_width(\@rows, \@rw, $col, $width, $content): how wide the
+# column comes out when it is wrapped at the width, as
+# expand_table_rows does, without making the rows.
+#
+sub column_width {
+    my($obj, $rows, $rw, $i, $w, $content) = @_;
+    my $limit = $obj->cell_limit($w, $content);
+    max 0, map {
+	my $r = $_;
+	my @lines = cell_lines($rows->[$r][$i]);
+	map {
+	    my $lw = @lines > 1 ? ansi_width($_ // '') : $rw->[$r][$i] // 0;
+	    $lw > $limit ? max(@{$obj->wrap_cell_line($_, $w)->[1]}) : $lw;
+	} @lines;
+    } keys @$rows;
+}
+
 sub expand_table_rows {
     my($obj, $rows, $rw, $target, $content, $continued, $ow) = @_;
     @$continued = () if $continued;
     @$ow = ();
     my @limit = map {
 	my($i, $w) = ($_, $target->[$_]);
-	!defined $w ? undef :
-	$content->[$i] > $w ? $w - $obj->table_margin($w) : $w;
+	defined $w ? $obj->cell_limit($w, $content->[$i]) : undef;
     } keys @$target;
-    my %fold;
     my @out;
     for my $r (keys @$rows) {
 	my $row = $rows->[$r];
@@ -225,14 +270,9 @@ sub expand_table_rows {
 		my $lw = @lines > 1 ? ansi_width($line // '') : $cw;
 		my(@c, @l);
 		if (defined $w and $lw > $limit[$_]) {
-		    @c = ($fold{$w} //= $obj->table_fold($w))->text($line)->chops(length => \@l);
-		    for my $k (keys @c) {
-			# trailing spaces are removed, and so is their width
-			$c[$k] =~ s/(\h+)((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$2/ or next;
-			my $sp = $1;
-			$l[$k] = $sp =~ /^ +$/ ? $l[$k] - length $sp : ansi_width($c[$k]);
-		    }
-		    @c or do { @c = (''); @l = (0) };
+		    my $wrapped = $obj->wrap_cell_line($line, $w);
+		    @c = @{$wrapped->[0]};
+		    @l = @{$wrapped->[1]};
 		} else {
 		    @c = ($line);
 		    @l = ($lw);
@@ -280,8 +320,85 @@ sub expand_table_rows {
 # to expand_table_rows(); \@continued and \@ow describe the rows
 # returned.
 #
+# The widths are decided on the target widths, but a wrapped column
+# often comes out narrower than its target: the run-in margin is kept
+# free in every wrapped column and is used only when a run-in
+# character goes there, and lines break at word boundaries before the
+# limit.  So the table is fit again with the width left unused added
+# to the budget, as long as the result still fits the real budget and
+# comes out wider.
+#
+# A larger budget raises every wrapped column at once, and the table
+# can come out several columns wider by one more column of budget,
+# over the budget.  What is still left is then given to the wrapped
+# columns one by one, widest content first: a column is wrapped at a
+# width larger by one, two, and so on up to what is left, the first
+# that makes it wider within the budget is taken, and so again until
+# none does.  How wide a column comes out depends on its own width
+# only, so a column is measured alone, and a column that cannot be
+# widened cannot be later, with less left.
+#
+# Only the widths are looked for; the rows are made once at the end.
+#
 sub fit_table_rows {
     my($obj, $rows, $rw, $content, $budget, $overhead, $fixed, $floor, $continued, $ow) = @_;
+    my $is_fixed = sub { $fixed and defined $fixed->[$_[0]] };
+    # the width of the table, from the widths of the columns
+    my $used = sub {
+	my $cw = shift;
+	sum map { ($is_fixed->($_) ? $fixed->[$_] : $cw->[$_]) + $overhead } keys @$content;
+    };
+    # fit into a budget: the widths wrapped at, and those come out
+    my $fit = sub {
+	my $b = shift;
+	my(@w, @t);
+	$obj->fit_table_rounds($rows, $rw, $content, $b, $overhead, $fixed, $floor, undef, \@w, \@t);
+	my @cw = map { my $i = $_; max 0, map { $_->[$i] // 0 } @w } keys @$content;
+	{ target => \@t, cw => \@cw, used => $used->(\@cw) };
+    };
+    my $best = $fit->($budget);
+    if (defined $budget) {
+	my $try = $budget;
+	# each round makes the table wider within the budget, or stops
+	while ((my $left = $budget - $best->{used}) > 0) {
+	    my $next;
+	    for (my $t = $try + $left; $t > $try; $t--) {
+		my $r = $fit->($t);
+		next if $r->{used} > $budget;
+		($next, $try) = ($r, $t) if $r->{used} > $best->{used};
+		last;
+	    }
+	    last unless $next;
+	    $best = $next;
+	}
+	my($t, $cw, $u) = @{$best}{qw(target cw used)};
+	for my $i (sort { $content->[$b] <=> $content->[$a] or $a <=> $b }
+		   grep { not $is_fixed->($_) } keys @$content) {
+	  WIDEN:
+	    while ((my $left = $budget - $u) > 0 and $content->[$i] > $t->[$i]) {
+		for my $d (1 .. $left) {
+		    my $m = $obj->column_width($rows, $rw, $i, $t->[$i] + $d, $content->[$i]);
+		    next if $m <= $cw->[$i] or $u + $m - $cw->[$i] > $budget;
+		    $u += $m - $cw->[$i];
+		    $cw->[$i] = $m;
+		    $t->[$i] += $d;
+		    next WIDEN;
+		}
+		last;
+	    }
+	}
+    }
+    $obj->expand_table_rows($rows, $rw, $best->{target}, $content, $continued, $ow);
+}
+
+#
+# fit_table_rounds(..., \@width): the rounds of fit_table_rows
+# described above, for one budget.  Arguments are those of
+# fit_table_rows, and \@width is set to the widths the columns were
+# wrapped at.
+#
+sub fit_table_rounds {
+    my($obj, $rows, $rw, $content, $budget, $overhead, $fixed, $floor, $continued, $ow, $wout) = @_;
     my @fix = $fixed ? @$fixed : ();
     my @wrap;			# width each column was wrapped at
     my @out;
@@ -289,6 +406,7 @@ sub fit_table_rows {
 	my $target = table_widths($content, $budget, $overhead, \@fix, $floor);
 	my @width = map { $wrap[$_] // $target->[$_] } keys @$content;
 	@out = $obj->expand_table_rows($rows, $rw, \@width, $content, $continued, $ow);
+	@$wout = @width if $wout;
 	my $changed = 0;
 	for my $i (keys @$content) {
 	    next if defined $fix[$i] or $content->[$i] <= $target->[$i];

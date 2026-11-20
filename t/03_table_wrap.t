@@ -68,9 +68,9 @@ my @T = ('-t', '-s', '|', '--table-remove=1,-0');
 is(out($tbl, @T, '-w', 80), out($tbl, @T), 'fits-identical');
 
 for (
-    [ 'wrap'        => [@T, '-w', 30] ],
-    [ 'item-format' => [@T, '-w', 34, '-o', '|', '--item-format= %s '] ],
-    [ 'right'       => [@T, '-w', 30, '--table-right=2'] ],
+    [ 'wrap'        => [@T, '-w', 29] ],
+    [ 'item-format' => [@T, '-w', 32, '-o', '|', '--item-format= %s '] ],
+    [ 'right'       => [@T, '-w', 29, '--table-right=2'] ],
     [ 'cell-fixed'  => [@T, '--cell', '20,0', '-o', '|'] ],
 ) {
     my($name, $opt) = @$_;
@@ -79,12 +79,12 @@ for (
 
 {
     my $in = "|aaaa bbbb cccc dddd eeee|1111 2222 3333 4444 5555|\n" x 2;
-    my $o = out($in, @T, '-w', 30);
+    my $o = out($in, @T, '-w', 20);
     my @l = split /\n/, $o;
     is(scalar @l, 6, 'equal-level: 3 physical lines per row');
     my @c1 = map { /^(\S+(?: \S+)*)\s{2,}/ ? length $1 : 0 } @l;
     is((sort { $b <=> $a } @c1)[0], 9, 'equal-level: both columns share the level');
-    ok(!(grep { $_ > 30 } widths($o)), 'equal-level: within width');
+    ok(!(grep { $_ > 20 } widths($o)), 'equal-level: within width');
 }
 
 {
@@ -183,29 +183,43 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     my $o = out($in, @T, '-w', 30, '-o', '|');
     my @r = cols($o);
     ok(!(grep { ansi_width($_->[0]) != 10 } @r), 'redistribute: column 1 keeps its wrapped width');
-    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 17, 'redistribute: column 2 takes the slack');
+    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 19, 'redistribute: column 2 takes the slack');
     ok(!(grep { $_ > 30 } widths($o)), 'redistribute: within width');
 }
 
 {
+    # The room kept for run-in characters in a wrapped column is given
+    # to the columns when no run-in character goes there: two lines
+    # per row, not three, and the table is as wide as -w.
+    my $in = "|aaaa bbbb cccc dddd eeee|1111 2222 3333 4444 5555|\n" x 2;
+    my $o = out($in, @T, '-w', 30, '--runin', 4);
+    is(scalar(split /\n/, $o), 4, 'run-in room: two physical lines per row');
+    is((sort { $b <=> $a } widths($o))[0], 30, 'run-in room: the table is as wide as -w');
+}
+
+{
     # Double-width characters cannot fill an odd width; being one
-    # column short is not slack, so both columns keep sharing.
+    # column short is not slack, so both columns keep sharing.  The
+    # column left unused is given to the other column when the table
+    # is fit again, and the table is as wide as -w.
     my $in = "|" . ("\x{3042}" x 20) . "|" . ("c" x 40) . "|\n";
     my $o = out($in, @T, q(-w), 30, q(-o), q(|));
     my @r = cols($o);
-    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 12, 'parity: one column short is not slack');
+    is((sort { $b <=> $a } map { ansi_width($_->[0]) } @r)[0], 14, 'parity: the double-width column is one short of its width');
+    is((sort { $b <=> $a } map { ansi_width($_->[1]) } @r)[0], 15, 'parity: the column left goes to the other column');
+    is((sort { $b <=> $a } widths($o))[0], 30, 'parity: the table is as wide as -w');
 }
 
 {
     # the mark is passed to the command as UTF-8 bytes
     my @M = (q(-o), q(|), q(--table-wrap-mark), encode_utf8("\x{b7}"));
     my @F = (q(--item-format= %s ));
-    my $o = out($tbl, @T, q(-w), 34, @M, @F);
+    my $o = out($tbl, @T, q(-w), 32, @M, @F);
     like($o, qr/^\s+\|\x{b7}jumps over the lazy dog$/m, q(wrap-mark: replaces the leading pad of a continuation line));
     like($o, qr/^ k1  \| the quick brown fox$/m, 'wrap-mark: first line keeps its pad');
     like($o, qr/^ k2  \| short$/m, 'wrap-mark: unwrapped cell untouched');
-    is($o =~ s/\x{b7}/ /gr, out($tbl, @T, q(-w), 34, q(-o), q(|), @F), 'wrap-mark: widths unchanged');
-    like(out($tbl, @T, q(-w), 30, @M), qr/^\s+\|\x{b7}jumps over the lazy dog$/m, 'wrap-mark: prepended when there is no pad');
+    is($o =~ s/\x{b7}/ /gr, out($tbl, @T, q(-w), 32, q(-o), q(|), @F), 'wrap-mark: widths unchanged');
+    like(out($tbl, @T, q(-w), 28, @M), qr/^\s+\|\x{b7}jumps over the lazy dog$/m, 'wrap-mark: prepended when there is no pad');
     my $sgr = out("|k|\e[1mthe quick brown fox jumps over the lazy dog\e[m|\n", @T, q(-w), 34, @M, @F);
     like($sgr, qr/^\s+\|\x{b7}\e\[1mover the lazy dog\e\[m$/m, q(wrap-mark: placed before the reopened SGR));
 }
@@ -215,19 +229,19 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     # that has a wrapped cell; other columns are left alone
     my @F = (q(-o), q(|), q(--item-format= %s ));
     my @I = (q(--table-cell-mark=+));
-    my $o = out($tbl, @T, q(-w), 34, @F, @I);
+    my $o = out($tbl, @T, q(-w), 32, @F, @I);
     like($o, qr/^ k1  \|\+the quick brown fox$/m, q(cell-mark: replaces the leading pad in the wrapped column));
     like($o, qr/^\s+\| jumps over the lazy dog$/m, q(cell-mark: continuation line keeps its pad));
     like($o, qr/^ k2  \|\+short$/m, q(cell-mark: unwrapped cell of a wrapped column is marked));
     unlike($o, qr/^\+/m, q(cell-mark: a column with no wrapped cell is not marked));
     like($o, qr/^ key \|\+description$/m, q(cell-mark: the first row is marked like any other without --table-head));
-    is($o =~ s/\+/ /gr, out($tbl, @T, q(-w), 34, @F), q(cell-mark: widths unchanged));
+    is($o =~ s/\+/ /gr, out($tbl, @T, q(-w), 32, @F), q(cell-mark: widths unchanged));
     is(out($tbl, @T, @F, @I), out($tbl, @T, @F), q(cell-mark: a table with no wrapped cell is left alone));
     is(out($tbl, @T, q(-w), 80, @F, @I), out($tbl, @T, @F), q(cell-mark: nor when -w is wide enough));
-    my $both = out($tbl, @T, q(-w), 34, @F, @I, q(--table-wrap-mark=-));
+    my $both = out($tbl, @T, q(-w), 32, @F, @I, q(--table-wrap-mark=-));
     like($both, qr/^\s+\|-jumps over the lazy dog$/m, q(cell-mark: continuation line gets the wrap mark));
     like($both, qr/^ k1  \|\+the quick brown fox$/m, q(cell-mark: first line gets the cell mark));
-    like(out($tbl, @T, q(-w), 30, q(-o), q(|), @I), qr/^k1 \|\+the quick brown fox$/m, q(cell-mark: prepended when there is no pad));
+    like(out($tbl, @T, q(-w), 28, q(-o), q(|), @I), qr/^k1 \|\+the quick brown fox$/m, q(cell-mark: prepended when there is no pad));
     is(out("|a||\n|bbbbbbbbbb|c|\n", @T, q(-o), q(|), q(--cell), q(5,0), @I), "+a   |\n+bbb |c\nbbb  |\nbbb  |\nb    |\n", q(cell-mark: empty cells are not marked, nor the unwrapped column));
     my $two = out("|aaaaaaaaaa|bbbbbbbbbb|\n|c|d|\n", @T, @F, q(--cell), q(6,6), @I);
     like($two, qr/^\+a+\s*\|\+b+\s*$/m, q(cell-mark: every column that wrapped is marked));
@@ -239,12 +253,12 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     # a row that wraps is still one row
     my @F = (q(-o), q(|), q(--item-format= %s ));
     my @I = (q(--table-cell-mark=+));
-    my $o = out($tbl, @T, q(-w), 34, @F, @I, q(--table-head=1));
+    my $o = out($tbl, @T, q(-w), 32, @F, @I, q(--table-head=1));
     like($o, qr/^ key \| description$/m, q(table-head: the header row is not marked));
     like($o, qr/^ k1  \|\+the quick brown fox$/m, q(table-head: body rows are marked));
     like($o, qr/^ k2  \|\+short$/m, q(table-head: all body rows are marked));
     my $sep = "|key|description|\n|-|-|\n|k1|the quick brown fox jumps over the lazy dog|\n";
-    my $s = out($sep, @T, q(-w), 34, @F, @I, q(--table-head=2));
+    my $s = out($sep, @T, q(-w), 32, @F, @I, q(--table-head=2));
     like($s, qr/^ key \| description$/m, q(table-head=2: the header row is not marked));
     like($s, qr/^ -   \| -$/m, q(table-head=2: the separator row is not marked));
     like($s, qr/^ k1  \|\+the quick brown fox$/m, q(table-head=2: the body row is marked));
@@ -252,7 +266,7 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     my $w = out($long, @T, q(-w), 30, @F, @I, q(--table-head=2));
     unlike($w, qr/^\+| \+[^|]*$/m, q(table-head: no mark in the header rows even when the header wraps));
     like($w, qr/^ k1  \|\+the quick/m, q(table-head: a wrapped header still counts as one row));
-    is(out($tbl, @T, q(-w), 34, @F, @I, q(--table-head=0)), out($tbl, @T, q(-w), 34, @F, @I), q(table-head=0: same as no --table-head));
+    is(out($tbl, @T, q(-w), 32, @F, @I, q(--table-head=0)), out($tbl, @T, q(-w), 32, @F, @I), q(table-head=0: same as no --table-head));
     is(out($tbl, @T, @F, q(--table-head=1)), out($tbl, @T, @F), q(table-head: no effect without a mark));
 }
 
@@ -269,8 +283,25 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
        q(cell-mark: left edge of a centered cell));
     is(out("|k|the quick brown fox jumps over the lazy dog|\n|kk|short|\n",
 	   @T, @F, q(-w), 26, q(--table-right=2), q(--table-wrap-mark=-)),
-       " k  | the quick brown\n    |- fox jumps over\n    |-   the lazy dog\n kk |           short\n",
+       " k  | the quick brown fox\n    |-jumps over the lazy\n    |-                dog\n kk |               short\n",
        q(wrap-mark: left edge of a right-aligned cell));
+}
+
+{
+    # One more column of budget can make the table several columns
+    # wider, over the budget; what is left is given to the wrapped
+    # columns one by one, and the table is as wide as -w.  The output
+    # loses the trailing space of the last cell: one short is full.
+    my $in = join '', map "$_\n",
+	"|E-101|vpn-tokyo-01_ssl-vpn_20250501-20250602.log|VPN auth log|2025-05-01 00:00 - 2025-06-02 10:15|b8c3f7e2a9d1c4b6e0f5a7c9d3e1b4f6a8c0d2e4f6a8b0c2d4e6f8a0b2c4d6e8|",
+	"|E-102|AD01_Security_20250501-20250602.evtx|Windows security log of AD01|2025-05-01 00:00 - 2025-06-02 11:20|c9d4e8f3a0b2c5d7e9f1a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4|",
+	"|E-103|FS01_Security_20250501-20250602.evtx|file sharing and logon events of FS01|2025-05-01 00:00 - 2025-06-02 11:35|d0e5f9a4b1c3d6e8f0a2b5c7d9e1f4a6b8c0d2e4f6a8b0c2d4e6f8a0b2c4d6|";
+    my @short = grep {
+	my $w = $_;
+	my $o = out($in, @T, q(-o), q(|), q(--item-format= %s ), q(-w), $w);
+	(sort { $b <=> $a } widths($o))[0] < $w - 1;
+    } 40 .. 100;
+    is("@short", '', 'fill: the table is as wide as -w, for -w from 40 to 100');
 }
 
 done_testing;

@@ -50,14 +50,14 @@ is(out("one${LS}two\nthree\n", qw(-c 20)),
 
 # with -w, every line of a cell is wrapped on its own
 my $wide = "k1|the quick brown fox${LS}jumps over the lazy dog\n";
-my $w = out($wide, @T, qw(-w 18));
+my $w = out($wide, @T, qw(-w 16));
 is($w,
    "k1|the quick\n  |brown fox\n  |jumps over\n  |the lazy dog\n",
    'with -w the lines of a cell are wrapped one by one');
 
 # --table-wrap-mark marks wrapped lines only, not the lines of a
 # cell given by the separator
-my $m = out($wide, @T, qw(-w 18), q(--table-wrap-mark), encode_utf8("\x{b7}"));
+my $m = out($wide, @T, qw(-w 16), q(--table-wrap-mark), encode_utf8("\x{b7}"));
 is($m,
    "k1|the quick\n  |\x{b7}brown fox\n  |jumps over\n  |\x{b7}the lazy dog\n",
    'wrap-mark is not put on a line started by the separator');
