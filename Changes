@@ -2,6 +2,17 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.69 2026-11-20T10:26:59Z
+
+    - A LINE SEPARATOR (U+2028) in a table cell breaks the cell into
+      lines: the row is as tall as its tallest cell (for the <br> of
+      a Markdown table)
+    - A table fit into -w uses the width that wrapped columns leave
+      unused (the run-in room, word boundaries): it is as wide as -w
+    - --intact keeps lines joined by UNIT SEPARATOR as they are: one
+      that fits the pane is not folded, even into the run-in room, and
+      a wider one is cut at the pane width as a terminal does
+
 1.68 2026-11-19T04:07:10Z
 
     - A label in the middle (N, S) with a number grows to the left
