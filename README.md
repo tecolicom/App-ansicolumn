@@ -160,6 +160,18 @@ default, from the standard input.
 
     Unlike the original [column(1)](http://man.he.net/man1/column) command, empty fields are not ignored.
 
+    A LINE SEPARATOR character (U+2028) in a cell breaks the cell into
+    lines: the row is printed on as many lines as its tallest cell, and
+    the width of a column is that of its widest line.  It does not end
+    the row as a newline does.  A program that makes a table can use it
+    for a line break in a cell, as for the `<br>` of a Markdown
+    table.  Outside the table mode, a LINE SEPARATOR ends a line.
+
+        $ printf 'item|first\342\200\250second\nnext|third\n' | ansicolumn -t -s '|'
+        item  first
+              second
+        next  third
+
     When the `-w` option is given, the table is fit into that width.
     A table that already fits is left alone.  Otherwise the table is
     narrowed by wrapping the cells of its wide columns: short columns
@@ -761,7 +773,8 @@ These options work with the `-t` option.
 
     When a cell is wrapped by `-w` or `--cell`, put _string_ at the
     start of its second and later lines, so that a continuation line
-    can be told from a new row.  The mark takes the place of leading
+    can be told from a new row.  A line which starts after a LINE
+    SEPARATOR (see **--table**) is not a continuation, and gets no mark.  The mark takes the place of leading
     space from `--item-format` as far as it is wide; with
     `--item-format=' %s '` and a one-column mark such as `›` (U+203A), column
     widths do not change.
@@ -773,8 +786,9 @@ These options work with the `-t` option.
     When a cell of the table is wrapped, put _string_ at the start of
     the first line of every non-empty cell in the columns that have a
     wrapped cell, so that the lines where a row starts stand out from the
-    continuation lines.  Columns without a wrapped cell, and a table with
-    no wrapped cell, are left as they are.  The mark takes the place of
+    continuation lines.  A cell broken into lines by LINE SEPARATORs (see
+    **--table**) counts as a wrapped cell here.  Columns without a wrapped
+    cell, and a table with no wrapped cell, are left as they are.  The mark takes the place of
     leading space in the same way as **--table-wrap-mark**.  Both can be
     used together.
 

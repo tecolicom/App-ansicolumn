@@ -153,16 +153,48 @@ sub table_fold {
 }
 
 #
+# cell_lines($cell)
+#
+# The lines of a table cell: a LINE SEPARATOR (U+2028) in a cell
+# breaks it into lines.  An empty cell has one empty line.  The cell
+# is divided by Text::ANSI::Fold, with no width, which ends a line at
+# the separator: colors and links that go on over it are closed at
+# the end of the line and opened again on the next.
+#
+sub cell_lines {
+    my $cell = shift;
+    return ($cell) if not defined $cell or $cell !~ /\x{2028}/;
+    state $fold = Text::ANSI::Fold->new(width => -1);
+    my @lines = map { s/\x{2028}\z//r } $fold->text($cell)->chops;
+    # a separator at the end leaves an empty last line
+    push @lines, '' if $cell =~ /\x{2028}(?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*\z/;
+    @lines;
+}
+
+#
+# cell_width($cell)
+#
+# The width of a table cell: the width of its widest line.
+#
+sub cell_width {
+    max map { ansi_width($_ // '') } cell_lines(shift);
+}
+
+#
 # expand_table_rows(\@rows, \@rw, \@target, \@content, \@continued, \@ow)
 #
 # Wrap cells wider than their target width and expand each logical
-# row into as many physical rows as its tallest cell.  Missing cell
-# lines are filled with empty strings.  Ragged rows stay ragged.
-# \@rw holds the width of every cell of \@rows, and \@ow is set to
-# the width of every cell of the rows returned, so that no cell is
-# measured twice.
+# row into as many physical rows as its tallest cell.  A cell which
+# has LINE SEPARATORs is broken into its lines first, and each line
+# is wrapped on its own.  Missing cell lines are filled with empty
+# strings.  Ragged rows stay ragged.
+# \@rw holds the width of every cell of \@rows (of its widest line),
+# and \@ow is set to the width of every cell of the rows returned, so
+# that no cell is measured twice.
 # When \@continued is given, $continued[row][col] is set for every
-# cell that is the second or later line of a wrapped cell.
+# cell that is the second or later line of a cell: 1 for a line of
+# a wrapped cell, 2 for a line which starts after a LINE SEPARATOR.
+# With an empty \@target, cells are only broken at LINE SEPARATORs.
 #
 # In a column that has a cell wider than the target (its widest cell,
 # $content[col], is wider), every cell wider than the target minus the
@@ -183,30 +215,42 @@ sub expand_table_rows {
     for my $r (keys @$rows) {
 	my $row = $rows->[$r];
 	my @widths;
+	my @kinds;
 	my @cells = map {
 	    my($cell, $w, $cw) = ($row->[$_], $target->[$_], $rw->[$r][$_]);
-	    if (defined $w and $cw > $limit[$_]) {
-		my @chops = ($fold{$w} //= $obj->table_fold($w))->text($cell)->chops(length => \my @length);
-		for my $k (keys @chops) {
-		    # trailing spaces are removed, and so is their width
-		    $chops[$k] =~ s/(\h+)((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$2/ or next;
-		    my $sp = $1;
-		    $length[$k] = $sp =~ /^ +$/ ? $length[$k] - length $sp : ansi_width($chops[$k]);
+	    my @lines = cell_lines($cell);
+	    my(@chops, @length, @kind);
+	    for my $n (keys @lines) {
+		my $line = $lines[$n];
+		my $lw = @lines > 1 ? ansi_width($line // '') : $cw;
+		my(@c, @l);
+		if (defined $w and $lw > $limit[$_]) {
+		    @c = ($fold{$w} //= $obj->table_fold($w))->text($line)->chops(length => \@l);
+		    for my $k (keys @c) {
+			# trailing spaces are removed, and so is their width
+			$c[$k] =~ s/(\h+)((?:\e\[[\d;]*m|\e\]8;;[^\e]*\e\\)*)$/$2/ or next;
+			my $sp = $1;
+			$l[$k] = $sp =~ /^ +$/ ? $l[$k] - length $sp : ansi_width($c[$k]);
+		    }
+		    @c or do { @c = (''); @l = (0) };
+		} else {
+		    @c = ($line);
+		    @l = ($lw);
 		}
-		@chops or do { @chops = (''); @length = (0) };
-		$widths[$_] = \@length;
-		\@chops;
-	    } else {
-		$widths[$_] = [ $cw ];
-		[ $cell ];
+		push @kind, ($n ? 2 : 0), (1) x $#c;
+		push @chops, @c;
+		push @length, @l;
 	    }
+	    $widths[$_] = \@length;
+	    $kinds[$_] = \@kind;
+	    \@chops;
 	} keys @$row;
 	my $height = max(1, map { int @$_ } @cells);
 	for my $k (0 .. $height - 1) {
 	    push @out, [ map { $_->[$k] // '' } @cells ];
 	    push @$ow, [ map { $_->[$k] // 0 } @widths ];
 	    next unless $continued and $k;
-	    $continued->[$#out][$_] = 1 for grep { defined $cells[$_][$k] } keys @cells;
+	    $continued->[$#out][$_] = $kinds[$_][$k] for grep { defined $cells[$_][$k] } keys @cells;
 	}
     }
     @out;

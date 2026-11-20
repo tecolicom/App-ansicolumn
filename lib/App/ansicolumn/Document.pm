@@ -26,13 +26,16 @@ use List::Util qw(any);
 #
 # With "formfeed", the text is divided at form feeds.  Without it the
 # text is one part, and a form feed is left in the lines as it is.
+# With "keep_ls", a LINE SEPARATOR (U+2028) does not end a line: the
+# table mode takes it as a line break in a cell.
 #
 sub new {
     my $class = shift;
     my %arg = @_;
     my $parts = $arg{parts} // do {
 	my $text = $arg{text} // '';
-	[ map { [ split /(?!\f)\R/ ] }
+	my $eol = $arg{keep_ls} ? qr/(?![\f\x{2028}])\R/ : qr/(?!\f)\R/;
+	[ map { [ split $eol ] }
 	  $arg{formfeed} ? _split_formfeed($text) : $text ];
     };
     bless {

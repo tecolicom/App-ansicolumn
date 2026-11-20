@@ -476,6 +476,7 @@ sub read_files {
 	    name     => $file,
 	    text     => $content,
 	    formfeed => $divide,
+	    keep_ls  => $obj->table,
 	);
 	push @files, map { $obj->prepare($_) }
 	    $obj->pages ? $doc->pages : $doc;
@@ -849,6 +850,8 @@ sub _numbers {
 sub table_out {
     my $obj = shift;
     return unless @_;
+    # A LINE SEPARATOR is not a space between columns: it breaks a cell.
+    my $space = qr/[^\S\x{2028}]/;
     my $split = do {
 	if ($obj->separator eq ' ') {
 	    # /\s+/a does not work as expected, maybe perl's bug
@@ -859,7 +862,13 @@ sub table_out {
 	    qr/[\Q$obj->{separator}\E]/;
 	}
     };
-    my @lines  = map { [ split $split, $_, $obj->table_columns_limit ] } @_;
+    my @lines  = map {
+	# split ' ' takes a LINE SEPARATOR as a space: do as it does,
+	# without it
+	$split eq ' ' && /\x{2028}/
+	    ? [ split /$space+/, s/\A$space+//r, $obj->table_columns_limit ]
+	    : [ split $split, $_, $obj->table_columns_limit ];
+    } @_;
     if (my $spec = $obj->table_remove) {
 	my $max_cols = max map { scalar @$_ } @lines;
 	my %discard = map { ($_ - 1) => 1 }
@@ -877,11 +886,12 @@ sub table_out {
     # -w / --cell: fit table into width, wrapping over-wide cells
     #
     my @fixed_width;
-    my @continued;		# [row][col] true for a wrapped cell's 2nd+ line
+    my @continued;		# [row][col] 1 for a wrapped cell's 2nd+ line,
+				# 2 for a line after a LINE SEPARATOR
     my @length;			# [row][col] width of the cell
     if (not $obj->table_align and not $obj->table_tabs
 	and (defined $obj->width or $obj->cell)) {
-	my @cw = map { [ map { ansi_width $_ } @$_ ] } @lines;
+	my @cw = map { [ map { cell_width($_) } @$_ ] } @lines;
 	my @content = map { max @$_ } xpose @cw;
 	my $overhead = $obj->item_format ? ansi_width(ansi_sprintf($obj->item_format, '')) : 0;
 	my $sep = ansi_width($obj->output_separator);
@@ -889,6 +899,11 @@ sub table_out {
 	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
 	@lines = $obj->fit_table_rows(\@lines, \@cw, \@content, $budget, $overhead, $fixed, 4, \@continued, \@length);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
+    }
+    elsif (grep { /\x{2028}/ } map { @$_ } @lines) {
+	# no wrapping, but a cell has lines
+	my @cw = map { [ map { cell_width($_) } @$_ ] } @lines;
+	@lines = $obj->expand_table_rows(\@lines, \@cw, [], [], \@continued, \@length);
     }
     my @blank = map { [ map { $_ eq '' } @$_ ] } @lines;
     @length = map { [ map { ansi_width $_ } @$_ ] } @lines unless @length;
@@ -913,7 +928,8 @@ sub table_out {
     }
     #
     # --table-wrap-mark: put the mark where a continuation line starts,
-    # in place of leading pad as far as the mark is wide.
+    # in place of leading pad as far as the mark is wide.  A line which
+    # starts after a LINE SEPARATOR is not a continuation and has none.
     # --table-cell-mark: same for the first line of every non-empty cell
     # in a column that has a wrapped cell, so that a row start can be
     # told from a continuation line; the first --table-head rows (a
@@ -929,7 +945,7 @@ sub table_out {
     };
     if ((my $mark = $obj->table_wrap_mark) ne '') {
 	for my $r (grep { $continued[$_] } keys @continued) {
-	    $put_mark->($mark, $r, $_) for grep { $continued[$r][$_] } keys @{$continued[$r]};
+	    $put_mark->($mark, $r, $_) for grep { ($continued[$r][$_] // 0) == 1 } keys @{$continued[$r]};
 	}
     }
     if ((my $mark = $obj->table_cell_mark) ne '' and grep { $_ } @continued) {
