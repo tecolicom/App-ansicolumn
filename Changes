@@ -2,6 +2,13 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.70 2026-11-21T16:41:34Z
+
+    - When a table is fit into -w, the spaces at the end of
+      --item-format are not counted in the last column, and are left
+      out when the table does not fit the width with them
+      (--no-table-tight keeps them)
+
 1.69 2026-11-20T10:26:59Z
 
     - A LINE SEPARATOR (U+2028) in a table cell breaks the cell into
