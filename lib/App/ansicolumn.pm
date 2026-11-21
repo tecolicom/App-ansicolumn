@@ -60,7 +60,7 @@ use Getopt::EX::Hashed 1.0701; {
     has table_head          => ' =i      ' , default => 0  ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
-    has table_tight         => ' !       ' ;
+    has table_tight         => ' !       ' , default => 1  ;
     has padding             => ' !       ' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
