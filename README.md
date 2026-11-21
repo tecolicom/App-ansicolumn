@@ -76,6 +76,7 @@ Table style options:
          --table-cell-mark=# mark the first line of cells in wrapped columns
          --table-head=#     header rows, not marked by --table-cell-mark
          --table-squeeze   remove all-empty columns
+         --table-tight     drop the last spaces of the table to fit -w
          --padding         pad last column to full width
 
 Default alias options:
@@ -847,6 +848,17 @@ These options work with the `-t` option.
     processing pipe-delimited data with border characters (e.g.,
     Markdown tables `| col1 | col2 |`, MySQL output), where the
     leading and trailing `|` create empty columns.
+
+- **--table-tight**
+
+    When the table is fit into the width given by `-w`, do not count the
+    spaces at the end of **--item-format** in the last column, and leave
+    them out when the table does not fit the width with them.  With
+    `--item-format=' %s '`, the text of the last column can go up to the
+    right end of the width, where a margin of the page usually follows.
+    A table which fits the width with the spaces keeps them.
+
+        $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-tight table.txt
 
 - **--padding**
 

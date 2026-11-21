@@ -304,6 +304,61 @@ is(ac->new('-V', '-c', '60', '--no-border', '--cell', '20,10', 't/data/para1.txt
     is("@short", '', 'fill: the table is as wide as -w, for -w from 40 to 100');
 }
 
+######################################################################
+# --table-tight: the spaces at the end of the item format are left
+# out of the last column when the table does not fit the width with
+# them
+######################################################################
+
+{
+    # exec() removes the spaces at the end of lines: take the output
+    # as it is
+    no warnings qw(redefine once);
+    local *out = sub {
+        my($in, @opt) = @_;
+        my $d = ac->new(@opt)->setstdin($in)->update->data;
+        utf8::is_utf8($d) ? $d : decode_utf8($d);
+    };
+    my @F = (@T, q(-o), q(|), q(--item-format= %s ), q(--padding));
+    my $ja = "|名前|説明|\n|甲|全角の文字だけで書いた長い説明の文章で折り返しがどうなるかを確かめるための行|\n";
+    my $run = "|名前|説明|\n|乙|句読点のある文章は、行の終わりに、追い込まれることがあります。それを見ます。|\n";
+
+    # 13 wide characters and a column left over without the option,
+    # 14 with it
+    my $o = out($ja, @F, q(-w), 36);
+    my $t = out($ja, @F, q(-w), 36, q(--table-tight));
+    is_deeply([ widths $o ], [ (35) x 4 ], q(tight: 35 wide without it));
+    is_deeply([ widths $t ], [ (36) x 4 ], q(tight: as wide as -w with it));
+    like($t,   qr/^ 甲   \| 全角の文字だけで書いた長い説$/m, q(tight: a character more in a line));
+    like($t,   qr/^ 名前 \| 説明 +$/m, q(tight: the other lines are padded to the same width));
+
+    # the spaces stay when the table fits the width with them
+    is(out($ja, @F, q(-w), 37, q(--table-tight)), out($ja, @F, q(-w), 37), q(tight: no change when it fits));
+    is(out($ja, @F, q(-w), 200, q(--table-tight)), out($ja, @F, q(-w), 200), q(tight: no change without wrapping));
+    is(out($ja, @F, q(--table-tight)), out($ja, @F), q(tight: no change without -w));
+
+    # a line with a character run in fits a width less by one
+    $t = out($run, @F, q(-w), 40, q(--table-tight));
+    is_deeply([ widths out($run, @F, q(-w), 40) ], [ (37) x 4 ], q(tight: 37 wide without it));
+    is_deeply([ widths $t ], [ (40) x 4 ], q(tight: 40 wide with it));
+    like($t, qr/あります。$/m, q(tight: the character run in is at the end of the line));
+    is(out($run, @F, q(-w), 41, q(--table-tight)), out($run, @F, q(-w), 41), q(tight: no change at 41));
+
+    # only the spaces at the end of the format are taken
+    for my $fmt (q(%s), q( %s), q([%s])) {
+        my @G = (@T, q(-o), q(|), qq(--item-format=$fmt), q(--padding), q(-w), 36);
+        is(out($ja, @G, q(--table-tight)), out($ja, @G), qq(tight: no change with the format "$fmt"));
+    }
+    is(out($ja, @T, q(-w), 30, q(--table-tight)), out($ja, @T, q(-w), 30), q(tight: no change without a format));
+
+    # two spaces at the end: as many as needed are taken
+    {
+        my @G = (@T, q(-o), q(|), q(--item-format= %s  ), q(--padding));
+        my @w = map { (widths out($ja, @G, q(-w), $_, q(--table-tight)))[0] } 36 .. 40;
+        ok(!(grep { $w[$_ - 36] > $_ } 36 .. 40), q(tight: never wider than -w));
+    }
+}
+
 done_testing;
 
 __DATA__

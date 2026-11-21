@@ -60,6 +60,7 @@ use Getopt::EX::Hashed 1.0701; {
     has table_head          => ' =i      ' , default => 0  ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
+    has table_tight         => ' !       ' ;
     has padding             => ' !       ' ;
     has separator           => ' =s s    ' , default => ' ' ;
     has regex_sep           => '    r    ' ;
@@ -927,6 +928,7 @@ sub table_out {
     # -w / --cell: fit table into width, wrapping over-wide cells
     #
     my @fixed_width;
+    my $tight = 0;		# --table-tight: spaces the last column may lose
     my @continued;		# [row][col] 1 for a wrapped cell's 2nd+ line,
 				# 2 for a line after a LINE SEPARATOR
     my @length;			# [row][col] width of the cell
@@ -938,6 +940,12 @@ sub table_out {
 	my $sep = ansi_width($obj->output_separator);
 	my $fixed = $obj->cell ? parse_cell_spec($obj->cell, \@content) : undef;
 	my $budget = defined $obj->width ? $obj->get_width - $sep * (@content - 1) : undef;
+	# --table-tight: the spaces at the end of the item format are not
+	# counted in the last column; they are left out below when the
+	# table does not fit the width with them
+	if (defined $budget and $obj->table_tight and $obj->item_format =~ /%s( +)\z/) {
+	    $budget += $tight = length $1;
+	}
 	@lines = $obj->fit_table_rows(\@lines, \@cw, \@content, $budget, $overhead, $fixed, 4, \@continued, \@length);
 	@fixed_width = map { defined $_ ? $_ + $overhead : undef } @$fixed if $fixed;
     }
@@ -953,11 +961,25 @@ sub table_out {
 	# it is put by hand and the width of the text is added.
 	if (my($pre, $post) = $fmt =~ /\A([^%]*+)%s([^%]*+)\z/) {
 	    my $add = ansi_width($pre . $post);
+	    # --table-tight: the last column has a shorter format when
+	    # the table is wider than the width
+	    my($last, $cut) = (-1, 0);
+	    if ($tight) {
+		my @w = map { max @$_ } xpose @length;
+		@w = map { max $w[$_] + $add, $fixed_width[$_] // 0 } keys @w;
+		my $over = sum(@w) + ansi_width($obj->output_separator) * $#w - $obj->get_width;
+		if ($over > 0) {
+		    ($last, $cut) = ($#w, min($tight, $over));
+		    $fixed_width[$last] -= $cut if defined $fixed_width[$last];
+		}
+	    }
+	    my @post = ($post, substr($post, 0, length($post) - $cut));
 	    for my $r (keys @lines) {
 		my $line = $lines[$r];
 		for my $c (keys @$line) {
-		    $line->[$c] = defined $line->[$c] ? "$pre$line->[$c]$post" : ansi_sprintf($fmt, undef);
-		    $length[$r][$c] += $add;
+		    my $short = $c == $last ? 1 : 0;
+		    $line->[$c] = $pre . ($line->[$c] // '') . $post[$short];
+		    $length[$r][$c] += $add - $short * $cut;
 		}
 	    }
 	} else {
