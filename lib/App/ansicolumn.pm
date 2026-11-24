@@ -28,6 +28,12 @@ our @EXPORT_OK = qw(ansicolumn);
 # --intact: what joins the lines to be kept intact into one line
 # (UNIT SEPARATOR, for now)
 our $INTACT_SEP = "\x1F";
+# --intact: what joins the lines of a group, kept intact in one pane,
+# and the marks of its lines: RECORD SEPARATOR on the first line and
+# GROUP SEPARATOR on the others
+our $GROUP_SEP   = "\x1D";
+our $GROUP_FIRST = "\x1E";
+our $GROUP_MARK  = qr/[\x1D\x1E]/;
 
 sub ansicolumn {
     __PACKAGE__->new->perform(@_);
@@ -407,6 +413,8 @@ sub parallel_out {
 	}
     }
     $obj->set_contents($_) for @files;
+    # the files are not laid out in panes: no group is kept in one
+    $_->replace(sub { $_[0] =~ s/^$GROUP_MARK//r }) for @files;
     # for the labels: every file is a pane
     $obj->{_total_panes} = @files;
     $obj->{_total_pages} = roundup(scalar @files, $obj->pane) / $obj->pane;
@@ -503,8 +511,22 @@ sub prepare {
     # intact, joined into one; it is divided into them, and every one
     # keeps the separator at its start as its mark, until the line is
     # folded (set_contents)
+    #
+    # A line which has GROUP SEPARATOR holds a group: lines kept intact
+    # and kept in one pane.  Every line of it has the mark of a group
+    # after the separator: GROUP_FIRST on the first, GROUP_SEP on the
+    # others, until the layout (space_layout).
     $doc->filter(sub {
-	map { /$INTACT_SEP/ ? map("$INTACT_SEP$_", split /$INTACT_SEP/, $_, -1) : $_ } @_;
+	map {
+	    if (/$GROUP_SEP/) {
+		my @l = split /$GROUP_SEP/, $_, -1;
+		map { $INTACT_SEP . ($_ ? $GROUP_SEP : $GROUP_FIRST) . $l[$_] } keys @l;
+	    }
+	    elsif (/$INTACT_SEP/) {
+		map("$INTACT_SEP$_", split /$INTACT_SEP/, $_, -1);
+	    }
+	    else { $_ }
+	} @_;
     }) if $intact;
     $doc->filter(\&insert_space) if $obj->paragraph;
     my @width;
@@ -514,9 +536,10 @@ sub prepare {
 	$doc->replace(sub {
 	    my $line = shift;
 	    my $mark = $intact && $line =~ s/^$INTACT_SEP//;
+	    my $group = $mark && $line =~ s/^($GROUP_MARK)// ? $1 : '';
 	    my($text, $width) = $obj->expand_tab($line);
 	    push @width, $width;
-	    $mark ? "$INTACT_SEP$text" : $text;
+	    $mark ? "$INTACT_SEP$group$text" : $text;
 	});
     }
     $doc->width(max(@width) // 0);
@@ -601,13 +624,18 @@ sub set_contents {
 	    $fold = sub {
 		my $line = shift;
 		$line =~ s/^$INTACT_SEP// or return $line_fold->($line);
+		my $group = $line =~ s/^($GROUP_MARK)// ? $1 : '';
 		my @chops = $intact_fold->text($line)->chops;
-		$truncate ? $chops[0] : @chops;
+		@chops = $chops[0] if $truncate;
+		# a line folded from a line of a group is in the group
+		return @chops if $group eq '';
+		map { ($_ ? $GROUP_SEP : $group) . $chops[$_] } keys @chops;
 	    };
 	}
 	$fp->replace($fold);
     }
     elsif ($intact) {
+	# the mark of a group stays, for the layout
 	$fp->replace(sub { $_[0] =~ s/^$INTACT_SEP//r });
     }
     return $obj;

@@ -4,6 +4,9 @@ use v5.14;
 use warnings;
 use utf8;
 
+# defined in App::ansicolumn
+our($GROUP_SEP, $GROUP_FIRST, $GROUP_MARK);
+
 ######################################################################
 # Object interface
 ######################################################################
@@ -103,7 +106,15 @@ sub set_layout {
     my($dp, @part) = @_;
     $obj->do_space_layout($dp, @part)
         ->do_fillup($dp);
+    strip_group_marks($dp);
     return $obj;
+}
+
+# The marks of the lines of a group (see prepare) are taken out after
+# the layout, and where there is none.
+sub strip_group_marks {
+    my $dp = shift;
+    s/^$GROUP_MARK// for @$dp;
 }
 
 sub do_space_layout {
@@ -132,18 +143,33 @@ sub space_layout {
     my $obj = shift;
     my($dp, $height) = @_;
     for (my $page = 0; (my $top = $page * $height) < @$dp; $page++) {
+	my $moved;
 	if ($height >= 4 and $top > 2 and !$obj->isolation) {
 	    if ($dp->[$top - 2] !~ /\S/ and
 		$dp->[$top - 1] =~ /\S/
 		) {
 		splice @$dp, $top - 1, 0, '';
-		next;
+		$moved = 1;
 	    }
 	}
-	if (not $obj->white_space) {
+	if (not $moved and not $obj->white_space) {
 	    while ($top < @$dp and $dp->[$top] !~ /\S/) {
 		splice @$dp, $top, 1;
 	    }
+	}
+	# A group which goes over the bottom of this pane, and is not
+	# higher than a pane, goes to the top of the next: empty lines
+	# are put before it.
+	my $bottom = $top + $height;
+	for (my $i = $top + 1; $i < $bottom and $i < @$dp; $i++) {
+	    $dp->[$i] =~ /^$GROUP_FIRST/ or next;
+	    my $end = $i;
+	    $end++ while $end < $#$dp and $dp->[$end + 1] =~ /^$GROUP_SEP/;
+	    if ($end >= $bottom) {
+		splice @$dp, $i, 0, ('') x ($bottom - $i) if $end - $i < $height;
+		last;
+	    }
+	    $i = $end;
 	}
     }
     return $obj;

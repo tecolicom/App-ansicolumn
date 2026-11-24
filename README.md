@@ -44,7 +44,8 @@ ansicolumn \[options\] \[file ...\]
     --runout=#           run-out width
     --runlen=#           set both run-in and run-out width
     --[no-]pagebreak     allow page break
-    --intact             keep lines joined by US as they are
+    --intact             keep lines joined by US as they are,
+                         and those joined by GS in one pane
     --border-style=#     border style
     --label X=Y          pane border label
     --page-label X=Y     page border label
@@ -471,6 +472,14 @@ default, from the standard input.
         $ printf '| a | b |\037| c | d |\n' | ansicolumn -C1 --intact
         | a | b |
         | c | d |
+
+    Lines joined by GROUP SEPARATOR characters (GS, 0x1D) instead are a
+    group: they are kept as they are, and kept in one pane.  A group
+    which would go over the bottom of a pane goes to the top of the next,
+    and leaves empty lines behind; one higher than a pane is laid out as
+    lines.  The rows of an image which a program draws with characters
+    can be sent this way.  In the parallel view (`-V`), where the files
+    are not laid out in panes, the lines of a group are only lines.
 
 - **--**\[**no-**\]**pagebreak**
 
