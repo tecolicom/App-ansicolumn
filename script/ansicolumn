@@ -984,6 +984,9 @@ Space and comma characters are ignored in the expression.  So C<1-2/>
 and C<< S<1 - 2 /> >> and C<1,-,2,/> are all the same.  See C<perldoc
 Math::RPN> for details.
 
+A C<=> before the value is taken away, as L<ansifold(1)|App::ansifold>
+takes the expression: C<-w=2/> is the same as C<-w 2/>.
+
 The next example selects the number of panes by dividing the terminal
 width by 85:
 

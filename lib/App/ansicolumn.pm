@@ -160,6 +160,7 @@ use Getopt::EX::Hashed 1.0701; {
     has [ qw(+height +width +pane +up +pane_width) ] => sub {
 	my $obj = $_;
 	my($name, $val) = @_;
+	$val =~ s/^=//;		# -w=2/, as ansifold takes it
 	$obj->$name = $val !~ /\D/ ? $val : do {
 	    my $init = $name =~ /height/ ? $obj->term_height : $obj->term_width;
 	    rpn_calc($init, $val) // die "$val: invalid $name.\n";

@@ -920,6 +920,9 @@ Space and comma characters are ignored in the expression.  So `1-2/`
 and `1 - 2 /` and `1,-,2,/` are all the same.  See `perldoc
 Math::RPN` for details.
 
+A `=` before the value is taken away, as [ansifold(1)](https://metacpan.org/pod/App%3A%3Aansifold)
+takes the expression: `-w=2/` is the same as `-w 2/`.
+
 The next example selects the number of panes by dividing the terminal
 width by 85:
 
