@@ -2,6 +2,17 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.71 2026-11-25T11:05:57Z
+
+    - With --intact, lines joined by GROUP SEPARATOR (0x1D) are a
+      group: kept intact as the lines joined by UNIT SEPARATOR, and
+      kept in one pane; a group which would go over the bottom of a
+      pane goes to the top of the next, unless it is higher than a
+      pane (for the images of mdee)
+    - -p does not put empty lines in a table kept intact
+    - A = before the value of an RPN option is taken away, as ansifold
+      takes it: -w=2/ is -w 2/
+
 1.70 2026-11-21T16:41:34Z
 
     - When a table is fit into -w, the spaces at the end of

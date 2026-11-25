@@ -90,7 +90,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.70
+Version 1.71
 
 # DESCRIPTION
 
