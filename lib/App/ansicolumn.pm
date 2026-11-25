@@ -415,7 +415,9 @@ sub parallel_out {
     }
     $obj->set_contents($_) for @files;
     # the files are not laid out in panes: no group is kept in one
-    $_->replace(sub { $_[0] =~ s/^$GROUP_MARK//r }) for @files;
+    if ($obj->intact) {
+	$_->replace(sub { $_[0] =~ s/^$GROUP_MARK//r }) for @files;
+    }
     # for the labels: every file is a pane
     $obj->{_total_panes} = @files;
     $obj->{_total_pages} = roundup(scalar @files, $obj->pane) / $obj->pane;
@@ -508,6 +510,9 @@ sub prepare {
     my $obj = shift;
     my $doc = shift;
     my $intact = $obj->intact && !$obj->table;
+    # -p: an empty line between the lines given, before the lines joined
+    # for --intact are divided, so that none goes in a table or a group
+    $doc->filter(\&insert_space) if $obj->paragraph;
     # --intact: a line which has the separator holds lines to be kept
     # intact, joined into one; it is divided into them, and every one
     # keeps the separator at its start as its mark, until the line is
@@ -529,7 +534,6 @@ sub prepare {
 	    else { $_ }
 	} @_;
     }) if $intact;
-    $doc->filter(\&insert_space) if $obj->paragraph;
     my @width;
     if ($obj->table) {
 	@width = map { length } $doc->lines;

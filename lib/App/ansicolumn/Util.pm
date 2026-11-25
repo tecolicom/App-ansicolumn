@@ -106,12 +106,12 @@ sub set_layout {
     my($dp, @part) = @_;
     $obj->do_space_layout($dp, @part)
         ->do_fillup($dp);
-    strip_group_marks($dp);
+    strip_group_marks($dp) if $obj->intact;
     return $obj;
 }
 
 # The marks of the lines of a group (see prepare) are taken out after
-# the layout, and where there is none.
+# the layout, with --intact, where they are made.
 sub strip_group_marks {
     my $dp = shift;
     s/^$GROUP_MARK// for @$dp;

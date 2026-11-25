@@ -115,4 +115,28 @@ my @P = qw(-C3 -S10 --no-border --intact);
     like($o, qr/^g1\s*$/m, 'side by side: the group is lines');
 }
 
+# without --intact, RS and GS at the start of a line are not marks:
+# they are left as they are, as they were before groups
+{
+    my $in = "\x1Ers\n\x1Dgs\nplain\n";
+    my $o = out($in, qw(-C1 -S10 --no-border));
+    like($o, qr/^\x1Ers/m, 'without --intact: RS at the start is left');
+    like($o, qr/^\x1Dgs/m, 'without --intact: GS at the start is left');
+    $o = out(undef, qw(-V -S10 --no-border), do {
+	my $dir = tempdir(CLEANUP => 1);
+	open my $fh, '>', "$dir/x" or die; print $fh $in; close $fh;
+	"$dir/x";
+    });
+    like($o, qr/^\x1Ers/m, 'without --intact, side by side: RS at the start is left');
+}
+
+# -p puts an empty line between the lines given, not between the lines
+# of a group, nor between those of a table kept intact
+{
+    my $in = join "\n", 'a', group(qw(g1 g2 g3)), 'b', "t1\x1Ft2", "c\n";
+    my $p = panes(out($in, qw(-C1 -S10 --no-border --intact -p)), 1);
+    is_deeply($p->[0], [ 'a', '', 'g1', 'g2', 'g3', '', 'b', '', 't1', 't2', '', 'c' ],
+	      '-p: no empty line in a group or a table');
+}
+
 done_testing;
