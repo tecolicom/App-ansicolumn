@@ -33,7 +33,9 @@ sub panes {
     my @pane;
     for my $line (split /\n/, $out, -1) {
 	for my $i (0 .. $n - 1) {
-	    push @{$pane[$i]}, (substr($line, $i * 10, 10) // "") =~ s/ +$//r;
+	    # a short line ends before the panes on the right
+	    my $text = length $line > $i * 10 ? substr($line, $i * 10, 10) : '';
+	    push @{$pane[$i]}, $text =~ s/ +$//r;
 	}
     }
     pop @$_ for @pane;		# after the last newline
