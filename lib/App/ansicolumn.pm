@@ -64,6 +64,7 @@ use Getopt::EX::Hashed 1.0701; {
     has table_wrap_mark     => ' =s      ' , default => '' ;
     has table_cell_mark     => ' =s      ' , default => '' ;
     has table_head          => ' =i      ' , default => 0  ;
+    has table_group         => ' !       ' ;
     has table_remove        => ' =s K    ' , default => '' ;
     has table_squeeze       => ' !       ' ;
     has table_tight         => ' !       ' , default => 1  ;
@@ -522,14 +523,22 @@ sub prepare {
     # and kept in one pane.  Every line of it has the mark of a group
     # after the separator: GROUP_FIRST on the first, GROUP_SEP on the
     # others, until the layout (space_layout).
+    #
+    # Both may be in a line: it is divided by UNIT SEPARATOR first, and
+    # a part with GROUP SEPARATOR is a group, as the rows of a table
+    # with --table-group are.
+    my $group = sub {
+	my @l = split /$GROUP_SEP/, shift, -1;
+	map { $INTACT_SEP . ($_ ? $GROUP_SEP : $GROUP_FIRST) . $l[$_] } keys @l;
+    };
     $doc->filter(sub {
 	map {
-	    if (/$GROUP_SEP/) {
-		my @l = split /$GROUP_SEP/, $_, -1;
-		map { $INTACT_SEP . ($_ ? $GROUP_SEP : $GROUP_FIRST) . $l[$_] } keys @l;
+	    if (/$INTACT_SEP/) {
+		map { /$GROUP_SEP/ ? $group->($_) : "$INTACT_SEP$_" }
+		    split /$INTACT_SEP/, $_, -1;
 	    }
-	    elsif (/$INTACT_SEP/) {
-		map("$INTACT_SEP$_", split /$INTACT_SEP/, $_, -1);
+	    elsif (/$GROUP_SEP/) {
+		$group->($_);
 	    }
 	    else { $_ }
 	} @_;
@@ -1089,6 +1098,14 @@ sub table_out {
 			     _numbers(max => int @max)->parse($_)->sequence
 			 } split /,/, $obj->table_center ] => '=');
     my @format = map { $align[$_] eq '=' ? "%-$max[$_]s" : "%$align[$_]$max[$_]s" } keys @max;
+    # --table-group: the lines of a row are joined by GROUP SEPARATOR,
+    # so that --intact keeps them in one pane
+    my $group = $obj->table_group;
+    my $printed = 0;
+    my $out = sub {
+	my($r, $text) = @_;
+	print !$printed++ ? '' : $group && $continued[$r] ? $GROUP_SEP : "\n", $text;
+    };
     for my $r (keys @lines) {
 	my $line = $lines[$r];
 	next unless @$line;
@@ -1108,8 +1125,8 @@ sub table_out {
 	my @fmt = @format[keys @$line];
 	$fmt[$#fmt] = '%s' if $align[$#fmt] ne '' and !$obj->padding;
 	if (grep { not defined } @$line) {
-	    my $format = join($obj->output_separator, @fmt) . "\n";
-	    ansi_printf $format, @$line;
+	    my $format = join($obj->output_separator, @fmt);
+	    $out->($r, ansi_sprintf $format, @$line);
 	    next;
 	}
 	# the width of every cell is known: pad it here
@@ -1119,8 +1136,9 @@ sub table_out {
 	  : $align[$_] eq ''   ? $space . $line->[$_]
 	  :                      $line->[$_] . $space;
 	} keys @$line;
-	print join($obj->output_separator, @out), "\n";
+	$out->($r, join($obj->output_separator, @out));
     }
+    print "\n" if $printed;
     return $obj;
 }
 
