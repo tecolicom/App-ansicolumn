@@ -34,6 +34,9 @@ our $INTACT_SEP = "\x1F";
 our $GROUP_SEP   = "\x1D";
 our $GROUP_FIRST = "\x1E";
 our $GROUP_MARK  = qr/[\x1D\x1E]/;
+# --pane-osc: a private OSC, which terminals ignore, at the start of
+# each pane, for a program which reads the output, as ansi2pdf
+our $PANE_OSC = "\e]7772;\e\\";
 
 sub ansicolumn {
     __PACKAGE__->new->perform(@_);
@@ -102,6 +105,7 @@ use Getopt::EX::Hashed 1.0701; {
     has runlen              => ' =i      ' ;
     has pagebreak           => ' !       ' , default => 1 ;
     has intact              => ' !       ' ;
+    has pane_osc            => ' !       ' ;
     has border              => ' :s      ' ; has B => '' , action => sub { $_->border = '' } ;
     has no_border           => '         ' , action => sub { $_->border = 'none' } ;
     has border_style        => ' =s   bs ' , default => 'box' ;
@@ -913,9 +917,11 @@ sub _column_out {
 	    my @panes = map {
 		@$_ ? ansi_sprintf("%-*s", shift @span, shift @$_) : ();
 	    } @_;
+	    # --pane-osc: a pane starts where the OSC is
+	    my $mark = $obj->pane_osc && $i == 0 ? $PANE_OSC : '';
 	    print      $bd->{left};
 	    print join $bd->{center},
-		map { $obj->color('TEXT', $_) } @panes;
+		map { $mark . $obj->color('TEXT', $_) } @panes;
 	    print      $bd->{right};
 	    print      "\n";
 	}
