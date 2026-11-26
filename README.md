@@ -76,6 +76,7 @@ Table style options:
          --table-wrap-mark=# mark continuation lines of wrapped cells
          --table-cell-mark=# mark the first line of cells in wrapped columns
          --table-head=#     header rows, not marked by --table-cell-mark
+         --table-group     join the lines of a row by GS, for --intact
          --table-squeeze   remove all-empty columns
          --no-table-tight  keep the last spaces of the table fit in -w
          --padding         pad last column to full width
@@ -90,7 +91,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.71
+Version 1.72
 
 # DESCRIPTION
 
@@ -481,6 +482,13 @@ default, from the standard input.
     can be sent this way.  In the parallel view (`-V`), where the files
     are not laid out in panes, the lines of a group are only lines.
 
+    Both can be in one line: it is divided at US first, and a part with
+    GS is a group.  The rows of a table made with `--table-group` are
+    sent this way, joined by US, so that a pane may end between two rows
+    but not inside one.
+
+        $ printf 'head\035rule\035row 1\037row 2\037row 3a\035row 3b\n' | ansicolumn --intact
+
 - **--**\[**no-**\]**pagebreak**
 
     Move to the next pane when a form feed character is found.
@@ -836,6 +844,13 @@ These options work with the `-t` option.
     rows.
 
         $ ansicolumn -t -s '|' -w60 --item-format=' %s ' --table-cell-mark=‣ --table-head=2 table.md
+
+- **--table-group**
+
+    Join the lines of a row which has more than one line, by a wrapped
+    cell or a line separator in a cell, into one by GROUP SEPARATOR
+    characters (GS, 0x1D), so that `--intact` keeps them in one pane
+    (see there).  The rows themselves are lines as usual.
 
 - **-K**#, **--table-remove**=#
 

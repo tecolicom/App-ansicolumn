@@ -2,6 +2,15 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.72 2026-11-26T06:13:13Z
+
+    - --table-group joins the lines of a row of a table, which has
+      more than one line by a wrapped cell or a line separator, by
+      GROUP SEPARATOR (0x1D).  --intact takes a line with both UNIT
+      SEPARATOR and GROUP SEPARATOR: it is divided at US first, and a
+      part with GS is a group kept in one pane, so that a pane ends
+      between the rows of a table but not inside one
+
 1.71 2026-11-25T11:05:57Z
 
     - With --intact, lines joined by GROUP SEPARATOR (0x1D) are a
