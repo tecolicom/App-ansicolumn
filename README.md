@@ -46,6 +46,7 @@ ansicolumn \[options\] \[file ...\]
     --[no-]pagebreak     allow page break
     --intact             keep lines joined by US as they are,
                          and those joined by GS in one pane
+    --pane-osc           mark the start of each pane by an OSC
     --border-style=#     border style
     --label X=Y          pane border label
     --page-label X=Y     page border label
@@ -91,7 +92,7 @@ Default alias options:
 
 # VERSION
 
-Version 1.72
+Version 1.73
 
 # DESCRIPTION
 
@@ -488,6 +489,18 @@ default, from the standard input.
     but not inside one.
 
         $ printf 'head\035rule\035row 1\037row 2\037row 3a\035row 3b\n' | ansicolumn --intact
+
+- **--pane-osc**
+
+    Put a private OSC, which terminals ignore, where the text of each
+    pane starts, on the first line of the pane:
+
+        ESC ] 7772 ; ESC \
+
+    A program which reads the output, as **ansi2pdf**, knows the panes
+    from where the OSCs are, and can put the text in the order of the
+    panes, so that the text of a pane is selected and copied as a whole
+    from a PDF.  **nup** gives this option when it makes a PDF.
 
 - **--**\[**no-**\]**pagebreak**
 

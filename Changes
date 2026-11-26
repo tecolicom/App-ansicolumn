@@ -2,6 +2,13 @@ Revision history for Perl extension App-ansicolumn
 
 {{$NEXT}}
 
+1.73 2026-11-26T09:10:36Z
+
+    - --pane-osc marks the start of each pane by a private OSC
+      (ESC ] 7772 ; ESC \), which terminals ignore, so that ansi2pdf
+      puts the text of a PDF pane by pane, and a viewer selects the
+      text of a pane rather than a line across the panes
+
 1.72 2026-11-26T06:13:13Z
 
     - --table-group joins the lines of a row of a table, which has
